@@ -5,19 +5,29 @@ class HourlyWeatherWidget extends StatelessWidget {
   final String hour;
   final String temperature;
   final String weatherIconPath;
+  final TextStyle hourTextStyle;
+  final TextStyle tempTextStyle;
+  final Color weatherBoxBackgroundColor;
 
-  HourlyWeatherWidget(
-      {@required this.hour,
-      @required this.temperature,
-      @required this.weatherIconPath});
+  HourlyWeatherWidget({
+    @required this.hour,
+    @required this.temperature,
+    @required this.weatherIconPath,
+    this.hourTextStyle = AppTheme.display2,
+    this.weatherBoxBackgroundColor = Colors.black,
+    this.tempTextStyle = AppTheme.display1,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: <Widget>[
-        Text(
-          hour,
-          style: AppTheme.display2,
+        Container(
+          width: MediaQuery.of(context).size.width / 5,
+          child: Text(
+            hour,
+            style: hourTextStyle,
+          ),
         ),
         SizedBox(
           width: 40.0,
@@ -25,7 +35,7 @@ class HourlyWeatherWidget extends StatelessWidget {
         Expanded(
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.black,
+              color: weatherBoxBackgroundColor,
               borderRadius: BorderRadius.all(
                 Radius.circular(20.0),
               ),
@@ -33,16 +43,14 @@ class HourlyWeatherWidget extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.only(
                 left: 8.0,
-//                                      top: 18.0,
-//                                      bottom: 18.0,
                 right: 8.0,
               ),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   Text(
                     temperature,
-                    style: AppTheme.display1,
+                    style: tempTextStyle,
                   ),
                   Image.asset(
                     weatherIconPath,

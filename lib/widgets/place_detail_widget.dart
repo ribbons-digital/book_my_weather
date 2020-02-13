@@ -1,4 +1,5 @@
 import 'package:despicables_me_app/widgets/explore_place_card_widget.dart';
+import 'package:despicables_me_app/widgets/hourly_weather_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
 
@@ -25,7 +26,7 @@ class PlaceDetailWidget extends StatelessWidget {
             title: Text('Taipei 101'),
             subtitle: Text('Shopping'),
           ),
-          Container(
+          Padding(
             padding: EdgeInsets.only(left: 15.0),
             child: Row(
               children: <Widget>[
@@ -240,255 +241,287 @@ class PlaceDetailWidget extends StatelessWidget {
             child: TabBarView(
               controller: _tabController,
               children: <Widget>[
+                PlaceOverview(height: height, width: width),
                 Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 12.0,
-                        top: 16.0,
-                        bottom: 16.0,
-                      ),
-                      child: Text(
-                        'Information',
-                        style: TextStyle(
-                          fontSize: 32.0,
-                          fontWeight: FontWeight.w100,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 18.0,
-                        bottom: 10.0,
-                      ),
-                      child: Text(
-                        'No.7, Section 5, Xinyi Road, Xinyi District, Taipei City, Taiwan 110',
-                        style: TextStyle(
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.w100,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 18.0,
-                        bottom: 10.0,
-                      ),
-                      child: Text(
-                        '(02) 98300123',
-                        style: TextStyle(
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.w100,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 18.0,
-                        bottom: 10.0,
-                      ),
-                      child: Text(
-                        'https://www.taipei101.com.tw',
-                        style: TextStyle(
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.w100,
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20.0,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10.0,
-                        ),
-                        child: Divider(
-                          color: Colors.black26,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 12.0,
-                        top: 16.0,
-                        bottom: 16.0,
-                      ),
-                      child: Text(
-                        'Business hours',
-                        style: TextStyle(
-                          fontSize: 32.0,
-                          fontWeight: FontWeight.w100,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 12.0,
-                      ),
+                    Expanded(
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: <Widget>[
-                          Text(
-                            'Monday  11:00am ~ 09:00pm',
-                            style: TextStyle(
-                              fontSize: 20.0,
-                              fontWeight: FontWeight.w100,
-                            ),
-                          ),
-                          Text(
-                            'Tuesday  11:00am ~ 09:00pm',
-                            style: TextStyle(
-                              fontSize: 20.0,
-                              fontWeight: FontWeight.w100,
-                            ),
-                          ),
-                          Text(
-                            'Wednesday  11:00am ~ 09:00pm',
-                            style: TextStyle(
-                              fontSize: 20.0,
-                              fontWeight: FontWeight.w100,
-                            ),
-                          ),
-                          Text(
-                            'Thursday  11:00am ~ 09:00pm',
-                            style: TextStyle(
-                              fontSize: 20.0,
-                              fontWeight: FontWeight.w100,
-                            ),
-                          ),
-                          Text(
-                            'Friday  11:00am ~ 09:00pm',
-                            style: TextStyle(
-                              fontSize: 20.0,
-                              fontWeight: FontWeight.w100,
-                            ),
-                          ),
-                          Text(
-                            'Saturday  11:00am ~ 09:00pm',
-                            style: TextStyle(
-                              fontSize: 20.0,
-                              fontWeight: FontWeight.w100,
-                            ),
-                          ),
-                          Text(
-                            'Sunday  11:00am ~ 09:00pm',
-                            style: TextStyle(
-                              fontSize: 20.0,
-                              fontWeight: FontWeight.w100,
-                            ),
-                          ),
-                        ],
+                        children: List.generate(5, (i) {
+                          return HourlyWeatherWidget(
+                            hour: '8am',
+                            temperature: '31',
+                            weatherIconPath: 'assets/images/sunny.png',
+                          );
+                        }),
                       ),
-                    ),
-                    SizedBox(
-                      height: 20.0,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10.0,
-                        ),
-                        child: Divider(
-                          color: Colors.black26,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 12.0,
-                        top: 16.0,
-                        bottom: 16.0,
-                      ),
-                      child: Text(
-                        'Weather forecast',
-                        style: TextStyle(
-                          fontSize: 32.0,
-                          fontWeight: FontWeight.w100,
-                        ),
-                      ),
+                    )
+                  ],
+                ),
+                Text('3'),
+                Text('4'),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class PlaceOverview extends StatelessWidget {
+  const PlaceOverview({
+    Key key,
+    @required this.height,
+    @required this.width,
+  }) : super(key: key);
+
+  final double height;
+  final double width;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 1000.0,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 12.0,
+              top: 16.0,
+              bottom: 16.0,
+            ),
+            child: Text(
+              'Information',
+              style: TextStyle(
+                fontSize: 32.0,
+                fontWeight: FontWeight.w100,
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 18.0,
+              bottom: 10.0,
+            ),
+            child: Text(
+              'No.7, Section 5, Xinyi Road, Xinyi District, Taipei City, Taiwan 110',
+              style: TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.w100,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 18.0,
+              bottom: 10.0,
+            ),
+            child: Text(
+              '(02) 98300123',
+              style: TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.w100,
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 18.0,
+              bottom: 10.0,
+            ),
+            child: Text(
+              'https://www.taipei101.com.tw',
+              style: TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.w100,
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 20.0,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 10.0,
+              ),
+              child: Divider(
+                color: Colors.black26,
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 12.0,
+              top: 16.0,
+              bottom: 16.0,
+            ),
+            child: Text(
+              'Business hours',
+              style: TextStyle(
+                fontSize: 32.0,
+                fontWeight: FontWeight.w100,
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 12.0,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: <Widget>[
+                Text(
+                  'Monday  11:00am ~ 09:00pm',
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.w100,
+                  ),
+                ),
+                Text(
+                  'Tuesday  11:00am ~ 09:00pm',
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.w100,
+                  ),
+                ),
+                Text(
+                  'Wednesday  11:00am ~ 09:00pm',
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.w100,
+                  ),
+                ),
+                Text(
+                  'Thursday  11:00am ~ 09:00pm',
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.w100,
+                  ),
+                ),
+                Text(
+                  'Friday  11:00am ~ 09:00pm',
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.w100,
+                  ),
+                ),
+                Text(
+                  'Saturday  11:00am ~ 09:00pm',
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.w100,
+                  ),
+                ),
+                Text(
+                  'Sunday  11:00am ~ 09:00pm',
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.w100,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 20.0,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 10.0,
+              ),
+              child: Divider(
+                color: Colors.black26,
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 12.0,
+              top: 16.0,
+              bottom: 16.0,
+            ),
+            child: Text(
+              'Weather forecast',
+              style: TextStyle(
+                fontSize: 32.0,
+                fontWeight: FontWeight.w100,
+              ),
+            ),
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: List<Widget>.generate(
+                7,
+                (i) => Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      '2/' + (int.parse('4') + i).toString(),
+                      style: TextStyle(color: Colors.black),
                     ),
                     Container(
-                      width: MediaQuery.of(context).size.width,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: List<Widget>.generate(
-                          7,
-                          (i) => Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Text(
-                                '2/' + (int.parse('4') + i).toString(),
-                                style: TextStyle(color: Colors.black),
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(top: 5, bottom: 10),
+                      margin: EdgeInsets.only(top: 5, bottom: 10),
 //                          child: _SpinningSun(),
-                                child: Image.asset(
-                                  'assets/images/sunny.png',
-                                  scale: 3.5,
-                                ),
-                              ),
-                              Text(
-                                '26º',
-                                style: TextStyle(color: Colors.black),
-                              ),
-                            ],
-                          ),
-                        ),
+                      child: Image.asset(
+                        'assets/images/sunny.png',
+                        scale: 3.5,
                       ),
                     ),
-                    Container(
-                      width: double.infinity,
-                      height: 400,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          SizedBox(
-                            height: 20.0,
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10.0,
-                              ),
-                              child: Divider(
-                                color: Colors.black26,
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              left: 12.0,
-                              top: 16.0,
-                              bottom: 16.0,
-                            ),
-                            child: Text(
-                              'Hotels nearby',
-                              style: TextStyle(
-                                fontSize: 32.0,
-                                fontWeight: FontWeight.w100,
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: ListView(
-                              scrollDirection: Axis.horizontal,
-                              children: List.generate(5, (i) {
-                                return AspectRatio(
-                                  aspectRatio: height < 600
-                                      ? width / height
-                                      : (width * 1.1) / height,
-                                  child: ExplorePlaceCardWidget(),
-                                );
-                              }),
-                            ),
-                          ),
-                        ],
-                      ),
+                    Text(
+                      '26º',
+                      style: TextStyle(color: Colors.black),
                     ),
                   ],
                 ),
-                Text('2'),
-                Text('3'),
-                Text('4'),
+              ),
+            ),
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                SizedBox(
+                  height: 20.0,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10.0,
+                    ),
+                    child: Divider(
+                      color: Colors.black26,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 12.0,
+                    top: 16.0,
+                    bottom: 16.0,
+                  ),
+                  child: Text(
+                    'Hotels nearby',
+                    style: TextStyle(
+                      fontSize: 32.0,
+                      fontWeight: FontWeight.w100,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    children: List.generate(5, (i) {
+                      return AspectRatio(
+                        aspectRatio: height < 600
+                            ? width / height
+                            : (width * 1.1) / height,
+                        child: ExplorePlaceCardWidget(),
+                      );
+                    }),
+                  ),
+                ),
               ],
             ),
           ),
