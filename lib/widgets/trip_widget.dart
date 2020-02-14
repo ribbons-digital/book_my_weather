@@ -45,6 +45,15 @@ class TripWidget extends StatelessWidget {
         child: Stack(
           fit: StackFit.expand,
           children: <Widget>[
+            Hero(
+              tag: 'card-background-$index',
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12.0),
+                  color: Colors.black,
+                ),
+              ),
+            ),
             ClipRRect(
               borderRadius: BorderRadius.circular(12.0),
               child: Hero(

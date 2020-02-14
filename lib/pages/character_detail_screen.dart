@@ -37,7 +37,7 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen>
         fit: StackFit.expand,
         children: <Widget>[
           Hero(
-            tag: "background-${characters[0].name}",
+            tag: "background-${widget.character.name}",
             child: DecoratedBox(
               decoration: BoxDecoration(
                 color: Colors.black,

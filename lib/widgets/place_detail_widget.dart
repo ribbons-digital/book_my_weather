@@ -241,7 +241,7 @@ class PlaceDetailWidget extends StatelessWidget {
             child: TabBarView(
               controller: _tabController,
               children: <Widget>[
-                PlaceOverview(height: height, width: width),
+//                PlaceOverview(height: height, width: width,),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -274,10 +274,12 @@ class PlaceOverview extends StatelessWidget {
     Key key,
     @required this.height,
     @required this.width,
+    @required this.goToWeatherTab,
   }) : super(key: key);
 
   final double height;
   final double width;
+  final Function goToWeatherTab;
 
   @override
   Widget build(BuildContext context) {
@@ -452,30 +454,33 @@ class PlaceOverview extends StatelessWidget {
           ),
           Container(
             width: MediaQuery.of(context).size.width,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: List<Widget>.generate(
-                7,
-                (i) => Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      '2/' + (int.parse('4') + i).toString(),
-                      style: TextStyle(color: Colors.black),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(top: 5, bottom: 10),
-//                          child: _SpinningSun(),
-                      child: Image.asset(
-                        'assets/images/sunny.png',
-                        scale: 3.5,
+            child: GestureDetector(
+              onTap: goToWeatherTab,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: List<Widget>.generate(
+                  7,
+                  (i) => Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        '2/' + (int.parse('4') + i).toString(),
+                        style: TextStyle(color: Colors.black),
                       ),
-                    ),
-                    Text(
-                      '26º',
-                      style: TextStyle(color: Colors.black),
-                    ),
-                  ],
+                      Container(
+                        margin: EdgeInsets.only(top: 5, bottom: 10),
+//                          child: _SpinningSun(),
+                        child: Image.asset(
+                          'assets/images/sunny.png',
+                          scale: 3.5,
+                        ),
+                      ),
+                      Text(
+                        '26º',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

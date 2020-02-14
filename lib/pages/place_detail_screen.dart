@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:despicables_me_app/widgets/daily_weather_widget.dart';
 import 'package:despicables_me_app/widgets/hourly_weather_widget.dart';
 import 'package:despicables_me_app/widgets/place_detail_widget.dart';
 import 'package:flutter/material.dart';
@@ -40,6 +41,12 @@ class _PlaceDetailState extends State<PlaceDetail>
     if (_tabController.indexIsChanging) {
       setState(() {});
     }
+  }
+
+  void goToWeatherTab() {
+    setState(() {
+      _tabController.index = 1;
+    });
   }
 
   @override
@@ -101,11 +108,6 @@ class _PlaceDetailState extends State<PlaceDetail>
               ],
             )),
           ),
-//          SliverToBoxAdapter(
-//            child: PlaceDetailWidget(
-//              tabController: _tabController,
-//            ),
-//          ),
           SliverToBoxAdapter(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -205,12 +207,6 @@ class _PlaceDetailState extends State<PlaceDetail>
                               Icons.phone,
                               color: Color(0XFF69A4FF),
                             ),
-//                      SvgPicture.asset(
-//                        'assets/images/note_solid.svg',
-//                        width: 14.0,
-//                        height: 16.0,
-//                        color: Color(0XFF69A4FF),
-//                      ),
                             SizedBox(
                               width: 5.0,
                             ),
@@ -334,26 +330,13 @@ class _PlaceDetailState extends State<PlaceDetail>
               ),
             ),
           ),
-//          SliverToBoxAdapter(
-//            child: ConstrainedBox(
-//              constraints: BoxConstraints(
-//                minHeight: 300.0,
-//                maxHeight: 1000.0,
-//              ),
-//              child: TabBarView(
-//                controller: _tabController,
-//                children: <Widget>[
-//                  PlaceOverview(height: height, width: width),
-//                  PlaceWeather(),
-//                  Text('3'),
-//                  Text('4'),
-//                ],
-//              ),
-//            ),
-//          )
           <Widget>[
             SliverToBoxAdapter(
-              child: PlaceOverview(height: height, width: width),
+              child: PlaceOverview(
+                height: height,
+                width: width,
+                goToWeatherTab: goToWeatherTab,
+              ),
             ),
             PlaceWeather(),
             SliverGrid.count(
@@ -380,37 +363,106 @@ class _PlaceDetailState extends State<PlaceDetail>
   }
 }
 
-class PlaceWeather extends StatelessWidget {
+class PlaceWeather extends StatefulWidget {
   const PlaceWeather({
     Key key,
   }) : super(key: key);
 
   @override
+  _PlaceWeatherState createState() => _PlaceWeatherState();
+}
+
+class _PlaceWeatherState extends State<PlaceWeather> {
+  bool isHourly = true;
+
+  void switchWeatherView() {
+    setState(() {
+      isHourly = !isHourly;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SliverList(
-      delegate: SliverChildListDelegate(List.generate(24, (i) {
-        return Padding(
-          padding: const EdgeInsets.only(
-            left: 16.0,
-            bottom: 16.0,
-          ),
-          child: HourlyWeatherWidget(
-            hour: '$i:00',
-            temperature: '31º',
-            weatherIconPath: 'assets/images/sunny.png',
-            hourTextStyle: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.w100,
-              fontSize: 28.0,
+      delegate: SliverChildListDelegate(List.generate(isHourly ? 24 : 7, (i) {
+        if (i == 0) {
+          return Theme(
+            data: ThemeData(
+              canvasColor: Colors.white,
             ),
-            weatherBoxBackgroundColor: Colors.white,
-            tempTextStyle: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.w100,
-              fontSize: 28.0,
+            child: Padding(
+              padding: const EdgeInsets.only(
+                left: 16.0,
+                top: 8.0,
+                right: 8.0,
+                bottom: 8.0,
+              ),
+              child: DropdownButton(
+                value: isHourly ? 'Hourly' : 'Daily',
+                elevation: 16,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.w200,
+                  fontSize: 20.0,
+                ),
+                items: <String>['Hourly', 'Daily']
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (String newValue) {
+                  setState(() {
+                    newValue == 'Hourly' ? isHourly = true : isHourly = false;
+                  });
+                },
+              ),
             ),
-          ),
-        );
+          );
+        }
+        return isHourly
+            ? Padding(
+                padding: const EdgeInsets.only(
+                  left: 16.0,
+                  bottom: 16.0,
+                ),
+                child: HourlyWeatherWidget(
+                  hour: '$i:00',
+                  temperature: '31º',
+                  weatherIconPath: 'assets/images/sunny.png',
+                  hourTextStyle: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.w100,
+                    fontSize: 28.0,
+                  ),
+                  weatherBoxBackgroundColor: Colors.white,
+                  tempTextStyle: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.w100,
+                    fontSize: 28.0,
+                  ),
+                ),
+              )
+            : Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: DailyWeather(
+                  date: 'Sat. 25, Jan.',
+                  weatherConditionImgPath: 'assets/images/sunny.png',
+                  tempRange: '32º / 22º',
+                  tempRangeTextStyle: TextStyle(
+                    fontWeight: FontWeight.w100,
+                    fontSize: 20,
+                    color: Colors.black,
+                  ),
+                  weatherBoxBackgroundColor: Colors.white,
+                  dateTextStyle: TextStyle(
+                    fontWeight: FontWeight.w100,
+                    fontSize: 20,
+                    color: Colors.black,
+                  ),
+                ),
+              );
       })),
     );
   }

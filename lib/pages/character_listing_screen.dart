@@ -8,6 +8,25 @@ class CharacterListingScreen extends StatefulWidget {
 }
 
 class _CharacterListingScreenState extends State<CharacterListingScreen> {
+  PageController _pageController;
+  int currentPage = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(
+      viewportFraction: 1.0,
+      initialPage: currentPage,
+      keepPage: false,
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _pageController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,7 +82,13 @@ class _CharacterListingScreenState extends State<CharacterListingScreen> {
                 ),
               ),
               Expanded(
-                child: CharacterWidget(),
+                child: PageView(
+                  controller: _pageController,
+                  children: <Widget>[
+                    CharacterWidget(),
+                    CharacterWidget(),
+                  ],
+                ),
               ),
             ],
           ),

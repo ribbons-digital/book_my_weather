@@ -197,7 +197,7 @@ class _TripsScreenState extends State<TripsScreen> {
                     Navigator.push(
                       context,
                       PageRouteBuilder(
-                        transitionDuration: const Duration(milliseconds: 550),
+                        transitionDuration: const Duration(milliseconds: 3550),
                         pageBuilder: (context, _, __) => TripDetail(
                           imgPath: 'assets/images/taipei.jpg',
                           tripName: 'Taiwan',

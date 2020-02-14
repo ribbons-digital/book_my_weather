@@ -4,17 +4,32 @@ class DailyWeather extends StatelessWidget {
   final String date;
   final String weatherConditionImgPath;
   final String tempRange;
+  final TextStyle dateTextStyle;
+  final TextStyle tempRangeTextStyle;
+  final Color weatherBoxBackgroundColor;
 
-  DailyWeather(
-      {@required this.date,
-      @required this.weatherConditionImgPath,
-      @required this.tempRange});
+  DailyWeather({
+    @required this.date,
+    @required this.weatherConditionImgPath,
+    @required this.tempRange,
+    this.dateTextStyle = const TextStyle(
+      fontWeight: FontWeight.w100,
+      fontSize: 20,
+      color: Colors.white,
+    ),
+    this.tempRangeTextStyle = const TextStyle(
+      fontWeight: FontWeight.w100,
+      fontSize: 20,
+      color: Colors.white,
+    ),
+    this.weatherBoxBackgroundColor = Colors.black,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.black,
+        color: weatherBoxBackgroundColor,
         borderRadius: BorderRadius.all(
           Radius.circular(20.0),
         ),
@@ -33,11 +48,7 @@ class DailyWeather extends StatelessWidget {
               flex: 4,
               child: Text(
                 date,
-                style: TextStyle(
-                  fontWeight: FontWeight.w100,
-                  fontSize: 20,
-                  color: Colors.white,
-                ),
+                style: dateTextStyle,
               ),
             ),
             Expanded(
@@ -51,11 +62,7 @@ class DailyWeather extends StatelessWidget {
                   ),
                   Text(
                     tempRange,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w100,
-                      fontSize: 20,
-                      color: Colors.white,
-                    ),
+                    style: tempRangeTextStyle,
                   ),
                 ],
               ),
