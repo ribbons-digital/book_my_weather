@@ -1,8 +1,8 @@
 import 'dart:math' as math;
 
-import 'package:despicables_me_app/widgets/daily_weather_widget.dart';
-import 'package:despicables_me_app/widgets/hourly_weather_widget.dart';
-import 'package:despicables_me_app/widgets/place_detail_widget.dart';
+import 'package:book_my_weather/widgets/daily_weather_widget.dart';
+import 'package:book_my_weather/widgets/hourly_weather_widget.dart';
+import 'package:book_my_weather/widgets/place_detail_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
 

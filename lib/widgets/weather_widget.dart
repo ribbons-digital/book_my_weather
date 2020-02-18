@@ -1,12 +1,12 @@
-import 'package:despicables_me_app/models/character.dart';
-import 'package:despicables_me_app/pages/character_detail_screen.dart';
-import 'package:despicables_me_app/styleguide.dart';
+import 'package:book_my_weather/models/character.dart';
+import 'package:book_my_weather/pages/weather_detail_screen.dart';
+import 'package:book_my_weather/styleguide.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 
 import '../styleguide.dart';
 
-class CharacterWidget extends StatelessWidget {
+class WeatherWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
@@ -19,7 +19,7 @@ class CharacterWidget extends StatelessWidget {
             PageRouteBuilder(
                 transitionDuration: const Duration(milliseconds: 350),
                 pageBuilder: (context, _, __) =>
-                    CharacterDetailScreen(character: characters[0])));
+                    WeatherDetailScreen(character: characters[0])));
       },
       child: Stack(
         children: [

@@ -1,6 +1,6 @@
-import 'package:despicables_me_app/pages/place_detail_screen.dart';
-import 'package:despicables_me_app/widgets/explore_place_card_widget.dart';
-import 'package:despicables_me_app/widgets/place_card_widget.dart';
+import 'package:book_my_weather/pages/place_detail_screen.dart';
+import 'package:book_my_weather/widgets/explore_place_card_widget.dart';
+import 'package:book_my_weather/widgets/place_card_widget.dart';
 import 'package:flutter/material.dart';
 
 class PlacesScreen extends StatefulWidget {

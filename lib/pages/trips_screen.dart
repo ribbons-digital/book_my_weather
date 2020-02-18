@@ -1,6 +1,6 @@
-import 'package:despicables_me_app/pages/new_trip_screen.dart';
-import 'package:despicables_me_app/pages/trip_detail_screen.dart';
-import 'package:despicables_me_app/widgets/trip_widget.dart';
+import 'package:book_my_weather/pages/new_trip_screen.dart';
+import 'package:book_my_weather/pages/trip_detail_screen.dart';
+import 'package:book_my_weather/widgets/trip_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -197,7 +197,7 @@ class _TripsScreenState extends State<TripsScreen> {
                     Navigator.push(
                       context,
                       PageRouteBuilder(
-                        transitionDuration: const Duration(milliseconds: 3550),
+                        transitionDuration: const Duration(milliseconds: 550),
                         pageBuilder: (context, _, __) => TripDetail(
                           imgPath: 'assets/images/taipei.jpg',
                           tripName: 'Taiwan',

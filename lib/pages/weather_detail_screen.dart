@@ -1,23 +1,23 @@
-import 'package:despicables_me_app/models/character.dart';
-import 'package:despicables_me_app/styleguide.dart';
-import 'package:despicables_me_app/widgets/daily_weather_detail_widget.dart';
-import 'package:despicables_me_app/widgets/daily_weather_heading.dart';
-import 'package:despicables_me_app/widgets/daily_weather_widget.dart';
-import 'package:despicables_me_app/widgets/hourly_weather_widget.dart';
+import 'package:book_my_weather/models/character.dart';
+import 'package:book_my_weather/styleguide.dart';
+import 'package:book_my_weather/widgets/daily_weather_detail_widget.dart';
+import 'package:book_my_weather/widgets/daily_weather_heading.dart';
+import 'package:book_my_weather/widgets/daily_weather_widget.dart';
+import 'package:book_my_weather/widgets/hourly_weather_widget.dart';
 import 'package:flutter/material.dart';
 
 import '../styleguide.dart';
 
-class CharacterDetailScreen extends StatefulWidget {
+class WeatherDetailScreen extends StatefulWidget {
   final Character character;
 
-  const CharacterDetailScreen({Key key, this.character}) : super(key: key);
+  const WeatherDetailScreen({Key key, this.character}) : super(key: key);
 
   @override
-  _CharacterDetailScreenState createState() => _CharacterDetailScreenState();
+  _WeatherDetailScreenState createState() => _WeatherDetailScreenState();
 }
 
-class _CharacterDetailScreenState extends State<CharacterDetailScreen>
+class _WeatherDetailScreenState extends State<WeatherDetailScreen>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
 
@@ -87,10 +87,10 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen>
                   controller: _tabController,
                   tabs: <Widget>[
                     Tab(
-                      child: Text('Hourly'),
+                      child: Text('Today'),
                     ),
                     Tab(
-                      child: Text('Daily'),
+                      child: Text('Forecast'),
                     ),
                   ],
                 ),
@@ -103,10 +103,28 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen>
                       ListView(
                         padding: EdgeInsets.all(10.0),
                         children: <Widget>[
-                          HourlyWeatherWidget(
-                            hour: ' 8AM',
-                            temperature: '26º',
-                            weatherIconPath: 'assets/images/sunny.png',
+                          GestureDetector(
+                            onTap: () {
+                              showModalBottomSheet(
+                                backgroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                ),
+                                context: context,
+                                isScrollControlled: true,
+                                builder: (context) {
+                                  return FractionallySizedBox(
+                                    heightFactor: 0.66,
+                                    child: DailyWeatherDetail(),
+                                  );
+                                },
+                              );
+                            },
+                            child: HourlyWeatherWidget(
+                              hour: ' 8AM',
+                              temperature: '26º',
+                              weatherIconPath: 'assets/images/sunny.png',
+                            ),
                           ),
                           SizedBox(
                             height: 10.0,
@@ -140,12 +158,15 @@ class _CharacterDetailScreenState extends State<CharacterDetailScreen>
                           GestureDetector(
                             onTap: () {
                               showModalBottomSheet(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                ),
                                 backgroundColor: Colors.white,
                                 context: context,
                                 isScrollControlled: true,
                                 builder: (context) {
                                   return FractionallySizedBox(
-                                    heightFactor: 0.65,
+                                    heightFactor: 0.66,
                                     child: DailyWeatherDetail(),
                                   );
                                 },

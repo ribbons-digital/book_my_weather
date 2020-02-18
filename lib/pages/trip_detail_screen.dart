@@ -1,5 +1,5 @@
-import 'package:despicables_me_app/pages/places_screen.dart';
-import 'package:despicables_me_app/widgets/trip_detail_grid_item_widget.dart';
+import 'package:book_my_weather/pages/places_screen.dart';
+import 'package:book_my_weather/widgets/trip_detail_grid_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';

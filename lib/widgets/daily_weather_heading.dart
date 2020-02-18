@@ -1,4 +1,4 @@
-import 'package:despicables_me_app/styleguide.dart';
+import 'package:book_my_weather/styleguide.dart';
 import 'package:flutter/material.dart';
 
 class DailyWeatherHeading extends StatelessWidget {

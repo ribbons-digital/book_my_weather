@@ -1,4 +1,4 @@
-import 'package:despicables_me_app/widgets/weather_condition_widget.dart';
+import 'package:book_my_weather/widgets/weather_condition_widget.dart';
 import 'package:flutter/material.dart';
 
 class DailyWeatherDetail extends StatelessWidget {

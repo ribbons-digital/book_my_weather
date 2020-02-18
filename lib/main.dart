@@ -1,10 +1,12 @@
-import 'package:despicables_me_app/pages/new_trip_screen.dart';
-import 'package:despicables_me_app/pages/place_detail_screen.dart';
-import 'package:despicables_me_app/pages/places_screen.dart';
-import 'package:despicables_me_app/pages/trip_detail_screen.dart';
+import 'package:book_my_weather/models/place_data.dart';
+import 'package:book_my_weather/pages/new_trip_screen.dart';
+import 'package:book_my_weather/pages/place_detail_screen.dart';
+import 'package:book_my_weather/pages/places_screen.dart';
+import 'package:book_my_weather/pages/trip_detail_screen.dart';
+import 'package:book_my_weather/pages/weather_listing_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import 'pages/character_listing_screen.dart';
 import 'pages/trips_screen.dart';
 
 void main() => runApp(MyApp());
@@ -45,65 +47,75 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Despicable Me Characters',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        primaryColor: Colors.white,
-        canvasColor: Colors.black,
-        appBarTheme: AppBarTheme(
-          elevation: 0,
-          color: Colors.black,
-          iconTheme: IconThemeData(
-            color: Colors.white,
-            size: 30.0,
-          ),
-          textTheme: TextTheme(
-            title: TextStyle(
-              color: Colors.white,
-              fontSize: 24.0,
-              fontWeight: FontWeight.w100,
+    return ChangeNotifierProvider<PlaceData>(
+      create: (context) => PlaceData(),
+      child: Consumer<PlaceData>(
+        builder: (_, placeData, __) => MaterialApp(
+          title: 'Despicable Me Characters',
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+            primaryColor: Colors.white,
+            canvasColor: Colors.black,
+            appBarTheme: AppBarTheme(
+              elevation: 0,
+              color: Colors.black,
+              iconTheme: IconThemeData(
+                color: Colors.white,
+                size: 30.0,
+              ),
+              textTheme: TextTheme(
+                title: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24.0,
+                  fontWeight: FontWeight.w100,
+                ),
+              ),
             ),
           ),
+          home: Scaffold(
+            body: IndexedStack(
+              index: _selectedIndex,
+              children: <Widget>[
+                WeatherListingScreen(
+                  places: placeData.places,
+                ),
+                TripsScreen()
+              ],
+            ),
+            bottomNavigationBar: BottomNavigationBar(
+              backgroundColor: Colors.white,
+              items: const <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.wb_sunny),
+                  title: Text('Home'),
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.map),
+                  title: Text('Trips'),
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.favorite),
+                  title: Text('Saved'),
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.settings),
+                  title: Text('Settings'),
+                ),
+              ],
+              currentIndex: _selectedIndex,
+              selectedItemColor: Colors.amber[800],
+              onTap: _onItemTapped,
+            ),
+          ),
+          routes: {
+            NewTrip.id: (context) => NewTrip(),
+            TripDetail.id: (context) => TripDetail(),
+            PlacesScreen.id: (context) => PlacesScreen(),
+            PlaceDetail.id: (context) => PlaceDetail(),
+          },
         ),
       ),
-      home: Scaffold(
-        body: IndexedStack(
-          index: _selectedIndex,
-          children: <Widget>[CharacterListingScreen(), TripsScreen()],
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Colors.white,
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.wb_sunny),
-              title: Text('Home'),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.map),
-              title: Text('Trips'),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.favorite),
-              title: Text('Saved'),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              title: Text('Settings'),
-            ),
-          ],
-          currentIndex: _selectedIndex,
-          selectedItemColor: Colors.amber[800],
-          onTap: _onItemTapped,
-        ),
-      ),
-      routes: {
-        NewTrip.id: (context) => NewTrip(),
-        TripDetail.id: (context) => TripDetail(),
-        PlacesScreen.id: (context) => PlacesScreen(),
-        PlaceDetail.id: (context) => PlaceDetail(),
-      },
     );
   }
 }
