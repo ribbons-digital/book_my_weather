@@ -1,12 +1,18 @@
 import 'package:book_my_weather/models/character.dart';
+import 'package:book_my_weather/models/place_data.dart';
 import 'package:book_my_weather/pages/weather_detail_screen.dart';
 import 'package:book_my_weather/styleguide.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 import '../styleguide.dart';
 
 class WeatherWidget extends StatelessWidget {
+  final placeIndex;
+
+  WeatherWidget({@required this.placeIndex});
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
@@ -61,11 +67,11 @@ class WeatherWidget extends StatelessWidget {
                     height: screenHeight / 100,
                   ),
                   Text(
-                    '26 º',
+                    '${Provider.of<PlaceData>(context).places[placeIndex].weather.hourly.data[0].temperature.toStringAsFixed(0)} º',
                     style: AppTheme.display1,
                   ),
                   Text(
-                    '35º / 26º',
+                    '${Provider.of<PlaceData>(context).places[placeIndex].weather.daily.data[0].temperatureHigh.toStringAsFixed(0)}º / ${Provider.of<PlaceData>(context).places[placeIndex].weather.daily.data[0].temperatureLow.toStringAsFixed(0)}º',
                     style: TextStyle(
                       fontSize: 26,
                       fontWeight: FontWeight.w100,
@@ -84,115 +90,36 @@ class WeatherWidget extends StatelessWidget {
             child: Container(
               width: screenWidth * 0.9,
               child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Column(
-                      children: <Widget>[
-                        Text(
-                          '8AM',
-                          style: AppTheme.small,
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(top: 5, bottom: 10),
+                  children: Provider.of<PlaceData>(context)
+                      .places[placeIndex]
+                      .weather
+                      .hourly
+                      .data
+                      .getRange(0, 5)
+                      .map((data) {
+                return Expanded(
+                  child: Column(
+                    children: <Widget>[
+                      Text(
+                        '${DateFormat('Ka').format(DateTime.fromMillisecondsSinceEpoch(data.time * 1000)).toString()}',
+                        style: AppTheme.small,
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(top: 5, bottom: 10),
 //                          child: _SpinningSun(),
-                          child: Image.asset(
-                            'assets/images/sunny.png',
-                            scale: 2.5,
-                          ),
+                        child: Image.asset(
+                          'assets/images/sunny.png',
+                          scale: 2.5,
                         ),
-                        Text(
-                          '26º',
-                          style: AppTheme.small,
-                        ),
-                      ],
-                    ),
+                      ),
+                      Text(
+                        '${data.temperature.toStringAsFixed(0)}º',
+                        style: AppTheme.small,
+                      ),
+                    ],
                   ),
-                  Expanded(
-                    child: Column(
-                      children: <Widget>[
-                        Text(
-                          '8AM',
-                          style: AppTheme.small,
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(top: 5, bottom: 10),
-                          child: Image.asset(
-                            'assets/images/sunny.png',
-                            scale: 2.5,
-                          ),
-                        ),
-                        Text(
-                          '26º',
-                          style: AppTheme.small,
-                        ),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    child: Column(
-                      children: <Widget>[
-                        Text(
-                          '8AM',
-                          style: AppTheme.small,
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(top: 5, bottom: 10),
-                          child: Image.asset(
-                            'assets/images/sunny.png',
-                            scale: 2.5,
-                          ),
-                        ),
-                        Text(
-                          '26º',
-                          style: AppTheme.small,
-                        ),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    child: Column(
-                      children: <Widget>[
-                        Text(
-                          '8AM',
-                          style: AppTheme.small,
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(top: 5, bottom: 10),
-                          child: Image.asset(
-                            'assets/images/sunny.png',
-                            scale: 2.5,
-                          ),
-                        ),
-                        Text(
-                          '26º',
-                          style: AppTheme.small,
-                        ),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    child: Column(
-                      children: <Widget>[
-                        Text(
-                          '8AM',
-                          style: AppTheme.small,
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(top: 5, bottom: 10),
-                          child: Image.asset(
-                            'assets/images/sunny.png',
-                            scale: 2.5,
-                          ),
-                        ),
-                        Text(
-                          '26º',
-                          style: AppTheme.small,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+                );
+              }).toList()),
             ),
           ),
         ],

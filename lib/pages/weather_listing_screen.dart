@@ -65,6 +65,14 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
         longitude: location.longitude,
       );
 
+      _addPlace(Place(
+        name: location.placeMark[0].name,
+        address: location.placeMark[0].locality,
+        latitude: location.latitude,
+        longitude: location.longitude,
+        weather: currentPlaceWeather,
+      ));
+
       return currentPlaceWeather;
     }
   }
@@ -75,10 +83,12 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
     _pageController.dispose();
   }
 
+  void _addPlace(Place newPlace) {
+    Provider.of<PlaceData>(context, listen: false).addPlace(newPlace);
+  }
+
   @override
   Widget build(BuildContext context) {
-    List<Place> places = Provider.of<PlaceData>(context).places;
-
     return Scaffold(
       appBar: AppBar(
         //leading: Icon(Icons.arrow_back_ios),
@@ -97,7 +107,32 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
                 IconButton(
                   padding: EdgeInsets.only(right: 16.0),
                   icon: Icon(Icons.my_location),
-                  onPressed: () {},
+                  onPressed: () async {
+                    Location location = Location();
+                    WeatherModel weather = WeatherModel();
+
+                    try {
+                      await location.getPlaceMarkFromAddress(
+                          address: 'taipei 101');
+
+                      Weather currentPlaceWeather =
+                          await weather.getLocationWeather(
+                        type: RequestedWeatherType.Both,
+                        latitude: location.latitude,
+                        longitude: location.longitude,
+                      );
+
+                      _addPlace(Place(
+                        name: location.placeMark[0].name,
+                        address: location.placeMark[0].locality,
+                        latitude: location.latitude,
+                        longitude: location.longitude,
+                        weather: currentPlaceWeather,
+                      ));
+                    } catch (e) {
+                      throw Exception('Something is wrong');
+                    }
+                  },
                 )
               ],
             ),
@@ -131,7 +166,7 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
                           FittedBox(
                             fit: BoxFit.contain,
                             child: Text(
-                              placeName,
+                              widget.places[currentPage].address,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w100,
@@ -154,13 +189,17 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
                       ),
                     ),
                     Expanded(
-                      child: PageView(
-                        controller: _pageController,
-                        children: <Widget>[
-                          WeatherWidget(),
-                          WeatherWidget(),
-                        ],
-                      ),
+                      child: PageView.builder(
+                          controller: _pageController,
+                          itemCount: widget.places.length,
+                          onPageChanged: (int index) {
+                            setState(() {
+                              currentPage = index;
+                            });
+                          },
+                          itemBuilder: (BuildContext context, int index) {
+                            return WeatherWidget(placeIndex: index);
+                          }),
                     ),
                   ],
                 );
