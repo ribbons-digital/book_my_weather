@@ -1,9 +1,9 @@
 import 'package:book_my_weather/models/weather.dart';
+import 'package:book_my_weather/secure/keys.dart';
 import 'package:book_my_weather/services/location.dart';
 import 'package:book_my_weather/services/networking.dart';
 import 'package:flutter/cupertino.dart';
 
-const apiKey = 'da35ba508e75f2b152d03db3084d86b9';
 const darkSkyApiUrl = 'https://api.darksky.net/forecast';
 
 enum RequestedWeatherType { Hourly, Daily, Both }
@@ -29,12 +29,12 @@ class WeatherModel {
             : ["currently", "minutely", "alerts", "flags"];
     if (latitude != null && longitude != null) {
       requestUrl =
-          '$darkSkyApiUrl/$apiKey/$latitude,$longitude?exclude=$excludes';
+          '$darkSkyApiUrl/$kDarkSkyAPIKey/$latitude,$longitude?exclude=$excludes';
     } else {
       Location location = Location();
       await location.getLocation();
       requestUrl =
-          '$darkSkyApiUrl/$apiKey/${location.latitude},${location.longitude}?exclude=$excludes';
+          '$darkSkyApiUrl/$kDarkSkyAPIKey/${location.latitude},${location.longitude}?exclude=$excludes';
     }
 
     NetworkHelper networkHelper = NetworkHelper(requestUrl);

@@ -2,6 +2,7 @@ import 'package:book_my_weather/models/place_data.dart';
 import 'package:book_my_weather/pages/new_trip_screen.dart';
 import 'package:book_my_weather/pages/place_detail_screen.dart';
 import 'package:book_my_weather/pages/places_screen.dart';
+import 'package:book_my_weather/pages/search_place_screen.dart';
 import 'package:book_my_weather/pages/trip_detail_screen.dart';
 import 'package:book_my_weather/pages/weather_listing_screen.dart';
 import 'package:flutter/material.dart';
@@ -113,6 +114,7 @@ class _MyAppState extends State<MyApp> {
             TripDetail.id: (context) => TripDetail(),
             PlacesScreen.id: (context) => PlacesScreen(),
             PlaceDetail.id: (context) => PlaceDetail(),
+            SearchPlaceScreen.id: (context) => SearchPlaceScreen(),
           },
         ),
       ),

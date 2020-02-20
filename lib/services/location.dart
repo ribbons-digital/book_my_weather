@@ -20,8 +20,10 @@ class Location {
       {String address = 'melbourne, VIC'}) async {
     try {
       List<Placemark> places = await Geolocator().placemarkFromAddress(address);
-      print(places[0].position);
+
       placeMark = places;
+      latitude = places[0].position.latitude;
+      longitude = places[0].position.longitude;
     } catch (e) {
       print(e);
     }
@@ -31,8 +33,9 @@ class Location {
     try {
       List<Placemark> places =
           await Geolocator().placemarkFromCoordinates(lat, lng);
-      print(places[0].name);
       placeMark = places;
+      latitude = lat;
+      longitude = lng;
     } catch (e) {
       print(e);
     }

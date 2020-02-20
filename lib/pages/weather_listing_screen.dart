@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:book_my_weather/models/place.dart';
 import 'package:book_my_weather/models/place_data.dart';
 import 'package:book_my_weather/models/weather.dart';
+import 'package:book_my_weather/pages/search_place_screen.dart';
 import 'package:book_my_weather/services/location.dart';
 import 'package:book_my_weather/services/weather.dart';
 import 'package:book_my_weather/widgets/weather_widget.dart';
@@ -21,6 +24,7 @@ class WeatherListingScreen extends StatefulWidget {
 
 class _WeatherListingScreenState extends State<WeatherListingScreen> {
   PageController _pageController;
+
   int currentPage = 0;
   String placeName = '';
 
@@ -42,7 +46,7 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
     WeatherModel weather = WeatherModel();
     if (widget.places.length > 0) {
       setState(() {
-        placeName = widget.places[0].name;
+        placeName = widget.places[0].address;
       });
       return await weather.getLocationWeather(
         type: RequestedWeatherType.Both,
@@ -57,7 +61,7 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
           lat: location.latitude, lng: location.longitude);
 
       setState(() {
-        placeName = location.placeMark[0].name;
+        placeName = location.placeMark[0].locality;
       });
       Weather currentPlaceWeather = await weather.getLocationWeather(
         type: RequestedWeatherType.Both,
@@ -97,43 +101,48 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(left: 16),
-                  child: Icon(
-                    Icons.search,
-                    color: Colors.white,
+                Expanded(
+                  child: IconButton(
+                    alignment: Alignment.centerLeft,
+                    icon: Icon(
+                      Icons.search,
+                      size: 30.0,
+                    ),
+                    onPressed: () {
+                      Navigator.pushNamed(context, SearchPlaceScreen.id);
+                    },
                   ),
                 ),
-                IconButton(
-                  padding: EdgeInsets.only(right: 16.0),
-                  icon: Icon(Icons.my_location),
-                  onPressed: () async {
-                    Location location = Location();
-                    WeatherModel weather = WeatherModel();
-
-                    try {
-                      await location.getPlaceMarkFromAddress(
-                          address: 'taipei 101');
-
-                      Weather currentPlaceWeather =
-                          await weather.getLocationWeather(
-                        type: RequestedWeatherType.Both,
-                        latitude: location.latitude,
-                        longitude: location.longitude,
-                      );
-
-                      _addPlace(Place(
-                        name: location.placeMark[0].name,
-                        address: location.placeMark[0].locality,
-                        latitude: location.latitude,
-                        longitude: location.longitude,
-                        weather: currentPlaceWeather,
-                      ));
-                    } catch (e) {
-                      throw Exception('Something is wrong');
-                    }
-                  },
-                )
+//                IconButton(
+//                  padding: EdgeInsets.only(right: 16.0),
+//                  icon: Icon(Icons.my_location),
+//                  onPressed: () async {
+//                    Location location = Location();
+//                    WeatherModel weather = WeatherModel();
+//
+//                    try {
+//                      await location.getPlaceMarkFromAddress(
+//                          address: 'taipei 101');
+//
+//                      Weather currentPlaceWeather =
+//                          await weather.getLocationWeather(
+//                        type: RequestedWeatherType.Both,
+//                        latitude: location.latitude,
+//                        longitude: location.longitude,
+//                      );
+//
+//                      _addPlace(Place(
+//                        name: location.placeMark[0].name,
+//                        address: location.placeMark[0].locality,
+//                        latitude: location.latitude,
+//                        longitude: location.longitude,
+//                        weather: currentPlaceWeather,
+//                      ));
+//                    } catch (e) {
+//                      throw Exception('Something is wrong');
+//                    }
+//                  },
+//                )
               ],
             ),
           ),
@@ -150,7 +159,6 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
                     .format(DateTime.fromMillisecondsSinceEpoch(
                         snapshot.data.daily.data[0].time * 1000))
                     .toString();
-
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
