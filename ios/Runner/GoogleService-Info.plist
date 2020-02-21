@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>760135216943-a10e4o2f1jhl90o4ofl1353icoql3itr.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.760135216943-a10e4o2f1jhl90o4ofl1353icoql3itr</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBXJOOsPD_011rcFWlfMVJg-GxH6WekdJQ</string>
+	<key>GCM_SENDER_ID</key>
+	<string>760135216943</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>digital.ribbons.book-my-weather</string>
+	<key>PROJECT_ID</key>
+	<string>book-my-weather</string>
+	<key>STORAGE_BUCKET</key>
+	<string>book-my-weather.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:760135216943:ios:1fb082c102f40680fa3bda</string>
+	<key>DATABASE_URL</key>
+	<string>https://book-my-weather.firebaseio.com</string>
+</dict>
+</plist>

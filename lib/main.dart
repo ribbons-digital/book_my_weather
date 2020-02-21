@@ -1,4 +1,5 @@
 import 'package:book_my_weather/models/place_data.dart';
+import 'package:book_my_weather/models/setting.dart';
 import 'package:book_my_weather/models/setting_data.dart';
 import 'package:book_my_weather/pages/new_trip_screen.dart';
 import 'package:book_my_weather/pages/place_detail_screen.dart';
@@ -6,6 +7,7 @@ import 'package:book_my_weather/pages/places_screen.dart';
 import 'package:book_my_weather/pages/search_place_screen.dart';
 import 'package:book_my_weather/pages/trip_detail_screen.dart';
 import 'package:book_my_weather/pages/weather_listing_screen.dart';
+import 'package:book_my_weather/services/db.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -49,6 +51,8 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    final db = DatabaseService();
+
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<PlaceData>(
@@ -86,8 +90,11 @@ class _MyAppState extends State<MyApp> {
             body: IndexedStack(
               index: _selectedIndex,
               children: <Widget>[
-                WeatherListingScreen(
-                  places: placeData.places,
+                StreamProvider<Setting>.value(
+                  value: db.streamSetting('9g6UjX6R9CP5KEc9PQ1r'),
+                  child: WeatherListingScreen(
+                    places: placeData.places,
+                  ),
                 ),
                 TripsScreen()
               ],

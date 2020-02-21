@@ -2,9 +2,10 @@ import 'dart:async';
 
 import 'package:book_my_weather/models/place.dart';
 import 'package:book_my_weather/models/place_data.dart';
-import 'package:book_my_weather/models/setting_data.dart';
+import 'package:book_my_weather/models/setting.dart';
 import 'package:book_my_weather/models/weather.dart';
 import 'package:book_my_weather/pages/search_place_screen.dart';
+import 'package:book_my_weather/services/db.dart';
 import 'package:book_my_weather/services/location.dart';
 import 'package:book_my_weather/services/weather.dart';
 import 'package:book_my_weather/widgets/weather_widget.dart';
@@ -96,6 +97,8 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final db = DatabaseService();
+    print(Provider.of<Setting>(context).useCelsius);
     return Scaffold(
       appBar: AppBar(
         //leading: Icon(Icons.arrow_back_ios),
@@ -120,8 +123,9 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
                   padding: EdgeInsets.only(right: 16.0),
                   icon: Icon(Icons.my_location),
                   onPressed: () {
-                    Provider.of<SettingData>(context, listen: false)
-                        .toggleTemperatureUnit();
+//                    Provider.of<SettingData>(context, listen: false)
+//                        .toggleTemperatureUnit();
+                    db.updateUnit('9g6UjX6R9CP5KEc9PQ1r', true);
                   },
                 )
               ],

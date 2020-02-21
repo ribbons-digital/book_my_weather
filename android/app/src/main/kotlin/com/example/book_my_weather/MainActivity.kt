@@ -1,4 +1,4 @@
-package com.example.despicables_me_app
+package digital.ribbons.book_my_weather
 
 import android.os.Bundle
 
