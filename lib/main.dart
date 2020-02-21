@@ -1,4 +1,5 @@
 import 'package:book_my_weather/models/place_data.dart';
+import 'package:book_my_weather/models/setting_data.dart';
 import 'package:book_my_weather/pages/new_trip_screen.dart';
 import 'package:book_my_weather/pages/place_detail_screen.dart';
 import 'package:book_my_weather/pages/places_screen.dart';
@@ -48,8 +49,15 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<PlaceData>(
-      create: (context) => PlaceData(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<PlaceData>(
+          create: (_) => PlaceData(),
+        ),
+        ChangeNotifierProvider<SettingData>(
+          create: (_) => SettingData(),
+        ),
+      ],
       child: Consumer<PlaceData>(
         builder: (_, placeData, __) => MaterialApp(
           title: 'Despicable Me Characters',

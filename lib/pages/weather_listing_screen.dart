@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:book_my_weather/models/place.dart';
 import 'package:book_my_weather/models/place_data.dart';
+import 'package:book_my_weather/models/setting_data.dart';
 import 'package:book_my_weather/models/weather.dart';
 import 'package:book_my_weather/pages/search_place_screen.dart';
 import 'package:book_my_weather/services/location.dart';
@@ -50,6 +51,7 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
       });
       return await weather.getLocationWeather(
         type: RequestedWeatherType.Both,
+        useCelsius: true,
         latitude: widget.places[0].latitude,
         longitude: widget.places[0].longitude,
       );
@@ -65,6 +67,7 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
       });
       Weather currentPlaceWeather = await weather.getLocationWeather(
         type: RequestedWeatherType.Both,
+        useCelsius: true,
         latitude: location.latitude,
         longitude: location.longitude,
       );
@@ -113,36 +116,14 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
                     },
                   ),
                 ),
-//                IconButton(
-//                  padding: EdgeInsets.only(right: 16.0),
-//                  icon: Icon(Icons.my_location),
-//                  onPressed: () async {
-//                    Location location = Location();
-//                    WeatherModel weather = WeatherModel();
-//
-//                    try {
-//                      await location.getPlaceMarkFromAddress(
-//                          address: 'taipei 101');
-//
-//                      Weather currentPlaceWeather =
-//                          await weather.getLocationWeather(
-//                        type: RequestedWeatherType.Both,
-//                        latitude: location.latitude,
-//                        longitude: location.longitude,
-//                      );
-//
-//                      _addPlace(Place(
-//                        name: location.placeMark[0].name,
-//                        address: location.placeMark[0].locality,
-//                        latitude: location.latitude,
-//                        longitude: location.longitude,
-//                        weather: currentPlaceWeather,
-//                      ));
-//                    } catch (e) {
-//                      throw Exception('Something is wrong');
-//                    }
-//                  },
-//                )
+                IconButton(
+                  padding: EdgeInsets.only(right: 16.0),
+                  icon: Icon(Icons.my_location),
+                  onPressed: () {
+                    Provider.of<SettingData>(context, listen: false)
+                        .toggleTemperatureUnit();
+                  },
+                )
               ],
             ),
           ),

@@ -9,15 +9,9 @@ const darkSkyApiUrl = 'https://api.darksky.net/forecast';
 enum RequestedWeatherType { Hourly, Daily, Both }
 
 class WeatherModel {
-//  Future<dynamic> getCityWeather(String cityName) async {
-//    String url = '$darkSkyApiUrl?q=$cityName&appid=$apiKey&units=metric';
-//    NetworkHelper networkHelper = NetworkHelper(url);
-//
-//    return await networkHelper.getData();
-//  }
-
   Future<Weather> getLocationWeather({
     @required RequestedWeatherType type,
+    @required bool useCelsius,
     double latitude,
     double longitude,
   }) async {
@@ -28,13 +22,15 @@ class WeatherModel {
             ? ["currently", "minutely", "hourly", "alerts", "flags"]
             : ["currently", "minutely", "alerts", "flags"];
     if (latitude != null && longitude != null) {
-      requestUrl =
-          '$darkSkyApiUrl/$kDarkSkyAPIKey/$latitude,$longitude?exclude=$excludes';
+      requestUrl = useCelsius
+          ? '$darkSkyApiUrl/$kDarkSkyAPIKey/$latitude,$longitude?units=si&?exclude=$excludes'
+          : '$darkSkyApiUrl/$kDarkSkyAPIKey/$latitude,$longitude?exclude=$excludes';
     } else {
       Location location = Location();
       await location.getLocation();
-      requestUrl =
-          '$darkSkyApiUrl/$kDarkSkyAPIKey/${location.latitude},${location.longitude}?exclude=$excludes';
+      requestUrl = useCelsius
+          ? '$darkSkyApiUrl/$kDarkSkyAPIKey/${location.latitude},${location.longitude}?units=si&?exclude=$excludes'
+          : '$darkSkyApiUrl/$kDarkSkyAPIKey/${location.latitude},${location.longitude}?exclude=$excludes';
     }
 
     NetworkHelper networkHelper = NetworkHelper(requestUrl);
