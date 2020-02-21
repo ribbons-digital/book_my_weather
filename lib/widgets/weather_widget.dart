@@ -67,7 +67,7 @@ class WeatherWidget extends StatelessWidget {
                     height: screenHeight / 100,
                   ),
                   Text(
-                    '${Provider.of<PlaceData>(context).places[placeIndex].weather.hourly.data[0].temperature.toStringAsFixed(0)}º',
+                    '${Provider.of<PlaceData>(context).places[placeIndex].weather.hourly.data[0].temperature.toStringAsFixed(0)} º',
                     style: AppTheme.display1,
                   ),
                   Text(
