@@ -8,13 +8,13 @@ part of 'weather.dart';
 
 Weather _$WeatherFromJson(Map<String, dynamic> json) {
   return Weather(
-    (json['latitude'] as num)?.toDouble(),
-    (json['longitude'] as num)?.toDouble(),
-    json['timeZone'] as String,
-    json['hourly'] == null
+    latitude: (json['latitude'] as num)?.toDouble(),
+    longitude: (json['longitude'] as num)?.toDouble(),
+    timeZone: json['timeZone'] as String,
+    hourly: json['hourly'] == null
         ? null
         : HourlyWeather.fromJson(json['hourly'] as Map<String, dynamic>),
-    json['daily'] == null
+    daily: json['daily'] == null
         ? null
         : DailyWeather.fromJson(json['daily'] as Map<String, dynamic>),
   );

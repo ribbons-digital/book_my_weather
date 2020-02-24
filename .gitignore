@@ -9,6 +9,8 @@
 .history
 .svn/
 *lib/secure/keys.dart
+*ios/Runner/GoogleService-Info.plist
+*android/app/google-services.json
 
 # IntelliJ related
 *.iml

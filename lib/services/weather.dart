@@ -18,6 +18,7 @@ class WeatherModel {
 
   Future<Weather> getLocationWeather({
     @required RequestedWeatherType type,
+    bool useCelsius,
     double latitude,
     double longitude,
   }) async {

@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:book_my_weather/models/place.dart';
 import 'package:book_my_weather/models/place_data.dart';
+import 'package:book_my_weather/models/setting_data.dart';
 import 'package:book_my_weather/models/weather.dart';
 import 'package:book_my_weather/secure/keys.dart';
 import 'package:book_my_weather/services/location.dart';
@@ -141,6 +142,10 @@ class _SearchPlaceScreenState extends State<SearchPlaceScreen> {
                                 Weather currentPlaceWeather =
                                     await weather.getLocationWeather(
                                   type: RequestedWeatherType.Both,
+                                  useCelsius: Provider.of<SettingData>(context,
+                                          listen: false)
+                                      .setting
+                                      .useCelsius,
                                   latitude: location.latitude,
                                   longitude: location.longitude,
                                 );
