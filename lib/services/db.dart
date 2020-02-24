@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:book_my_weather/models/place.dart';
 import 'package:book_my_weather/models/setting.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -19,5 +20,17 @@ class DatabaseService {
         .collection('settings')
         .document(id)
         .setData({'useCelsius': useCelsius});
+  }
+
+  Future<void> updatePlaces(String id, Place place) {
+
+    return _db.collection('settings').document(id).updateData({
+      'places': FieldValue.arrayUnion([{
+        'name': place.name,
+        'address': place.address,
+        'latitude': place.latitude,
+        'longitude': place.longitude,
+      }])
+    });
   }
 }

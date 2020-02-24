@@ -142,7 +142,8 @@ class _SearchPlaceScreenState extends State<SearchPlaceScreen> {
                                 Weather currentPlaceWeather =
                                     await weather.getLocationWeather(
                                   type: RequestedWeatherType.Both,
-                                  useCelsius: Provider.of<SettingData>(context)
+                                  useCelsius: Provider.of<SettingData>(context,
+                                          listen: false)
                                       .setting
                                       .useCelsius,
                                   latitude: location.latitude,

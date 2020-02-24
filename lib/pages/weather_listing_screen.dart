@@ -17,8 +17,9 @@ import 'package:provider/provider.dart';
 class WeatherListingScreen extends StatefulWidget {
   static const String id = 'home';
   final List<Place> places;
+  final Setting setting;
 
-  WeatherListingScreen({@required this.places});
+  WeatherListingScreen({@required this.places, this.setting});
 
   @override
   _WeatherListingScreenState createState() => _WeatherListingScreenState();
@@ -40,12 +41,12 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
       initialPage: currentPage,
       keepPage: false,
     );
-
     hourlyWeather = getWeather();
   }
 
   Future<Weather> getWeather() async {
     WeatherModel weather = WeatherModel();
+
     if (widget.places.length > 0) {
       setState(() {
         placeName = widget.places[0].address;
@@ -95,10 +96,48 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
     Provider.of<PlaceData>(context, listen: false).addPlace(newPlace);
   }
 
+  void _updatePlaceWeather(int index, Weather updatedWeather) {
+    Provider.of<PlaceData>(context, listen: false)
+        .updatePlaceWeather(index, updatedWeather);
+  }
+
+  @override
+  void didChangeDependencies() async {
+    super.didChangeDependencies();
+
+    if (Provider.of<Setting>(context) != null) {
+      WeatherModel weather = WeatherModel();
+      final tempPlaces = Provider.of<Setting>(context, listen: false).places;
+      setState(() {
+        placeName = tempPlaces[0].address;
+      });
+
+      Weather placeWeather = await weather.getLocationWeather(
+        type: RequestedWeatherType.Both,
+        useCelsius: true,
+        latitude: tempPlaces[0].latitude,
+        longitude: tempPlaces[0].longitude,
+      );
+
+      List<Place> places = [];
+      for (var i = 0; i <= tempPlaces.length - 1; i++) {
+        places.add(Place(
+          name: tempPlaces[i].name,
+          address: tempPlaces[i].address,
+          latitude: tempPlaces[i].latitude,
+          longitude: tempPlaces[i].longitude,
+          weather: placeWeather,
+        ));
+      }
+
+      Provider.of<PlaceData>(context, listen: false).updatePlaces(places);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final db = DatabaseService();
-    print(Provider.of<Setting>(context).useCelsius);
+
     return Scaffold(
       appBar: AppBar(
         //leading: Icon(Icons.arrow_back_ios),
@@ -123,9 +162,14 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
                   padding: EdgeInsets.only(right: 16.0),
                   icon: Icon(Icons.my_location),
                   onPressed: () {
-//                    Provider.of<SettingData>(context, listen: false)
-//                        .toggleTemperatureUnit();
-                    db.updateUnit('9g6UjX6R9CP5KEc9PQ1r', true);
+                    final newPlace = Place(
+                      address: 'Taipei, Taiwan',
+                      name: 'Taipei City',
+                      latitude: 25.105497,
+                      longitude: 121.597366,
+                    );
+
+                    db.updatePlaces('9g6UjX6R9CP5KEc9PQ1r', newPlace);
                   },
                 )
               ],
@@ -185,10 +229,24 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
                       child: PageView.builder(
                           controller: _pageController,
                           itemCount: widget.places.length,
-                          onPageChanged: (int index) {
+                          onPageChanged: (int index) async {
                             setState(() {
                               currentPage = index;
                             });
+
+                            final place =
+                                Provider.of<PlaceData>(context, listen: false).places[index];
+
+                            WeatherModel weather = WeatherModel();
+                            Weather updatedWeather =
+                                await weather.getLocationWeather(
+                              type: RequestedWeatherType.Both,
+                              useCelsius: true,
+                              latitude: place.latitude,
+                              longitude: place.longitude,
+                            );
+
+                            _updatePlaceWeather(index, updatedWeather);
                           },
                           itemBuilder: (BuildContext context, int index) {
                             return WeatherWidget(placeIndex: index);

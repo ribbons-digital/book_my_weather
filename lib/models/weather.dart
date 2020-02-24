@@ -6,13 +6,13 @@ part 'weather.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class Weather {
-  Weather(
+  Weather({
     this.latitude,
     this.longitude,
     this.timeZone,
     this.hourly,
     this.daily,
-  );
+  });
 
   double latitude;
   double longitude;
