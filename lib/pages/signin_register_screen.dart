@@ -40,6 +40,11 @@ class _SignInRegisterScreenState extends State<SignInRegisterScreen> {
               SizedBox(height: 20.0),
               TextFormField(
                 validator: (val) => val.isEmpty ? 'Enter an email' : null,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w100,
+                  fontSize: 24.0,
+                ),
                 decoration: InputDecoration(
                   hintText: 'Email',
                   hintStyle: TextStyle(
@@ -60,6 +65,11 @@ class _SignInRegisterScreenState extends State<SignInRegisterScreen> {
               SizedBox(height: 20.0),
               TextFormField(
                 obscureText: true,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w100,
+                  fontSize: 24.0,
+                ),
                 decoration: InputDecoration(
                   hintText: 'Password',
                   hintStyle: TextStyle(
