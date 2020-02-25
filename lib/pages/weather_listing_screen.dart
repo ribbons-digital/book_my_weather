@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:book_my_weather/models/place.dart';
 import 'package:book_my_weather/models/place_data.dart';
 import 'package:book_my_weather/models/setting.dart';
+import 'package:book_my_weather/models/user.dart';
 import 'package:book_my_weather/models/weather.dart';
 import 'package:book_my_weather/pages/search_place_screen.dart';
+import 'package:book_my_weather/services/auth.dart';
 import 'package:book_my_weather/services/location.dart';
 import 'package:book_my_weather/services/weather.dart';
 import 'package:book_my_weather/widgets/weather_widget.dart';
@@ -33,6 +35,7 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
   Timer _throttle;
 
   Future<Weather> hourlyWeather;
+  final _auth = AuthService();
 
   @override
   void initState() {
@@ -104,7 +107,7 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
   void didChangeDependencies() async {
     super.didChangeDependencies();
 
-    if (Provider.of<Setting>(context) != null) {
+    if (Provider.of<Setting>(context) != null && Provider.of<Setting>(context).places.length != widget.places.length) {
 
       WeatherModel weather = WeatherModel();
       final tempPlaces = Provider.of<Setting>(context, listen: false).places;
@@ -136,8 +139,7 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // final db = DatabaseService();
-
+    print(Provider.of<User>(context));
 
     return Scaffold(
       appBar: AppBar(
@@ -171,6 +173,7 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
                     // );
 
                     // db.updatePlaces('9g6UjX6R9CP5KEc9PQ1r', newPlace);
+                    _auth.signOut();
                   },
                 )
               ],
