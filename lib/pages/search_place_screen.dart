@@ -6,6 +6,7 @@ import 'package:book_my_weather/models/place_data.dart';
 import 'package:book_my_weather/models/setting_data.dart';
 import 'package:book_my_weather/models/weather.dart';
 import 'package:book_my_weather/secure/keys.dart';
+import 'package:book_my_weather/services/db.dart';
 import 'package:book_my_weather/services/location.dart';
 import 'package:book_my_weather/services/weather.dart';
 import 'package:flutter/material.dart';
@@ -78,6 +79,8 @@ class _SearchPlaceScreenState extends State<SearchPlaceScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final db = DatabaseService();
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Search'),
@@ -150,7 +153,14 @@ class _SearchPlaceScreenState extends State<SearchPlaceScreen> {
                                   longitude: location.longitude,
                                 );
 
-//                                print(location.placeMark[0].locality);
+                                db.updatePlaces('9g6UjX6R9CP5KEc9PQ1r', Place(
+                                  name: location.placeMark[0].name,
+                                  address: location.placeMark[0].name == ''
+                                      ? location.placeMark[0].locality
+                                      : location.placeMark[0].name,
+                                  latitude: location.latitude,
+                                  longitude: location.longitude,
+                                ));
 
                                 Provider.of<PlaceData>(context, listen: false)
                                     .addPlace(Place(
