@@ -23,6 +23,7 @@ class WeatherModel {
     double longitude,
   }) async {
     String requestUrl;
+    print('called');
     List<String> excludes = type == RequestedWeatherType.Hourly
         ? ["currently", "minutely", "daily", "alerts", "flags"]
         : type == RequestedWeatherType.Daily

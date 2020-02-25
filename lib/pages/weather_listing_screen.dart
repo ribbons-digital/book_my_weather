@@ -5,7 +5,6 @@ import 'package:book_my_weather/models/place_data.dart';
 import 'package:book_my_weather/models/setting.dart';
 import 'package:book_my_weather/models/weather.dart';
 import 'package:book_my_weather/pages/search_place_screen.dart';
-import 'package:book_my_weather/services/db.dart';
 import 'package:book_my_weather/services/location.dart';
 import 'package:book_my_weather/services/weather.dart';
 import 'package:book_my_weather/widgets/weather_widget.dart';
@@ -30,6 +29,8 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
 
   int currentPage = 0;
   String placeName = '';
+
+  Timer _throttle;
 
   Future<Weather> hourlyWeather;
 
@@ -104,6 +105,7 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
     super.didChangeDependencies();
 
     if (Provider.of<Setting>(context) != null) {
+
       WeatherModel weather = WeatherModel();
       final tempPlaces = Provider.of<Setting>(context, listen: false).places;
       setState(() {
@@ -134,7 +136,8 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final db = DatabaseService();
+    // final db = DatabaseService();
+
 
     return Scaffold(
       appBar: AppBar(
@@ -160,14 +163,14 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
                   padding: EdgeInsets.only(right: 16.0),
                   icon: Icon(Icons.my_location),
                   onPressed: () {
-                    final newPlace = Place(
-                      address: 'Taipei, Taiwan',
-                      name: 'Taipei City',
-                      latitude: 25.105497,
-                      longitude: 121.597366,
-                    );
+                    // final newPlace = Place(
+                    //   address: 'Taipei, Taiwan',
+                    //   name: 'Taipei City',
+                    //   latitude: 25.105497,
+                    //   longitude: 121.597366,
+                    // );
 
-                    db.updatePlaces('9g6UjX6R9CP5KEc9PQ1r', newPlace);
+                    // db.updatePlaces('9g6UjX6R9CP5KEc9PQ1r', newPlace);
                   },
                 )
               ],
@@ -232,19 +235,25 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
                               currentPage = index;
                             });
 
-                            final place =
-                                Provider.of<PlaceData>(context, listen: false).places[index];
+                            if (_throttle?.isActive ?? false)
+                              _throttle.cancel();
+                            _throttle = Timer(const Duration(milliseconds: 800),
+                                () async {
+                              final place =
+                                  Provider.of<PlaceData>(context, listen: false)
+                                      .places[index];
 
-                            WeatherModel weather = WeatherModel();
-                            Weather updatedWeather =
-                                await weather.getLocationWeather(
-                              type: RequestedWeatherType.Both,
-                              useCelsius: true,
-                              latitude: place.latitude,
-                              longitude: place.longitude,
-                            );
+                              WeatherModel weather = WeatherModel();
+                              Weather updatedWeather =
+                                  await weather.getLocationWeather(
+                                type: RequestedWeatherType.Both,
+                                useCelsius: true,
+                                latitude: place.latitude,
+                                longitude: place.longitude,
+                              );
 
-                            _updatePlaceWeather(index, updatedWeather);
+                              _updatePlaceWeather(index, updatedWeather);
+                            });
                           },
                           itemBuilder: (BuildContext context, int index) {
                             return WeatherWidget(placeIndex: index);
