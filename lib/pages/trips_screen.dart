@@ -1,8 +1,11 @@
+import 'package:book_my_weather/models/user.dart';
 import 'package:book_my_weather/pages/new_trip_screen.dart';
+import 'package:book_my_weather/pages/signin_register_screen.dart';
 import 'package:book_my_weather/pages/trip_detail_screen.dart';
 import 'package:book_my_weather/widgets/trip_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class TripsScreen extends StatefulWidget {
   static const String id = 'trips';
@@ -32,7 +35,7 @@ class _TripsScreenState extends State<TripsScreen> {
   @override
   Widget build(BuildContext context) {
     final double h = MediaQuery.of(context).size.width < 600 ? 20.0 : 50.0;
-
+    final User user = Provider.of<User>(context);
     return Scaffold(
       appBar: AppBar(
         //leading: Icon(Icons.arrow_back_ios),
@@ -70,14 +73,25 @@ class _TripsScreenState extends State<TripsScreen> {
                       color: Colors.white,
                     ),
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) {
-                            return NewTrip();
-                          },
-                        ),
-                      );
+                      if (user != null) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return NewTrip();
+                            },
+                          ),
+                        );
+                      } else {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return SignInRegisterScreen();
+                            },
+                          ),
+                        );
+                      }
                     },
                   ),
                 ),
