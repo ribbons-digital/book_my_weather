@@ -1,18 +1,23 @@
+import 'package:book_my_weather/models/place_data.dart';
 import 'package:book_my_weather/styleguide.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class HourlyWeatherWidget extends StatelessWidget {
+  final String weatherIconPath;
   final String hour;
   final String temperature;
-  final String weatherIconPath;
+  final int hourIndex;
   final TextStyle hourTextStyle;
   final TextStyle tempTextStyle;
   final Color weatherBoxBackgroundColor;
 
   HourlyWeatherWidget({
-    @required this.hour,
-    @required this.temperature,
     @required this.weatherIconPath,
+    @required this.hourIndex,
+    this.hour,
+    this.temperature,
     this.hourTextStyle = AppTheme.display2,
     this.weatherBoxBackgroundColor = Colors.black,
     this.tempTextStyle = AppTheme.display1,
@@ -20,12 +25,15 @@ class HourlyWeatherWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final placeData = Provider.of<PlaceData>(context);
+    final place = placeData.places[placeData.currentPlaceIndex];
+    final hourlyWeatherData = place.weather.hourly.data;
     return Row(
       children: <Widget>[
         Container(
           width: MediaQuery.of(context).size.width / 5,
           child: Text(
-            hour,
+            '${DateFormat('Ka').format(DateTime.fromMillisecondsSinceEpoch(hourlyWeatherData[hourIndex].time * 1000)).toString()}',
             style: hourTextStyle,
           ),
         ),
@@ -49,7 +57,7 @@ class HourlyWeatherWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   Text(
-                    temperature,
+                    '${hourlyWeatherData[hourIndex].temperature.toStringAsFixed(0)}',
                     style: tempTextStyle,
                   ),
                   Image.asset(

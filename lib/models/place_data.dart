@@ -28,6 +28,15 @@ class PlaceData extends ChangeNotifier {
     return _places.length;
   }
 
+  int _currentPlaceIndex = 0;
+
+  int get currentPlaceIndex => _currentPlaceIndex;
+
+  void updateCurrentPlaceIndex(int updatedIndex) {
+    _currentPlaceIndex = updatedIndex;
+    notifyListeners();
+  }
+
   void addPlace(Place newPlace) {
     Place place = Place(
       name: newPlace.name,

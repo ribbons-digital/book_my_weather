@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:book_my_weather/models/place.dart';
 import 'package:book_my_weather/models/place_data.dart';
 import 'package:book_my_weather/models/setting.dart';
-import 'package:book_my_weather/models/user.dart';
 import 'package:book_my_weather/models/weather.dart';
 import 'package:book_my_weather/pages/search_place_screen.dart';
 import 'package:book_my_weather/services/auth.dart';
@@ -109,8 +108,8 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
   void didChangeDependencies() async {
     super.didChangeDependencies();
 
-    if (Provider.of<Setting>(context) != null && Provider.of<Setting>(context).places.length != widget.places.length) {
-
+    if (Provider.of<Setting>(context) != null &&
+        Provider.of<Setting>(context).places.length != widget.places.length) {
       WeatherModel weather = WeatherModel();
       final tempPlaces = Provider.of<Setting>(context, listen: false).places;
       setState(() {
@@ -141,8 +140,6 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print(Provider.of<User>(context));
-
     return Scaffold(
       appBar: AppBar(
         //leading: Icon(Icons.arrow_back_ios),

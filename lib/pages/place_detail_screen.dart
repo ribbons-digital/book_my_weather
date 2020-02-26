@@ -428,6 +428,7 @@ class _PlaceWeatherState extends State<PlaceWeather> {
                   bottom: 16.0,
                 ),
                 child: HourlyWeatherWidget(
+                  hourIndex: 0,
                   hour: '$i:00',
                   temperature: '31º',
                   weatherIconPath: 'assets/images/sunny.png',
