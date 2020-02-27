@@ -28,6 +28,7 @@ class HourlyWeatherWidget extends StatelessWidget {
     final placeData = Provider.of<PlaceData>(context);
     final place = placeData.places[placeData.currentPlaceIndex];
     final hourlyWeatherData = place.weather.hourly.data;
+
     return Row(
       children: <Widget>[
         Container(

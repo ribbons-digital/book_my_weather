@@ -6,6 +6,7 @@ import 'package:book_my_weather/models/setting.dart';
 import 'package:book_my_weather/models/weather.dart';
 import 'package:book_my_weather/pages/search_place_screen.dart';
 import 'package:book_my_weather/services/auth.dart';
+import 'package:book_my_weather/services/db.dart';
 import 'package:book_my_weather/services/location.dart';
 import 'package:book_my_weather/services/weather.dart';
 import 'package:book_my_weather/widgets/weather_widget.dart';
@@ -18,8 +19,10 @@ class WeatherListingScreen extends StatefulWidget {
   static const String id = 'home';
   final List<Place> places;
   final Setting setting;
+  final String deviceId;
 
-  WeatherListingScreen({@required this.places, this.setting});
+  WeatherListingScreen(
+      {@required this.places, this.setting, @required this.deviceId});
 
   @override
   _WeatherListingScreenState createState() => _WeatherListingScreenState();
@@ -109,6 +112,7 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
     super.didChangeDependencies();
 
     if (Provider.of<Setting>(context) != null &&
+        Provider.of<Setting>(context).places.length > 0 &&
         Provider.of<Setting>(context).places.length != widget.places.length) {
       WeatherModel weather = WeatherModel();
       final tempPlaces = Provider.of<Setting>(context, listen: false).places;
@@ -135,6 +139,23 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
       }
 
       Provider.of<PlaceData>(context, listen: false).updatePlaces(places);
+    }
+
+    if (Provider.of<Setting>(context, listen: false) != null &&
+        Provider.of<Setting>(context, listen: false).places.length == 0) {
+      Location location = Location();
+      await location.getLocation();
+
+      await location.getPlaceMarkFromCoordinates(
+          lat: location.latitude, lng: location.longitude);
+      final place = Place(
+        name: location.placeMark[0].name,
+        address: location.placeMark[0].locality,
+        latitude: location.latitude,
+        longitude: location.longitude,
+      );
+      final db = DatabaseService();
+      db.addNewSetting(widget.deviceId, place);
     }
   }
 

@@ -13,9 +13,9 @@ class DailyWeather extends StatelessWidget {
   final Color weatherBoxBackgroundColor;
 
   DailyWeather({
-    @required this.date,
+    this.date,
     @required this.weatherConditionImgPath,
-    @required this.tempRange,
+    this.tempRange,
     @required this.dayIndex,
     this.dateTextStyle = const TextStyle(
       fontWeight: FontWeight.w100,

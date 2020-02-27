@@ -42,15 +42,29 @@ class WeatherModel {
     return Weather.fromJson(hourlyWeatherMap);
   }
 
-  String getMessage(int temp) {
-    if (temp > 25) {
-      return 'It\'s 🍦 time';
-    } else if (temp > 20) {
-      return 'Time for shorts and 👕';
-    } else if (temp < 10) {
-      return 'You\'ll need 🧣 and 🧤';
+  String getMessage(String condition) {
+    if (condition == 'clear-day') {
+      return '1';
+    } else if (condition == 'clear-night') {
+      return '2';
+    } else if (condition == 'rain') {
+      return '3';
+    } else if (condition == 'snow') {
+      return '4';
+    } else if (condition == 'sleet') {
+      return '5';
+    } else if (condition == 'wind') {
+      return '6';
+    } else if (condition == 'fog') {
+      return '7';
+    } else if (condition == 'cloudy') {
+      return '8';
+    } else if (condition == 'partly-cloudy-day') {
+      return '9';
+    } else if (condition == 'partly-cloudy-night') {
+      return '10';
     } else {
-      return 'Bring a 🧥 just in case';
+      return '0';
     }
   }
 }

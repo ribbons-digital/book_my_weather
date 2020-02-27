@@ -1,9 +1,9 @@
 import 'package:book_my_weather/models/place.dart';
 import 'package:book_my_weather/styleguide.dart';
-import 'package:book_my_weather/widgets/daily_weather_detail_widget.dart';
 import 'package:book_my_weather/widgets/daily_weather_heading.dart';
 import 'package:book_my_weather/widgets/daily_weather_widget.dart';
 import 'package:book_my_weather/widgets/hourly_weather_widget.dart';
+import 'package:book_my_weather/widgets/weather_detail_widget.dart';
 import 'package:flutter/material.dart';
 
 import '../styleguide.dart';
@@ -115,7 +115,7 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen>
                                   isScrollControlled: true,
                                   builder: (context) {
                                     return FractionallySizedBox(
-                                      heightFactor: 0.66,
+                                      heightFactor: 0.55,
                                       child: WeatherDetail(
                                         rowIndex: index,
                                       ),
@@ -147,7 +147,7 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen>
                                   isScrollControlled: true,
                                   builder: (context) {
                                     return FractionallySizedBox(
-                                      heightFactor: 0.66,
+                                      heightFactor: 0.55,
                                       child: WeatherDetail(
                                         rowIndex: index,
                                         isHourly: false,
@@ -158,10 +158,8 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen>
                               },
                               child: DailyWeather(
                                 dayIndex: index,
-                                date: 'Sat. 25, Jan.',
                                 weatherConditionImgPath:
                                     'assets/images/sunny.png',
-                                tempRange: '32º / 22º',
                               ),
                             );
                           }

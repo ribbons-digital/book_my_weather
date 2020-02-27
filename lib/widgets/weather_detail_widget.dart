@@ -25,6 +25,7 @@ class WeatherDetail extends StatelessWidget {
         .format(DateTime.fromMillisecondsSinceEpoch(
             place.weather.daily.data[rowIndex].time * 1000))
         .toString();
+
     return Column(
       children: <Widget>[
         Padding(
@@ -32,10 +33,10 @@ class WeatherDetail extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
-              Icon(
-                Icons.chevron_left,
-                size: 50,
-              ),
+              // Icon(
+              //   Icons.chevron_left,
+              //   size: 50,
+              // ),
               Row(
                 children: <Widget>[
                   Image.asset(
@@ -69,17 +70,17 @@ class WeatherDetail extends StatelessWidget {
                   ),
                 ],
               ),
-              Icon(
-                Icons.chevron_right,
-                size: 50,
-              ),
+              // Icon(
+              //   Icons.chevron_right,
+              //   size: 50,
+              // ),
             ],
           ),
         ),
         Padding(
           padding: const EdgeInsets.only(bottom: 16.0),
           child: Text(
-            'Intermittent Cloud',
+            isHourly ? '${hourlyWeather.summary}' : '${dailyWeather.summary}',
             style: TextStyle(
               fontSize: 16.0,
             ),
@@ -95,40 +96,23 @@ class WeatherDetail extends StatelessWidget {
                   WeatherCondition(
                     icon: Icons.wb_cloudy,
                     conditionName: 'Rain',
-                    condition: '0mm',
-                  ),
-                  WeatherCondition(
-                    icon: Icons.wb_cloudy,
-                    conditionName: 'Winds from',
-                    condition: 'ESE',
-                  ),
-                  WeatherCondition(
-                    icon: Icons.wb_cloudy,
-                    conditionName: 'Dew Point',
-                    condition: '23 º',
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 10.0,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  WeatherCondition(
-                    icon: Icons.wb_cloudy,
-                    conditionName: 'Snow',
-                    condition: '0cm',
+                    condition: isHourly
+                        ? '${(hourlyWeather.precipProbability * 100).toStringAsFixed(0)}%'
+                        : '${(hourlyWeather.precipProbability * 100).toStringAsFixed(0)}%',
                   ),
                   WeatherCondition(
                     icon: Icons.wb_cloudy,
                     conditionName: 'Wind Speed',
-                    condition: '17 KPH',
+                    condition: isHourly
+                        ? '${hourlyWeather.windSpeed} KPH'
+                        : '${dailyWeather.windSpeed} KPH',
                   ),
                   WeatherCondition(
                     icon: Icons.wb_cloudy,
-                    conditionName: 'Humidity',
-                    condition: '68%',
+                    conditionName: 'Dew Point',
+                    condition: isHourly
+                        ? '${hourlyWeather.dewPoint.toStringAsFixed(0)} º'
+                        : '${dailyWeather.dewPoint.toStringAsFixed(0)} ',
                   ),
                 ],
               ),
@@ -141,17 +125,23 @@ class WeatherDetail extends StatelessWidget {
                   WeatherCondition(
                     icon: Icons.wb_cloudy,
                     conditionName: 'UV Index',
-                    condition: '7',
+                    condition: isHourly
+                        ? '${hourlyWeather.uvIndex}'
+                        : '${dailyWeather.uvIndex}',
                   ),
                   WeatherCondition(
                     icon: Icons.wb_cloudy,
                     conditionName: 'Visibility',
-                    condition: '16 KM',
+                    condition: isHourly
+                        ? '${hourlyWeather.visibility.toStringAsFixed(2)} KM'
+                        : '${dailyWeather.visibility.toStringAsFixed(2)} KM',
                   ),
                   WeatherCondition(
                     icon: Icons.wb_cloudy,
-                    conditionName: 'AQI',
-                    condition: '52',
+                    conditionName: 'Humidity',
+                    condition: isHourly
+                        ? '${(hourlyWeather.humidity * 100).toStringAsFixed(0)}%'
+                        : '${(dailyWeather.humidity * 100).toStringAsFixed(0)}%',
                   ),
                 ],
               ),
