@@ -1,17 +1,22 @@
+import 'package:book_my_weather/models/place_data.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class DailyWeather extends StatelessWidget {
   final String date;
   final String weatherConditionImgPath;
   final String tempRange;
+  final int dayIndex;
   final TextStyle dateTextStyle;
   final TextStyle tempRangeTextStyle;
   final Color weatherBoxBackgroundColor;
 
   DailyWeather({
-    @required this.date,
+    this.date,
     @required this.weatherConditionImgPath,
-    @required this.tempRange,
+    this.tempRange,
+    @required this.dayIndex,
     this.dateTextStyle = const TextStyle(
       fontWeight: FontWeight.w100,
       fontSize: 20,
@@ -27,7 +32,17 @@ class DailyWeather extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final placeData = Provider.of<PlaceData>(context);
+    final place = placeData.places[placeData.currentPlaceIndex];
+    final dailyWeatherData = place.weather.daily.data;
+    String currentDate = DateFormat('EEE, MMM d')
+        .format(DateTime.fromMillisecondsSinceEpoch(
+            place.weather.daily.data[dayIndex].time * 1000))
+        .toString();
     return Container(
+      margin: EdgeInsets.only(
+        bottom: 20.0,
+      ),
       decoration: BoxDecoration(
         color: weatherBoxBackgroundColor,
         borderRadius: BorderRadius.all(
@@ -37,8 +52,6 @@ class DailyWeather extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.only(
           left: 8.0,
-//                                        top: 18.0,
-//                                        bottom: 18.0,
           right: 8.0,
         ),
         child: Row(
@@ -47,7 +60,7 @@ class DailyWeather extends StatelessWidget {
             Expanded(
               flex: 4,
               child: Text(
-                date,
+                currentDate,
                 style: dateTextStyle,
               ),
             ),
@@ -61,7 +74,7 @@ class DailyWeather extends StatelessWidget {
                     scale: 3.5,
                   ),
                   Text(
-                    tempRange,
+                    '${dailyWeatherData[dayIndex].temperatureHigh.toStringAsFixed(0)}º / ${dailyWeatherData[dayIndex].temperatureLow.toStringAsFixed(0)}º',
                     style: tempRangeTextStyle,
                   ),
                 ],
