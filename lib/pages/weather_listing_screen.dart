@@ -52,7 +52,6 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
 
   Future<Weather> getWeather() async {
     WeatherModel weather = WeatherModel();
-
     if (widget.places.length > 0) {
       setState(() {
         placeName = widget.places[0].address;
@@ -78,13 +77,22 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
         longitude: location.longitude,
       );
 
-      _addPlace(Place(
+      List<Place> places = [];
+      places.add(Place(
         name: location.placeMark[0].name,
         address: location.placeMark[0].locality,
         latitude: location.latitude,
         longitude: location.longitude,
         weather: currentPlaceWeather,
       ));
+//      _addPlace(Place(
+//        name: location.placeMark[0].name,
+//        address: location.placeMark[0].locality,
+//        latitude: location.latitude,
+//        longitude: location.longitude,
+//        weather: currentPlaceWeather,
+//      ));
+      Provider.of<PlaceData>(context, listen: false).updatePlaces(places);
 
       return currentPlaceWeather;
     }
@@ -110,14 +118,33 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
     super.didChangeDependencies();
 
     if (Provider.of<Setting>(context) != null &&
-        Provider.of<Setting>(context).places.length > 0 &&
-        Provider.of<Setting>(context).places.length != widget.places.length) {
-      WeatherModel weather = WeatherModel();
-      final tempPlaces = Provider.of<Setting>(context, listen: false).places;
+        widget.places.length > Provider.of<Setting>(context).places.length &&
+        widget.places.length > 1) {
+      final db = DatabaseService();
+
+      final tempPlaces = widget.places;
       setState(() {
         placeName = tempPlaces[0].address;
       });
 
+      final docId = Provider.of<Setting>(context, listen: false).id;
+
+      db.updatePlaces(
+          docId,
+          Place(
+            name: tempPlaces[tempPlaces.length - 1].name,
+            address: tempPlaces[tempPlaces.length - 1].name == ''
+                ? tempPlaces[tempPlaces.length - 1].address
+                : tempPlaces[tempPlaces.length - 1].name,
+            latitude: tempPlaces[tempPlaces.length - 1].latitude,
+            longitude: tempPlaces[tempPlaces.length - 1].longitude,
+          ));
+    }
+
+    if (Provider.of<Setting>(context, listen: false) != null &&
+        widget.places.length < Provider.of<Setting>(context).places.length) {
+      WeatherModel weather = WeatherModel();
+      final tempPlaces = Provider.of<Setting>(context).places;
       Weather placeWeather = await weather.getLocationWeather(
         type: RequestedWeatherType.Both,
         useCelsius: true,
@@ -141,19 +168,21 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
 
     if (Provider.of<Setting>(context, listen: false) != null &&
         Provider.of<Setting>(context, listen: false).places.length == 0) {
-      Location location = Location();
-      await location.getLocation();
-
-      await location.getPlaceMarkFromCoordinates(
-          lat: location.latitude, lng: location.longitude);
-      final place = Place(
-        name: location.placeMark[0].name,
-        address: location.placeMark[0].locality,
-        latitude: location.latitude,
-        longitude: location.longitude,
-      );
-      final db = DatabaseService();
-      db.addNewSetting(widget.deviceId, place);
+//      Location location = Location();
+//      await location.getLocation();
+//
+//      await location.getPlaceMarkFromCoordinates(
+//          lat: location.latitude, lng: location.longitude);
+      if (widget.places.length > 0) {
+        final place = Place(
+          name: widget.places[0].name,
+          address: widget.places[0].address,
+          latitude: widget.places[0].latitude,
+          longitude: widget.places[0].longitude,
+        );
+        final db = DatabaseService();
+        db.addNewSetting(widget.deviceId, place);
+      }
     }
   }
 

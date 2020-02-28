@@ -3,7 +3,6 @@ import 'dart:convert';
 
 import 'package:book_my_weather/models/place.dart';
 import 'package:book_my_weather/models/place_data.dart';
-import 'package:book_my_weather/models/setting.dart';
 import 'package:book_my_weather/models/setting_data.dart';
 import 'package:book_my_weather/models/weather.dart';
 import 'package:book_my_weather/secure/keys.dart';
@@ -154,20 +153,20 @@ class _SearchPlaceScreenState extends State<SearchPlaceScreen> {
                                   longitude: location.longitude,
                                 );
 
-                                final docId =
-                                    Provider.of<Setting>(context, listen: false)
-                                        .id;
+//                                final docId =
+//                                    Provider.of<Setting>(context, listen: false)
+//                                        .id;
 
-                                db.updatePlaces(
-                                    docId,
-                                    Place(
-                                      name: location.placeMark[0].name,
-                                      address: location.placeMark[0].name == ''
-                                          ? location.placeMark[0].locality
-                                          : location.placeMark[0].name,
-                                      latitude: location.latitude,
-                                      longitude: location.longitude,
-                                    ));
+//                                db.updatePlaces(
+//                                    docId,
+//                                    Place(
+//                                      name: location.placeMark[0].name,
+//                                      address: location.placeMark[0].name == ''
+//                                          ? location.placeMark[0].locality
+//                                          : location.placeMark[0].name,
+//                                      latitude: location.latitude,
+//                                      longitude: location.longitude,
+//                                    ));
 
                                 Provider.of<PlaceData>(context, listen: false)
                                     .addPlace(Place(
