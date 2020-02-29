@@ -102,68 +102,70 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen>
                     children: <Widget>[
                       ListView.builder(
                         padding: EdgeInsets.all(10.0),
+                        itemCount: 12,
                         itemBuilder: (BuildContext context, int index) {
-                          if (index < 12) {
-                            return GestureDetector(
-                              onTap: () {
-                                showModalBottomSheet(
-                                  backgroundColor: Colors.white,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                  ),
-                                  context: context,
-                                  isScrollControlled: true,
-                                  builder: (context) {
-                                    return FractionallySizedBox(
-                                      heightFactor: 0.55,
-                                      child: WeatherDetail(
-                                        rowIndex: index,
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
-                              child: HourlyWeatherWidget(
-                                hourIndex: index,
-                                weatherIconPath: 'assets/images/sunny.png',
-                              ),
-                            );
-                          }
-                          return null;
+//                          if (index < 12) {
+                          return GestureDetector(
+                            onTap: () {
+                              showModalBottomSheet(
+                                backgroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                ),
+                                context: context,
+                                isScrollControlled: true,
+                                builder: (context) {
+                                  return FractionallySizedBox(
+                                    heightFactor: 0.55,
+                                    child: WeatherDetail(
+                                      rowIndex: index,
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                            child: HourlyWeatherWidget(
+                              hourIndex: index,
+                              weatherIconPath: 'assets/images/sunny.png',
+                            ),
+                          );
+//                          }
+//                          return null;
                         },
                       ),
                       ListView.builder(
                         padding: EdgeInsets.all(10.0),
+                        itemCount: 7,
                         itemBuilder: (BuildContext context, int index) {
-                          if (index < 7) {
-                            return GestureDetector(
-                              onTap: () {
-                                showModalBottomSheet(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                  ),
-                                  backgroundColor: Colors.white,
-                                  context: context,
-                                  isScrollControlled: true,
-                                  builder: (context) {
-                                    return FractionallySizedBox(
-                                      heightFactor: 0.55,
-                                      child: WeatherDetail(
-                                        rowIndex: index,
-                                        isHourly: false,
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
-                              child: DailyWeather(
-                                dayIndex: index,
-                                weatherConditionImgPath:
-                                    'assets/images/sunny.png',
-                              ),
-                            );
-                          }
-                          return null;
+//                          if (index < 7) {
+                          return GestureDetector(
+                            onTap: () {
+                              showModalBottomSheet(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                ),
+                                backgroundColor: Colors.white,
+                                context: context,
+                                isScrollControlled: true,
+                                builder: (context) {
+                                  return FractionallySizedBox(
+                                    heightFactor: 0.55,
+                                    child: WeatherDetail(
+                                      rowIndex: index,
+                                      isHourly: false,
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                            child: DailyWeather(
+                              dayIndex: index,
+                              weatherConditionImgPath:
+                                  'assets/images/sunny.png',
+                            ),
+                          );
+//                          }
+//                          return null;
                         },
                       ),
                     ],

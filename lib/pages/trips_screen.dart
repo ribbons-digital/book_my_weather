@@ -1,3 +1,4 @@
+import 'package:book_my_weather/models/trip.dart';
 import 'package:book_my_weather/models/user.dart';
 import 'package:book_my_weather/pages/new_trip_screen.dart';
 import 'package:book_my_weather/pages/signin_register_screen.dart';
@@ -9,6 +10,9 @@ import 'package:provider/provider.dart';
 
 class TripsScreen extends StatefulWidget {
   static const String id = 'trips';
+  Function setFilterString;
+
+  TripsScreen({@required this.setFilterString});
 
   @override
   _TripsScreenState createState() => _TripsScreenState();
@@ -36,6 +40,8 @@ class _TripsScreenState extends State<TripsScreen> {
   Widget build(BuildContext context) {
     final double h = MediaQuery.of(context).size.width < 600 ? 20.0 : 50.0;
     final User user = Provider.of<User>(context);
+    final trips = Provider.of<List<Trip>>(context);
+
     return Scaffold(
       appBar: AppBar(
         //leading: Icon(Icons.arrow_back_ios),
@@ -176,90 +182,115 @@ class _TripsScreenState extends State<TripsScreen> {
                   ),
                 )
               : SizedBox(),
-          Expanded(
-            child: ListView(
-              children: <Widget>[
-                GestureDetector(
-                  onTap: () {
+          if (trips != null && trips.length > 0)
+            Expanded(
+              child: ListView.builder(
+                  itemCount: trips.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return GestureDetector(
+                      onTap: () {
 //                    Navigator.pushNamed(context, TripDetail.id);
-                    Navigator.push(
-                      context,
-                      PageRouteBuilder(
-                        transitionDuration: const Duration(milliseconds: 550),
-                        pageBuilder: (context, _, __) => TripDetail(
-                          imgPath: 'assets/images/budapest.jpg',
-                          tripName: 'Hungary',
-                          city: 'Budapest',
-                          index: 0,
-                          currentTemp: '31',
-                          precipitation: '0',
-                          startDate: '2020-02-20 00:00:00.000',
-                        ),
+                        Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                            transitionDuration:
+                                const Duration(milliseconds: 550),
+                            pageBuilder: (context, _, __) => TripDetail(
+                              index: index,
+                              currentTemp: '31',
+                              precipitation: '0',
+                            ),
+                          ),
+                        );
+                      },
+                      child: TripWidget(
+                        index: index,
                       ),
                     );
-                  },
-                  child: TripWidget(
-                    imgPath: 'assets/images/budapest.jpg',
-                    tripName: 'Hungary',
-                    city: 'Budapest',
-                    index: 0,
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-//                    Navigator.pushNamed(context, TripDetail.id);
-                    Navigator.push(
-                      context,
-                      PageRouteBuilder(
-                        transitionDuration: const Duration(milliseconds: 550),
-                        pageBuilder: (context, _, __) => TripDetail(
-                          imgPath: 'assets/images/taipei.jpg',
-                          tripName: 'Taiwan',
-                          city: 'Taipei',
-                          index: 1,
-                          currentTemp: '31',
-                          precipitation: '0',
-                          startDate: '2020-02-20 00:00:00.000',
-                        ),
-                      ),
-                    );
-                  },
-                  child: TripWidget(
-                    imgPath: 'assets/images/taipei.jpg',
-                    tripName: 'Taiwan',
-                    city: 'Taipei',
-                    index: 1,
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-//                    Navigator.pushNamed(context, TripDetail.id);
-                    Navigator.push(
-                      context,
-                      PageRouteBuilder(
-                        transitionDuration: const Duration(milliseconds: 550),
-                        pageBuilder: (context, _, __) => TripDetail(
-                          imgPath: 'assets/images/shanghai.jpg',
-                          tripName: 'China',
-                          city: 'Shanghai',
-                          index: 2,
-                          currentTemp: '31',
-                          precipitation: '0',
-                          startDate: '2020-02-20 00:00:00.000',
-                        ),
-                      ),
-                    );
-                  },
-                  child: TripWidget(
-                    imgPath: 'assets/images/shanghai.jpg',
-                    tripName: 'China',
-                    city: 'Shanghai',
-                    index: 2,
-                  ),
-                ),
-              ],
+                  }),
+//              child: ListView(
+//                children: <Widget>[
+//                  GestureDetector(
+//                    onTap: () {
+////                    Navigator.pushNamed(context, TripDetail.id);
+//                      Navigator.push(
+//                        context,
+//                        PageRouteBuilder(
+//                          transitionDuration: const Duration(milliseconds: 550),
+//                          pageBuilder: (context, _, __) => TripDetail(
+//                            imgPath: 'assets/images/budapest.jpg',
+//                            tripName: 'Hungary',
+//                            city: 'Budapest',
+//                            index: 0,
+//                            currentTemp: '31',
+//                            precipitation: '0',
+//                            startDate: '2020-02-20 00:00:00.000',
+//                          ),
+//                        ),
+//                      );
+//                    },
+//                    child: TripWidget(
+//                      imgPath: 'assets/images/budapest.jpg',
+//                      tripName: 'Hungary',
+//                      city: 'Budapest',
+//                      index: 0,
+//                    ),
+//                  ),
+//                  GestureDetector(
+//                    onTap: () {
+////                    Navigator.pushNamed(context, TripDetail.id);
+//                      Navigator.push(
+//                        context,
+//                        PageRouteBuilder(
+//                          transitionDuration: const Duration(milliseconds: 550),
+//                          pageBuilder: (context, _, __) => TripDetail(
+//                            imgPath: 'assets/images/taipei.jpg',
+//                            tripName: 'Taiwan',
+//                            city: 'Taipei',
+//                            index: 1,
+//                            currentTemp: '31',
+//                            precipitation: '0',
+//                            startDate: '2020-02-20 00:00:00.000',
+//                          ),
+//                        ),
+//                      );
+//                    },
+//                    child: TripWidget(
+//                      imgPath: 'assets/images/taipei.jpg',
+//                      tripName: 'Taiwan',
+//                      city: 'Taipei',
+//                      index: 1,
+//                    ),
+//                  ),
+//                  GestureDetector(
+//                    onTap: () {
+////                    Navigator.pushNamed(context, TripDetail.id);
+//                      Navigator.push(
+//                        context,
+//                        PageRouteBuilder(
+//                          transitionDuration: const Duration(milliseconds: 550),
+//                          pageBuilder: (context, _, __) => TripDetail(
+//                            imgPath: 'assets/images/shanghai.jpg',
+//                            tripName: 'China',
+//                            city: 'Shanghai',
+//                            index: 2,
+//                            currentTemp: '31',
+//                            precipitation: '0',
+//                            startDate: '2020-02-20 00:00:00.000',
+//                          ),
+//                        ),
+//                      );
+//                    },
+//                    child: TripWidget(
+//                      imgPath: 'assets/images/shanghai.jpg',
+//                      tripName: 'China',
+//                      city: 'Shanghai',
+//                      index: 2,
+//                    ),
+//                  ),
+//                ],
+//              ),
             ),
-          ),
         ],
       ),
     );

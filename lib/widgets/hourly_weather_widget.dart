@@ -34,7 +34,7 @@ class HourlyWeatherWidget extends StatelessWidget {
         Container(
           width: MediaQuery.of(context).size.width / 5,
           child: Text(
-            '${DateFormat('Ka').format(DateTime.fromMillisecondsSinceEpoch(hourlyWeatherData[hourIndex].time * 1000)).toString()}',
+            '${DateFormat('ha').format(DateTime.fromMillisecondsSinceEpoch(hourlyWeatherData[hourIndex].time * 1000)).toString()}',
             style: hourTextStyle,
           ),
         ),

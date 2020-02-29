@@ -1,6 +1,7 @@
 import 'package:book_my_weather/models/place_data.dart';
 import 'package:book_my_weather/models/setting.dart';
 import 'package:book_my_weather/models/setting_data.dart';
+import 'package:book_my_weather/models/trip.dart';
 import 'package:book_my_weather/models/user.dart';
 import 'package:book_my_weather/pages/new_trip_screen.dart';
 import 'package:book_my_weather/pages/place_detail_screen.dart';
@@ -9,7 +10,6 @@ import 'package:book_my_weather/pages/search_place_screen.dart';
 import 'package:book_my_weather/pages/trip_detail_screen.dart';
 import 'package:book_my_weather/pages/trips_screen.dart';
 import 'package:book_my_weather/pages/weather_listing_screen.dart';
-import 'package:book_my_weather/services/auth.dart';
 import 'package:book_my_weather/services/db.dart';
 import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +25,7 @@ class Wrapper extends StatefulWidget {
 class _WrapperState extends State<Wrapper> {
   int _selectedIndex = 0;
   Future<String> deviceId;
+  String filterString;
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.w100);
   static const List<Widget> _widgetOptions = <Widget>[
@@ -70,10 +71,16 @@ class _WrapperState extends State<Wrapper> {
     }
   }
 
+  void setFilterStringForTrips(String newString) {
+    setState(() {
+      filterString = newString;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final db = DatabaseService();
-    final auth = AuthService();
+//    final auth = AuthService();
 
     return FutureBuilder(
       future: deviceId,
@@ -90,9 +97,16 @@ class _WrapperState extends State<Wrapper> {
               StreamProvider<Setting>.value(
                 value: db.streamSetting(snapshot.data),
               ),
-              StreamProvider<User>.value(
-                value: auth.user,
-              ),
+//              StreamProvider<User>.value(
+//                value: auth.user,
+//              ),
+              StreamProvider<List<Trip>>.value(
+                  value: db.streamTrips(
+                uid: Provider.of<User>(context) != null
+                    ? Provider.of<User>(context).uid
+                    : '',
+                filterString: filterString,
+              )),
             ],
             child: Consumer<PlaceData>(
               builder: (_, placeData, __) => MaterialApp(
@@ -133,7 +147,9 @@ class _WrapperState extends State<Wrapper> {
                         deviceId: snapshot.data,
                         // setting: setting,
                       ),
-                      TripsScreen()
+                      TripsScreen(
+                        setFilterString: setFilterStringForTrips,
+                      )
                     ],
                   ),
                   bottomNavigationBar: BottomNavigationBar(

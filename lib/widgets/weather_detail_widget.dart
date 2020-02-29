@@ -59,7 +59,7 @@ class WeatherDetail extends StatelessWidget {
                       ),
                       Text(
                         isHourly
-                            ? '${DateFormat('Ka').format(DateTime.fromMillisecondsSinceEpoch(hourlyWeather.time * 1000)).toString()}'
+                            ? '${DateFormat('ha').format(DateTime.fromMillisecondsSinceEpoch(hourlyWeather.time * 1000)).toString()}'
                             : date,
                         style: TextStyle(
                           fontWeight: FontWeight.w100,

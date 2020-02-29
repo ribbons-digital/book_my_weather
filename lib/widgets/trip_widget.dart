@@ -1,30 +1,29 @@
+import 'package:book_my_weather/models/trip.dart';
+import 'package:book_my_weather/utilities/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class TripWidget extends StatelessWidget {
-  final String imgPath;
   final String currentTemp;
   final String precipitation;
-  final String tripName;
-  final String city;
-  final String startDate;
   final int index;
 
   TripWidget({
-    @required this.imgPath,
     this.currentTemp = '31',
     this.precipitation = '0',
-    @required this.tripName,
-    @required this.city,
-    this.startDate = '2020-02-20 00:00:00.000',
     @required this.index,
   });
 
   @override
   Widget build(BuildContext context) {
-    String daysLeft =
-        DateTime.parse(startDate).difference(DateTime.now()).inDays.toString();
+    final trips = Provider.of<List<Trip>>(context);
+    final startDateISOString = timeStampToISOString(trips[index].startDate);
+    final startDateToDateString = timeStampToDateString(trips[index].startDate);
+    String daysLeft = DateTime.parse(startDateISOString)
+        .difference(DateTime.now())
+        .inDays
+        .toString();
     return Padding(
       padding: const EdgeInsets.only(
           left: 20.0, right: 20.0, top: 10.0, bottom: 10.0),
@@ -58,8 +57,8 @@ class TripWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(12.0),
               child: Hero(
                 tag: 'city-img-$index',
-                child: Image.asset(
-                  imgPath,
+                child: Image.network(
+                  trips[index].heroImages[0],
                   fit: BoxFit.cover,
                 ),
               ),
@@ -119,7 +118,7 @@ class TripWidget extends StatelessWidget {
                         child: Material(
                           color: Color(0X00FFFFFF),
                           child: Text(
-                            city,
+                            trips[index].destination,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 22.0,
@@ -133,7 +132,7 @@ class TripWidget extends StatelessWidget {
                         child: Material(
                           color: Color(0X00FFFFFF),
                           child: Text(
-                            tripName,
+                            trips[index].name,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 18.0,
@@ -176,8 +175,7 @@ class TripWidget extends StatelessWidget {
                         child: Material(
                           color: Color(0X00FFFFFF),
                           child: Text(
-                            DateFormat.yMd('en_US')
-                                .format(DateTime.parse(startDate)),
+                            startDateToDateString,
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.w200,

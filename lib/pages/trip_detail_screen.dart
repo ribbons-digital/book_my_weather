@@ -1,32 +1,33 @@
+import 'package:book_my_weather/models/trip.dart';
 import 'package:book_my_weather/pages/places_screen.dart';
+import 'package:book_my_weather/utilities/index.dart';
 import 'package:book_my_weather/widgets/trip_detail_grid_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class TripDetail extends StatelessWidget {
   static const String id = 'tripDetail';
 
-  final String imgPath;
   final String currentTemp;
   final String precipitation;
-  final String tripName;
-  final String city;
-  final String startDate;
   final int index;
 
   TripDetail({
-    @required this.imgPath,
     @required this.currentTemp,
     @required this.precipitation,
-    @required this.tripName,
-    @required this.city,
-    @required this.startDate,
     @required this.index,
   });
 
   @override
   Widget build(BuildContext context) {
+    final trips = Provider.of<List<Trip>>(context);
+    final startDateISOString = timeStampToISOString(trips[index].startDate);
+    final startDateToDateString = timeStampToDateString(trips[index].startDate);
+    String daysLeft = DateTime.parse(startDateISOString)
+        .difference(DateTime.now())
+        .inDays
+        .toString();
     return Scaffold(
       body: Column(
         children: <Widget>[
@@ -38,8 +39,8 @@ class TripDetail extends StatelessWidget {
               children: <Widget>[
                 Hero(
                   tag: 'city-img-$index',
-                  child: Image.asset(
-                    imgPath,
+                  child: Image.network(
+                    trips[index].heroImages[0],
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -76,7 +77,7 @@ class TripDetail extends StatelessWidget {
                     child: Material(
                       color: Color(0X00FFFFFF),
                       child: Text(
-                        city,
+                        trips[index].destination,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 22.0,
@@ -93,7 +94,7 @@ class TripDetail extends StatelessWidget {
                     child: Material(
                       color: Color(0X00FFFFFF),
                       child: Text(
-                        tripName,
+                        trips[index].name,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 18.0,
@@ -179,7 +180,7 @@ class TripDetail extends StatelessWidget {
                               child: Material(
                                 color: Color(0X00FFFFFF),
                                 child: Text(
-                                  '13 days, from today',
+                                  '$daysLeft days, from today',
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w200,
@@ -194,9 +195,7 @@ class TripDetail extends StatelessWidget {
                           child: Material(
                             color: Color(0X00FFFFFF),
                             child: Text(
-                              DateFormat.yMd('en_US').format(
-                                DateTime.parse(startDate),
-                              ),
+                              startDateToDateString,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w200,

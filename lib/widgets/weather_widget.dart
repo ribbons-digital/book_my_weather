@@ -102,7 +102,7 @@ class WeatherWidget extends StatelessWidget {
                   child: Column(
                     children: <Widget>[
                       Text(
-                        '${DateFormat('Ka').format(DateTime.fromMillisecondsSinceEpoch(data.time * 1000)).toString()}',
+                        '${DateFormat('ha').format(DateTime.fromMillisecondsSinceEpoch(data.time * 1000)).toString()}',
                         style: AppTheme.small,
                       ),
                       Container(

@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:book_my_weather/models/place.dart';
 import 'package:book_my_weather/models/setting.dart';
+import 'package:book_my_weather/models/trip.dart';
+import 'package:book_my_weather/models/trip_place.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DatabaseService {
@@ -18,6 +20,44 @@ class DatabaseService {
           places: [],
         );
       }
+    });
+  }
+
+  Stream<List<Trip>> streamTrips({String uid, String filterString}) {
+    if (filterString != null) {
+      return _db
+          .collection('trips')
+          .where('createdByUid', isEqualTo: uid)
+          .snapshots()
+          .map((snapshot) {
+        return snapshot.documents.map((document) {
+          return Trip.fromFirestore(document);
+        }).toList();
+      });
+    } else {
+      return _db
+          .collection('trips')
+          .where('createdByUid', isEqualTo: uid)
+          .where('destination', isEqualTo: filterString)
+          .snapshots()
+          .map((snapshot) {
+        return snapshot.documents.map((document) {
+          return Trip.fromFirestore(document);
+        }).toList();
+      });
+    }
+  }
+
+  Stream<List<TripPlace>> streamTripPlaces(String tripId) {
+    return _db
+        .collection('trips')
+        .document(tripId)
+        .collection('places')
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.documents.map((document) {
+        return TripPlace.fromFirestore(document);
+      });
     });
   }
 
