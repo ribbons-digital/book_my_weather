@@ -18,17 +18,22 @@ import 'package:provider/provider.dart';
 
 enum DateType { startDate, endDate }
 
-class NewTrip extends StatefulWidget {
-  static const String id = 'newTrip';
+class TripScreen extends StatefulWidget {
+  static const String id = 'trip_screen';
+  final Trip existingTrip;
+
+  TripScreen({this.existingTrip});
 
   @override
-  _NewTripState createState() => _NewTripState();
+  _TripScreenState createState() => _TripScreenState();
 }
 
-class _NewTripState extends State<NewTrip> {
+class _TripScreenState extends State<TripScreen> {
+  TextEditingController _nameTextEditingController;
   TextEditingController _startDateTextEditingController;
   TextEditingController _endDateTextEditingController;
   TextEditingController _destinationTextEditingController;
+  TextEditingController _descriptionTextEditingController;
   final _formKey = GlobalKey<FormState>();
   String name = '';
   String destination = '';
@@ -43,17 +48,38 @@ class _NewTripState extends State<NewTrip> {
   @override
   void initState() {
     super.initState();
+    _nameTextEditingController = TextEditingController();
     _startDateTextEditingController = TextEditingController();
     _endDateTextEditingController = TextEditingController();
     _destinationTextEditingController = TextEditingController();
+    _descriptionTextEditingController = TextEditingController();
     _destinationTextEditingController.addListener(_onSearch);
+    if (widget.existingTrip != null) {
+      final trip = widget.existingTrip;
+      setState(() {
+        name = trip.name;
+        _nameTextEditingController.text = trip.name;
+        _descriptionTextEditingController.text = trip.description;
+        destination = trip.destination;
+        _destinationTextEditingController.text = trip.destination;
+        startDate = DateTime.parse(timeStampToISOString(trip.startDate));
+        _startDateTextEditingController.text = DateFormat('yMMMMd')
+            .format(DateTime.parse(timeStampToISOString(trip.startDate)));
+        endDate = DateTime.parse(timeStampToISOString(trip.startDate));
+        _endDateTextEditingController.text = DateFormat('yMMMMd')
+            .format(DateTime.parse(timeStampToISOString(trip.endDate)));
+        description = trip.description;
+      });
+    }
   }
 
   @override
   void dispose() {
     super.dispose();
+    _nameTextEditingController.dispose();
     _startDateTextEditingController.dispose();
     _endDateTextEditingController.dispose();
+    _descriptionTextEditingController.dispose();
     _destinationTextEditingController.removeListener(_onSearch);
     _destinationTextEditingController.dispose();
   }
@@ -102,6 +128,74 @@ class _NewTripState extends State<NewTrip> {
     }
   }
 
+  void addTrip(BuildContext context) async {
+    final db = DatabaseService();
+    String heroImageUrl = '';
+
+    http.Response response =
+        await http.get('$kUnsplashAPIURL&query=$destination');
+
+    if (response.statusCode == 200) {
+      heroImageUrl = jsonDecode(response.body)[0]['urls']['regular'];
+    }
+
+    Location location = Location();
+    await location.getPlaceMarkFromAddress(address: destination);
+    WeatherModel weather = WeatherModel();
+    Weather currentWeather = await weather.getLocationWeather(
+      type: RequestedWeatherType.Currently,
+      useCelsius: true,
+      latitude: location.latitude,
+      longitude: location.longitude,
+    );
+
+    Trip newTrip = Trip(
+        createdByUid: Provider.of<User>(context, listen: false).uid,
+        name: name,
+        destination: destination,
+        description: description,
+        startDate: Timestamp.fromDate(startDate),
+        endDate: Timestamp.fromDate(endDate),
+        location: GeoPoint(location.latitude, location.longitude),
+        heroImages: [heroImageUrl],
+        temperature: currentWeather.currently.temperature.toStringAsFixed(0),
+        weatherIcon: currentWeather.currently.icon);
+
+    await db.addTrip(newTrip);
+    Navigator.pop(context);
+    Navigator.pop(context);
+  }
+
+  void updateTrip(BuildContext context) async {
+    final db = DatabaseService();
+
+    Location location = Location();
+    await location.getPlaceMarkFromAddress(address: destination);
+    WeatherModel weather = WeatherModel();
+    Weather currentWeather = await weather.getLocationWeather(
+      type: RequestedWeatherType.Currently,
+      useCelsius: true,
+      latitude: location.latitude,
+      longitude: location.longitude,
+    );
+
+    Trip updatedTrip = Trip(
+        createdByUid: Provider.of<User>(context, listen: false).uid,
+        name: name,
+        destination: destination,
+        description: description,
+        startDate: Timestamp.fromDate(startDate),
+        endDate: Timestamp.fromDate(endDate),
+        location: GeoPoint(location.latitude, location.longitude),
+        temperature: currentWeather.currently.temperature.toStringAsFixed(0),
+        weatherIcon: currentWeather.currently.icon);
+
+    await db.updateTrip(
+        docId: widget.existingTrip.id, updatedTrip: updatedTrip);
+    Navigator.pop(context);
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -132,9 +226,6 @@ class _NewTripState extends State<NewTrip> {
                         color: Color(0XFF69A4FF),
                         onPressed: () async {
                           if (_formKey.currentState.validate()) {
-                            final db = DatabaseService();
-                            String heroImageUrl = '';
-
                             showDialog(
                                 context: context,
                                 barrierDismissible: false,
@@ -144,47 +235,11 @@ class _NewTripState extends State<NewTrip> {
                                     size: 50.0,
                                   );
                                 });
-
-                            http.Response response = await http
-                                .get('$kUnsplashAPIURL&query=$destination');
-
-                            if (response.statusCode == 200) {
-                              heroImageUrl = jsonDecode(response.body)[0]
-                                  ['urls']['regular'];
+                            if (widget.existingTrip == null) {
+                              addTrip(context);
+                            } else {
+                              updateTrip(context);
                             }
-
-                            Location location = Location();
-                            await location.getPlaceMarkFromAddress(
-                                address: destination);
-                            WeatherModel weather = WeatherModel();
-                            Weather currentWeather =
-                                await weather.getLocationWeather(
-                              type: RequestedWeatherType.Currently,
-                              useCelsius: true,
-                              latitude: location.latitude,
-                              longitude: location.longitude,
-                            );
-
-                            Trip newTrip = Trip(
-                                createdByUid:
-                                    Provider.of<User>(context, listen: false)
-                                        .uid,
-                                name: name,
-                                destination: destination,
-                                description: description,
-                                startDate: Timestamp.fromDate(startDate),
-                                endDate: Timestamp.fromDate(endDate),
-                                location: GeoPoint(
-                                    location.latitude, location.longitude),
-                                heroImages: [heroImageUrl],
-                                temperature: currentWeather
-                                    .currently.temperature
-                                    .toStringAsFixed(0),
-                                weatherIcon: currentWeather.currently.icon);
-
-                            await db.addTrip(newTrip);
-                            Navigator.pop(context);
-                            Navigator.pop(context);
                           }
                         },
                       ),
@@ -194,7 +249,7 @@ class _NewTripState extends State<NewTrip> {
                     height: 10.0,
                   ),
                   Text(
-                    'New Trip',
+                    widget.existingTrip != null ? 'Edit Trip' : 'New Trip',
                     style: TextStyle(
                       fontWeight: FontWeight.w100,
                       fontSize: 40.0,
@@ -207,6 +262,7 @@ class _NewTripState extends State<NewTrip> {
                         Padding(
                           padding: const EdgeInsets.only(bottom: 15.0),
                           child: TextFormField(
+                            controller: _nameTextEditingController,
                             style: kTextFieldStyle,
                             validator: (val) =>
                                 val.isEmpty ? 'Enter a name' : null,
@@ -310,6 +366,7 @@ class _NewTripState extends State<NewTrip> {
                         Padding(
                           padding: const EdgeInsets.only(bottom: 20.0),
                           child: TextFormField(
+                            controller: _descriptionTextEditingController,
                             style: kTextFieldStyle,
                             onChanged: (String newValue) {
                               setState(() {

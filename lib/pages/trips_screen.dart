@@ -1,9 +1,9 @@
 import 'package:book_my_weather/models/currentlyWeather.dart';
 import 'package:book_my_weather/models/trip.dart';
 import 'package:book_my_weather/models/user.dart';
-import 'package:book_my_weather/pages/new_trip_screen.dart';
 import 'package:book_my_weather/pages/signin_register_screen.dart';
 import 'package:book_my_weather/pages/trip_detail_screen.dart';
+import 'package:book_my_weather/pages/trip_screen.dart';
 import 'package:book_my_weather/widgets/trip_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -12,10 +12,8 @@ import 'package:provider/provider.dart';
 class TripsScreen extends StatefulWidget {
   static const String id = 'trips';
   final Function setFilterString;
-  final int selectedScreenIndex;
 
-  TripsScreen(
-      {@required this.setFilterString, @required this.selectedScreenIndex});
+  TripsScreen({@required this.setFilterString});
 
   @override
   _TripsScreenState createState() => _TripsScreenState();
@@ -26,7 +24,6 @@ class _TripsScreenState extends State<TripsScreen> {
   List<CurrentlyWeather> _temperatureList = [];
 
   String dropdownValue = 'Upcoming';
-  bool isEmpty = false;
 
   @override
   void initState() {
@@ -45,8 +42,6 @@ class _TripsScreenState extends State<TripsScreen> {
     final double h = MediaQuery.of(context).size.width < 600 ? 20.0 : 50.0;
     final User user = Provider.of<User>(context);
     final trips = Provider.of<List<Trip>>(context);
-    final bool shouldUpdateWeather =
-        _temperatureList.length > 0 && _temperatureList.length == trips.length;
 
     return Scaffold(
       appBar: AppBar(
@@ -86,16 +81,9 @@ class _TripsScreenState extends State<TripsScreen> {
                     ),
                     onPressed: () {
                       if (user != null) {
-                        Navigator.pushNamed(context, NewTrip.id);
+                        Navigator.pushNamed(context, TripScreen.id);
                       } else {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return SignInRegisterScreen();
-                            },
-                          ),
-                        );
+                        Navigator.pushNamed(context, SignInRegisterScreen.id);
                       }
                     },
                   ),
@@ -151,7 +139,7 @@ class _TripsScreenState extends State<TripsScreen> {
               ),
             ),
           ),
-          isEmpty
+          trips != null && trips.length == 0
               ? Align(
                   child: Padding(
                     padding: const EdgeInsets.all(10.0),
@@ -166,7 +154,7 @@ class _TripsScreenState extends State<TripsScreen> {
                   ),
                 )
               : SizedBox(),
-          isEmpty
+          trips != null && trips.length == 0
               ? Align(
                   child: Padding(
                     padding: const EdgeInsets.all(10.0),
@@ -196,14 +184,6 @@ class _TripsScreenState extends State<TripsScreen> {
                                 const Duration(milliseconds: 550),
                             pageBuilder: (context, _, __) => TripDetail(
                               index: index,
-//                              currentTemp: shouldUpdateWeather
-//                                  ? '${_temperatureList[index].temperature.toStringAsFixed(0)}'
-//                                  : '--',
-//                              precipitation: shouldUpdateWeather
-//                                  ? _temperatureList[index]
-//                                      .precipProbability
-//                                      .toStringAsFixed(0)
-//                                  : '0',
                             ),
                           ),
                         );
@@ -213,6 +193,22 @@ class _TripsScreenState extends State<TripsScreen> {
                       ),
                     );
                   }),
+            ),
+          if (trips == null || trips.length == 0)
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: 20.0,
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12.0),
+                child: Opacity(
+                  opacity: 0.7,
+                  child: Image.asset(
+                    'assets/images/Hot_Air_Ballon.jpg',
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
             ),
         ],
       ),

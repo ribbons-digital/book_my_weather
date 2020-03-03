@@ -2,12 +2,12 @@ import 'package:book_my_weather/models/place_data.dart';
 import 'package:book_my_weather/models/setting.dart';
 import 'package:book_my_weather/models/trip.dart';
 import 'package:book_my_weather/models/user.dart';
-import 'package:book_my_weather/pages/new_trip_screen.dart';
 import 'package:book_my_weather/pages/place_detail_screen.dart';
 import 'package:book_my_weather/pages/places_screen.dart';
 import 'package:book_my_weather/pages/search_place_screen.dart';
 import 'package:book_my_weather/pages/signin_register_screen.dart';
 import 'package:book_my_weather/pages/trip_detail_screen.dart';
+import 'package:book_my_weather/pages/trip_screen.dart';
 import 'package:book_my_weather/pages/trips_screen.dart';
 import 'package:book_my_weather/pages/weather_listing_screen.dart';
 import 'package:book_my_weather/services/db.dart';
@@ -150,7 +150,6 @@ class _WrapperState extends State<Wrapper> {
                       ),
                       TripsScreen(
                         setFilterString: setFilterStringForTrips,
-                        selectedScreenIndex: _selectedIndex,
                       )
                     ],
                   ),
@@ -180,7 +179,7 @@ class _WrapperState extends State<Wrapper> {
                   ),
                 ),
                 routes: {
-                  NewTrip.id: (context) => NewTrip(),
+                  TripScreen.id: (context) => TripScreen(),
                   TripDetail.id: (context) => TripDetail(),
                   PlacesScreen.id: (context) => PlacesScreen(),
                   PlaceDetail.id: (context) => PlaceDetail(),

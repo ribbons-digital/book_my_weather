@@ -110,6 +110,20 @@ class DatabaseService {
     });
   }
 
+  Future<void> updateTrip({String docId, Trip updatedTrip}) {
+    return _db.collection('trips').document(docId).updateData({
+      'createdByUid': updatedTrip.createdByUid,
+      'name': updatedTrip.name,
+      'destination': updatedTrip.destination,
+      'startDate': updatedTrip.startDate,
+      'endDate': updatedTrip.endDate,
+      'description': updatedTrip.description,
+      'location': updatedTrip.location,
+      'temperature': updatedTrip.temperature,
+      'weatherIcon': updatedTrip.weatherIcon,
+    });
+  }
+
   Future<void> updateTripCurrentWeather(
       {String docId, String newTemp, String newIcon}) {
     return _db.collection('trips').document(docId).updateData({

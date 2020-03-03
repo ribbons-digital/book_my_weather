@@ -144,7 +144,6 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
     }
 
     if (Provider.of<Setting>(context, listen: false) != null &&
-        widget.places.length > 0 &&
         widget.places.length < Provider.of<Setting>(context).places.length) {
       WeatherModel weather = WeatherModel();
       final tempPlaces = Provider.of<Setting>(context).places;
@@ -155,9 +154,13 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
         longitude: tempPlaces[0].longitude,
       );
 
-      List<Place> places = widget.places[0].name == tempPlaces[0].name
-          ? []
-          : List.from(widget.places);
+      List<Place> places = [];
+
+      if (widget.places.length > 0) {
+        places = widget.places[0].name == tempPlaces[0].name
+            ? []
+            : List.from(widget.places);
+      }
       for (var i = 0; i <= tempPlaces.length - 1; i++) {
         places.add(Place(
           name: tempPlaces[i].name,

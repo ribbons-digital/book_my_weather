@@ -1,5 +1,6 @@
 import 'package:book_my_weather/models/trip.dart';
 import 'package:book_my_weather/pages/places_screen.dart';
+import 'package:book_my_weather/pages/trip_screen.dart';
 import 'package:book_my_weather/utilities/index.dart';
 import 'package:book_my_weather/widgets/trip_detail_grid_item_widget.dart';
 import 'package:flutter/material.dart';
@@ -17,9 +18,9 @@ class TripDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final trips = Provider.of<List<Trip>>(context);
-    final startDateISOString = timeStampToISOString(trips[index].startDate);
-    final startDateToDateString = timeStampToDateString(trips[index].startDate);
+    final trip = Provider.of<List<Trip>>(context)[index];
+    final startDateISOString = timeStampToISOString(trip.startDate);
+    final startDateToDateString = timeStampToDateString(trip.startDate);
     String daysLeft = DateTime.parse(startDateISOString)
         .difference(DateTime.now())
         .inDays
@@ -38,7 +39,7 @@ class TripDetail extends StatelessWidget {
                   child: Opacity(
                     opacity: 0.6,
                     child: Image.network(
-                      trips[index].heroImages[0],
+                      trip.heroImages[0],
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -60,10 +61,22 @@ class TripDetail extends StatelessWidget {
                       ),
                       Padding(
                         padding: const EdgeInsets.only(right: 9.0),
-                        child: Icon(
-                          Icons.edit,
-                          size: 30.0,
-                          color: Colors.white,
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.edit,
+                            size: 30.0,
+                            color: Colors.white,
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                pageBuilder: (context, _, __) => TripScreen(
+                                  existingTrip: trip,
+                                ),
+                              ),
+                            );
+                          },
                         ),
                       )
                     ],
@@ -76,7 +89,7 @@ class TripDetail extends StatelessWidget {
                     child: Material(
                       color: Color(0X00FFFFFF),
                       child: Text(
-                        trips[index].destination,
+                        trip.destination,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 22.0,
@@ -93,7 +106,7 @@ class TripDetail extends StatelessWidget {
                     child: Material(
                       color: Color(0X00FFFFFF),
                       child: Text(
-                        trips[index].name,
+                        trip.name,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 18.0,
@@ -126,7 +139,7 @@ class TripDetail extends StatelessWidget {
                               child: Material(
                                 color: Color(0X00FFFFFF),
                                 child: Text(
-                                  '${trips[index].temperature}º currently',
+                                  '${trip.temperature}º currently',
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w300,
