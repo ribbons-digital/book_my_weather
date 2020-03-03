@@ -1,3 +1,4 @@
+import 'package:book_my_weather/models/currentlyWeather.dart';
 import 'package:book_my_weather/models/trip.dart';
 import 'package:book_my_weather/models/user.dart';
 import 'package:book_my_weather/pages/new_trip_screen.dart';
@@ -10,9 +11,11 @@ import 'package:provider/provider.dart';
 
 class TripsScreen extends StatefulWidget {
   static const String id = 'trips';
-  Function setFilterString;
+  final Function setFilterString;
+  final int selectedScreenIndex;
 
-  TripsScreen({@required this.setFilterString});
+  TripsScreen(
+      {@required this.setFilterString, @required this.selectedScreenIndex});
 
   @override
   _TripsScreenState createState() => _TripsScreenState();
@@ -20,6 +23,7 @@ class TripsScreen extends StatefulWidget {
 
 class _TripsScreenState extends State<TripsScreen> {
   TextEditingController _textEditingController;
+  List<CurrentlyWeather> _temperatureList = [];
 
   String dropdownValue = 'Upcoming';
   bool isEmpty = false;
@@ -41,6 +45,8 @@ class _TripsScreenState extends State<TripsScreen> {
     final double h = MediaQuery.of(context).size.width < 600 ? 20.0 : 50.0;
     final User user = Provider.of<User>(context);
     final trips = Provider.of<List<Trip>>(context);
+    final bool shouldUpdateWeather =
+        _temperatureList.length > 0 && _temperatureList.length == trips.length;
 
     return Scaffold(
       appBar: AppBar(
@@ -80,14 +86,7 @@ class _TripsScreenState extends State<TripsScreen> {
                     ),
                     onPressed: () {
                       if (user != null) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return NewTrip();
-                            },
-                          ),
-                        );
+                        Navigator.pushNamed(context, NewTrip.id);
                       } else {
                         Navigator.push(
                           context,
@@ -197,8 +196,14 @@ class _TripsScreenState extends State<TripsScreen> {
                                 const Duration(milliseconds: 550),
                             pageBuilder: (context, _, __) => TripDetail(
                               index: index,
-                              currentTemp: '31',
-                              precipitation: '0',
+//                              currentTemp: shouldUpdateWeather
+//                                  ? '${_temperatureList[index].temperature.toStringAsFixed(0)}'
+//                                  : '--',
+//                              precipitation: shouldUpdateWeather
+//                                  ? _temperatureList[index]
+//                                      .precipProbability
+//                                      .toStringAsFixed(0)
+//                                  : '0',
                             ),
                           ),
                         );
@@ -208,88 +213,6 @@ class _TripsScreenState extends State<TripsScreen> {
                       ),
                     );
                   }),
-//              child: ListView(
-//                children: <Widget>[
-//                  GestureDetector(
-//                    onTap: () {
-////                    Navigator.pushNamed(context, TripDetail.id);
-//                      Navigator.push(
-//                        context,
-//                        PageRouteBuilder(
-//                          transitionDuration: const Duration(milliseconds: 550),
-//                          pageBuilder: (context, _, __) => TripDetail(
-//                            imgPath: 'assets/images/budapest.jpg',
-//                            tripName: 'Hungary',
-//                            city: 'Budapest',
-//                            index: 0,
-//                            currentTemp: '31',
-//                            precipitation: '0',
-//                            startDate: '2020-02-20 00:00:00.000',
-//                          ),
-//                        ),
-//                      );
-//                    },
-//                    child: TripWidget(
-//                      imgPath: 'assets/images/budapest.jpg',
-//                      tripName: 'Hungary',
-//                      city: 'Budapest',
-//                      index: 0,
-//                    ),
-//                  ),
-//                  GestureDetector(
-//                    onTap: () {
-////                    Navigator.pushNamed(context, TripDetail.id);
-//                      Navigator.push(
-//                        context,
-//                        PageRouteBuilder(
-//                          transitionDuration: const Duration(milliseconds: 550),
-//                          pageBuilder: (context, _, __) => TripDetail(
-//                            imgPath: 'assets/images/taipei.jpg',
-//                            tripName: 'Taiwan',
-//                            city: 'Taipei',
-//                            index: 1,
-//                            currentTemp: '31',
-//                            precipitation: '0',
-//                            startDate: '2020-02-20 00:00:00.000',
-//                          ),
-//                        ),
-//                      );
-//                    },
-//                    child: TripWidget(
-//                      imgPath: 'assets/images/taipei.jpg',
-//                      tripName: 'Taiwan',
-//                      city: 'Taipei',
-//                      index: 1,
-//                    ),
-//                  ),
-//                  GestureDetector(
-//                    onTap: () {
-////                    Navigator.pushNamed(context, TripDetail.id);
-//                      Navigator.push(
-//                        context,
-//                        PageRouteBuilder(
-//                          transitionDuration: const Duration(milliseconds: 550),
-//                          pageBuilder: (context, _, __) => TripDetail(
-//                            imgPath: 'assets/images/shanghai.jpg',
-//                            tripName: 'China',
-//                            city: 'Shanghai',
-//                            index: 2,
-//                            currentTemp: '31',
-//                            precipitation: '0',
-//                            startDate: '2020-02-20 00:00:00.000',
-//                          ),
-//                        ),
-//                      );
-//                    },
-//                    child: TripWidget(
-//                      imgPath: 'assets/images/shanghai.jpg',
-//                      tripName: 'China',
-//                      city: 'Shanghai',
-//                      index: 2,
-//                    ),
-//                  ),
-//                ],
-//              ),
             ),
         ],
       ),

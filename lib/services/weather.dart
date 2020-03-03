@@ -6,7 +6,7 @@ import 'package:flutter/cupertino.dart';
 
 const darkSkyApiUrl = 'https://api.darksky.net/forecast';
 
-enum RequestedWeatherType { Hourly, Daily, Both }
+enum RequestedWeatherType { Hourly, Daily, Currently, All }
 
 class WeatherModel {
   Future<Weather> getLocationWeather({
@@ -21,7 +21,9 @@ class WeatherModel {
         ? ["currently", "minutely", "daily", "alerts", "flags"]
         : type == RequestedWeatherType.Daily
             ? ["currently", "minutely", "hourly", "alerts", "flags"]
-            : ["currently", "minutely", "alerts", "flags"];
+            : type == RequestedWeatherType.Currently
+                ? ["daily", "minutely", "hourly", "alerts", "flags"]
+                : ["currently", "minutely", "alerts", "flags"];
     if (latitude != null && longitude != null) {
       requestUrl = useCelsius
           ? '$darkSkyApiUrl/$kDarkSkyAPIKey/$latitude,$longitude?units=si&?exclude=$excludes'

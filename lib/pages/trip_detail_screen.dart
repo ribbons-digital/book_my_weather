@@ -9,13 +9,9 @@ import 'package:provider/provider.dart';
 class TripDetail extends StatelessWidget {
   static const String id = 'tripDetail';
 
-  final String currentTemp;
-  final String precipitation;
   final int index;
 
   TripDetail({
-    @required this.currentTemp,
-    @required this.precipitation,
     @required this.index,
   });
 
@@ -39,9 +35,12 @@ class TripDetail extends StatelessWidget {
               children: <Widget>[
                 Hero(
                   tag: 'city-img-$index',
-                  child: Image.network(
-                    trips[index].heroImages[0],
-                    fit: BoxFit.cover,
+                  child: Opacity(
+                    opacity: 0.6,
+                    child: Image.network(
+                      trips[index].heroImages[0],
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
                 Align(
@@ -112,7 +111,7 @@ class TripDetail extends StatelessWidget {
                       right: 8.0,
                     ),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Row(
                           children: <Widget>[
@@ -127,31 +126,31 @@ class TripDetail extends StatelessWidget {
                               child: Material(
                                 color: Color(0X00FFFFFF),
                                 child: Text(
-                                  currentTemp + 'º currently',
+                                  '${trips[index].temperature}º currently',
                                   style: TextStyle(
                                     color: Colors.white,
-                                    fontWeight: FontWeight.w200,
+                                    fontWeight: FontWeight.w300,
                                   ),
                                 ),
                               ),
                             ),
                           ],
                         ),
-                        Hero(
-                          tag: 'precipitation-1',
-                          child: Material(
-                            color: Color(0X00FFFFFF),
-                            child: Stack(
-                              alignment: Alignment.center,
-                              children: <Widget>[
-                                Image.asset('assets/images/rain-solid.png'),
-                                Text(
-                                  precipitation + '%',
-                                )
-                              ],
-                            ),
-                          ),
-                        )
+//                        Hero(
+//                          tag: 'precipitation-1',
+//                          child: Material(
+//                            color: Color(0X00FFFFFF),
+//                            child: Stack(
+//                              alignment: Alignment.center,
+//                              children: <Widget>[
+//                                Image.asset('assets/images/rain-solid.png'),
+//                                Text(
+//                                  precipitation + '%',
+//                                )
+//                              ],
+//                            ),
+//                          ),
+//                        )
                       ],
                     ),
                   ),

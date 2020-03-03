@@ -94,4 +94,27 @@ class DatabaseService {
       ]),
     });
   }
+
+  Future<void> addTrip(Trip newTrip) {
+    return _db.collection('trips').document().setData({
+      'createdByUid': newTrip.createdByUid,
+      'name': newTrip.name,
+      'destination': newTrip.destination,
+      'startDate': newTrip.startDate,
+      'endDate': newTrip.endDate,
+      'description': newTrip.description,
+      'location': newTrip.location,
+      'heroImages': newTrip.heroImages,
+      'temperature': newTrip.temperature,
+      'weatherIcon': newTrip.weatherIcon,
+    });
+  }
+
+  Future<void> updateTripCurrentWeather(
+      {String docId, String newTemp, String newIcon}) {
+    return _db.collection('trips').document(docId).updateData({
+      'temperature': newTemp,
+      'weatherIcon': newIcon,
+    });
+  }
 }

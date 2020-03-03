@@ -11,6 +11,8 @@ class Trip {
   String description;
   GeoPoint location;
   List<String> heroImages;
+  String temperature;
+  String weatherIcon;
 
   Trip({
     this.id,
@@ -22,6 +24,8 @@ class Trip {
     @required this.location,
     this.description,
     this.heroImages,
+    this.temperature,
+    this.weatherIcon,
   });
 
   factory Trip.fromFirestore(DocumentSnapshot doc) {
@@ -43,6 +47,8 @@ class Trip {
       description: data['description'],
       location: data['location'],
       heroImages: heroImages,
+      temperature: data['temperature'],
+      weatherIcon: data['weatherIcon'],
     );
   }
 }

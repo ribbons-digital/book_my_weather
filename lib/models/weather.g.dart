@@ -17,6 +17,9 @@ Weather _$WeatherFromJson(Map<String, dynamic> json) {
     daily: json['daily'] == null
         ? null
         : DailyWeather.fromJson(json['daily'] as Map<String, dynamic>),
+    currently: json['currently'] == null
+        ? null
+        : CurrentlyWeather.fromJson(json['currently'] as Map<String, dynamic>),
   );
 }
 
@@ -26,4 +29,5 @@ Map<String, dynamic> _$WeatherToJson(Weather instance) => <String, dynamic>{
       'timeZone': instance.timeZone,
       'hourly': instance.hourly?.toJson(),
       'daily': instance.daily?.toJson(),
+      'currently': instance.currently?.toJson(),
     };

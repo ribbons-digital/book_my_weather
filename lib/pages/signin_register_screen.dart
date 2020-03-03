@@ -2,6 +2,7 @@ import 'package:book_my_weather/services/auth.dart';
 import 'package:flutter/material.dart';
 
 class SignInRegisterScreen extends StatefulWidget {
+  static const String id = 'signInRegister';
   @override
   _SignInRegisterScreenState createState() => _SignInRegisterScreenState();
 }
@@ -26,10 +27,13 @@ class _SignInRegisterScreenState extends State<SignInRegisterScreen> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0.0,
-        title: Text('Sign in or Register', style: TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.w200,
-        ),),
+        title: Text(
+          'Sign in or Register',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w200,
+          ),
+        ),
       ),
       body: Container(
         padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
@@ -117,15 +121,21 @@ class _SignInRegisterScreenState extends State<SignInRegisterScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text(isSignIn ? 'No account yet?' : 'Already registered?', style: TextStyle(
-                    color: Colors.white,
-                  ),),
+                  Text(
+                    isSignIn ? 'No account yet?' : 'Already registered?',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
                   FlatButton(
-                    child: Text(isSignIn ? 'Register' : 'Log in', style: TextStyle(
-                    color: Color(0XFF69A4FF),
-                    fontWeight: FontWeight.w500,
-                    fontSize: 16.0,
-                  ),),
+                    child: Text(
+                      isSignIn ? 'Register' : 'Log in',
+                      style: TextStyle(
+                        color: Color(0XFF69A4FF),
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16.0,
+                      ),
+                    ),
                     onPressed: toggleIsSignIn,
                   )
                 ],
