@@ -23,28 +23,60 @@ class DatabaseService {
     });
   }
 
-  Stream<List<Trip>> streamTrips({String uid, String filterString}) {
-    if (filterString != null) {
-      return _db
-          .collection('trips')
-          .where('createdByUid', isEqualTo: uid)
-          .snapshots()
-          .map((snapshot) {
-        return snapshot.documents.map((document) {
-          return Trip.fromFirestore(document);
-        }).toList();
-      });
+  Stream<List<Trip>> streamTrips(
+      {String uid, String filterString, bool isPast}) {
+    final today = DateTime.now().millisecondsSinceEpoch;
+
+    if (filterString == null || filterString.trim() == '') {
+      if (isPast) {
+        return _db
+            .collection('trips')
+            .where('createdByUid', isEqualTo: uid)
+            .where('endDateInMs', isLessThan: today)
+            .snapshots()
+            .map((snapshot) {
+          return snapshot.documents.map((document) {
+            return Trip.fromFirestore(document);
+          }).toList();
+        });
+      } else {
+        return _db
+            .collection('trips')
+            .where('createdByUid', isEqualTo: uid)
+            .where('endDateInMs', isGreaterThanOrEqualTo: today)
+            .snapshots()
+            .map((snapshot) {
+          return snapshot.documents.map((document) {
+            return Trip.fromFirestore(document);
+          }).toList();
+        });
+      }
     } else {
-      return _db
-          .collection('trips')
-          .where('createdByUid', isEqualTo: uid)
-          .where('destination', isEqualTo: filterString)
-          .snapshots()
-          .map((snapshot) {
-        return snapshot.documents.map((document) {
-          return Trip.fromFirestore(document);
-        }).toList();
-      });
+      if (isPast) {
+        return _db
+            .collection('trips')
+            .where('createdByUid', isEqualTo: uid)
+            .where('searchIndex', arrayContains: filterString)
+            .where('endDateInMs', isLessThan: today)
+            .snapshots()
+            .map((snapshot) {
+          return snapshot.documents.map((document) {
+            return Trip.fromFirestore(document);
+          }).toList();
+        });
+      } else {
+        return _db
+            .collection('trips')
+            .where('createdByUid', isEqualTo: uid)
+            .where('searchIndex', arrayContains: filterString)
+            .where('endDateInMs', isGreaterThanOrEqualTo: today)
+            .snapshots()
+            .map((snapshot) {
+          return snapshot.documents.map((document) {
+            return Trip.fromFirestore(document);
+          }).toList();
+        });
+      }
     }
   }
 
@@ -107,6 +139,8 @@ class DatabaseService {
       'heroImages': newTrip.heroImages,
       'temperature': newTrip.temperature,
       'weatherIcon': newTrip.weatherIcon,
+      'searchIndex': newTrip.searchIndex,
+      'endDateInMs': newTrip.endDateInMs,
     });
   }
 
@@ -121,6 +155,8 @@ class DatabaseService {
       'location': updatedTrip.location,
       'temperature': updatedTrip.temperature,
       'weatherIcon': updatedTrip.weatherIcon,
+      'searchIndex': updatedTrip.searchIndex,
+      'endDateInMs': updatedTrip.endDateInMs,
     });
   }
 

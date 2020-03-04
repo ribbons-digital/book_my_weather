@@ -1,4 +1,3 @@
-import 'package:book_my_weather/models/currentlyWeather.dart';
 import 'package:book_my_weather/models/trip.dart';
 import 'package:book_my_weather/models/user.dart';
 import 'package:book_my_weather/pages/signin_register_screen.dart';
@@ -12,8 +11,9 @@ import 'package:provider/provider.dart';
 class TripsScreen extends StatefulWidget {
   static const String id = 'trips';
   final Function setFilterString;
+  final Function setIsPast;
 
-  TripsScreen({@required this.setFilterString});
+  TripsScreen({@required this.setFilterString, @required this.setIsPast});
 
   @override
   _TripsScreenState createState() => _TripsScreenState();
@@ -21,7 +21,6 @@ class TripsScreen extends StatefulWidget {
 
 class _TripsScreenState extends State<TripsScreen> {
   TextEditingController _textEditingController;
-  List<CurrentlyWeather> _temperatureList = [];
 
   String dropdownValue = 'Upcoming';
 
@@ -66,6 +65,11 @@ class _TripsScreenState extends State<TripsScreen> {
                       );
                     }).toList(),
                     onChanged: (String newValue) {
+                      if (newValue == 'Upcoming') {
+                        widget.setIsPast(false);
+                      } else {
+                        widget.setIsPast(true);
+                      }
                       setState(() {
                         dropdownValue = newValue;
                       });
@@ -104,11 +108,17 @@ class _TripsScreenState extends State<TripsScreen> {
             ),
             child: TextField(
               controller: _textEditingController,
+              onChanged: (String newValue) {
+                widget.setFilterString(newValue);
+              },
+              style: TextStyle(
+                fontSize: 22.0,
+              ),
               decoration: InputDecoration(
                 prefixIcon: Icon(Icons.search),
                 contentPadding:
                     EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                hintText: 'Search',
+                hintText: 'Search by destination',
                 hintStyle: TextStyle(color: Color(0XFF8D9093)),
                 filled: true,
                 fillColor: Color(0XFFE5E7EA),
@@ -139,7 +149,7 @@ class _TripsScreenState extends State<TripsScreen> {
               ),
             ),
           ),
-          trips != null && trips.length == 0
+          (trips == null || trips.length == 0) && dropdownValue == 'Upcoming'
               ? Align(
                   child: Padding(
                     padding: const EdgeInsets.all(10.0),
@@ -154,7 +164,7 @@ class _TripsScreenState extends State<TripsScreen> {
                   ),
                 )
               : SizedBox(),
-          trips != null && trips.length == 0
+          (trips == null || trips.length == 0) && dropdownValue == 'Upcoming'
               ? Align(
                   child: Padding(
                     padding: const EdgeInsets.all(10.0),
@@ -194,7 +204,8 @@ class _TripsScreenState extends State<TripsScreen> {
                     );
                   }),
             ),
-          if (trips == null || trips.length == 0)
+          if ((trips == null || trips.length == 0) &&
+              dropdownValue == 'Upcoming')
             Padding(
               padding: EdgeInsets.symmetric(
                 horizontal: 20.0,

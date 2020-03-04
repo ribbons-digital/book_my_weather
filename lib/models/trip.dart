@@ -13,6 +13,8 @@ class Trip {
   List<String> heroImages;
   String temperature;
   String weatherIcon;
+  List<String> searchIndex;
+  int endDateInMs;
 
   Trip({
     this.id,
@@ -26,14 +28,23 @@ class Trip {
     this.heroImages,
     this.temperature,
     this.weatherIcon,
+    this.searchIndex,
+    this.endDateInMs,
   });
 
   factory Trip.fromFirestore(DocumentSnapshot doc) {
     Map data = doc.data;
     List<String> heroImages = [];
+    List<String> searchIndex = [];
     if (data['heroImages'].length > 0) {
       heroImages = (data['heroImages'] as List)
           .map((heroImage) => heroImage as String)
+          .toList();
+    }
+
+    if (data['searchIndex'].length > 0) {
+      searchIndex = (data['searchIndex'] as List)
+          .map((indexString) => indexString as String)
           .toList();
     }
 
@@ -49,6 +60,8 @@ class Trip {
       heroImages: heroImages,
       temperature: data['temperature'],
       weatherIcon: data['weatherIcon'],
+      searchIndex: searchIndex,
+      endDateInMs: data['endDateInMs'],
     );
   }
 }

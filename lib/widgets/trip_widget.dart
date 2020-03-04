@@ -19,17 +19,49 @@ class TripWidget extends StatefulWidget {
 }
 
 class _TripWidgetState extends State<TripWidget> {
+  String getTimeMessage(BuildContext context) {
+    String timeMessage = '';
+    final trips = Provider.of<List<Trip>>(context);
+
+    final startDateISOString =
+        timeStampToISOString(trips[widget.index].startDate);
+
+    final endDateISOString = timeStampToISOString(trips[widget.index].endDate);
+    final isPast =
+        trips[widget.index].endDateInMs < DateTime.now().millisecondsSinceEpoch;
+    int daysLeft =
+        DateTime.parse(startDateISOString).difference(DateTime.now()).inDays;
+
+    int endedDaysAgo =
+        DateTime.parse(endDateISOString).difference(DateTime.now()).inDays;
+
+    if (daysLeft.isNegative && !isPast) {
+      timeMessage =
+          ' Started ${daysLeft.toString().substring(1, daysLeft.toString().length)} days ago';
+    }
+
+    if (daysLeft.isNegative && isPast) {
+      timeMessage =
+          ' Ended ${endedDaysAgo.toString().substring(1, daysLeft.toString().length)} days ago';
+    }
+
+    if (!daysLeft.isNegative && !isPast) {
+      timeMessage = ' $daysLeft days, from today';
+    }
+
+    if (daysLeft == 0) {
+      timeMessage = ' Trip starts today';
+    }
+
+    return timeMessage;
+  }
+
   @override
   Widget build(BuildContext context) {
     final trips = Provider.of<List<Trip>>(context);
-    final startDateISOString =
-        timeStampToISOString(trips[widget.index].startDate);
     final startDateToDateString =
         timeStampToDateString(trips[widget.index].startDate);
-    String daysLeft = DateTime.parse(startDateISOString)
-        .difference(DateTime.now())
-        .inDays
-        .toString();
+
     return Padding(
       padding: const EdgeInsets.only(
           left: 20.0, right: 20.0, top: 10.0, bottom: 10.0),
@@ -167,7 +199,7 @@ class _TripWidgetState extends State<TripWidget> {
                             child: Material(
                               color: Color(0X00FFFFFF),
                               child: Text(
-                                '$daysLeft days, from today',
+                                getTimeMessage(context),
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w200,

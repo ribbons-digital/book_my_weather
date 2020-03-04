@@ -17,6 +17,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 enum DateType { startDate, endDate }
+enum TripActionType { Add, Update }
 
 class TripScreen extends StatefulWidget {
   static const String id = 'trip_screen';
@@ -128,15 +129,19 @@ class _TripScreenState extends State<TripScreen> {
     }
   }
 
-  void addTrip(BuildContext context) async {
+  void addOrUpdateTrip(BuildContext context, TripActionType actionType) async {
     final db = DatabaseService();
     String heroImageUrl = '';
+    Trip trip;
+    final endDateInMs = endDate.millisecondsSinceEpoch;
 
-    http.Response response =
-        await http.get('$kUnsplashAPIURL&query=$destination');
+    List<String> splitList = destination.split(' ');
+    List<String> indexList = [];
 
-    if (response.statusCode == 200) {
-      heroImageUrl = jsonDecode(response.body)[0]['urls']['regular'];
+    for (int i = 0; i < splitList.length; i++) {
+      for (int y = 1; y < splitList[i].length + 1; y++) {
+        indexList.add(splitList[i].substring(0, y).toLowerCase());
+      }
     }
 
     Location location = Location();
@@ -149,7 +154,15 @@ class _TripScreenState extends State<TripScreen> {
       longitude: location.longitude,
     );
 
-    Trip newTrip = Trip(
+    if (actionType == TripActionType.Add) {
+      http.Response response =
+          await http.get('$kUnsplashAPIURL&query=$destination');
+
+      if (response.statusCode == 200) {
+        heroImageUrl = jsonDecode(response.body)[0]['urls']['regular'];
+      }
+
+      trip = Trip(
         createdByUid: Provider.of<User>(context, listen: false).uid,
         name: name,
         destination: destination,
@@ -159,27 +172,13 @@ class _TripScreenState extends State<TripScreen> {
         location: GeoPoint(location.latitude, location.longitude),
         heroImages: [heroImageUrl],
         temperature: currentWeather.currently.temperature.toStringAsFixed(0),
-        weatherIcon: currentWeather.currently.icon);
-
-    await db.addTrip(newTrip);
-    Navigator.pop(context);
-    Navigator.pop(context);
-  }
-
-  void updateTrip(BuildContext context) async {
-    final db = DatabaseService();
-
-    Location location = Location();
-    await location.getPlaceMarkFromAddress(address: destination);
-    WeatherModel weather = WeatherModel();
-    Weather currentWeather = await weather.getLocationWeather(
-      type: RequestedWeatherType.Currently,
-      useCelsius: true,
-      latitude: location.latitude,
-      longitude: location.longitude,
-    );
-
-    Trip updatedTrip = Trip(
+        weatherIcon: currentWeather.currently.icon,
+        searchIndex: indexList,
+        endDateInMs: endDateInMs,
+      );
+      await db.addTrip(trip);
+    } else {
+      trip = Trip(
         createdByUid: Provider.of<User>(context, listen: false).uid,
         name: name,
         destination: destination,
@@ -188,10 +187,13 @@ class _TripScreenState extends State<TripScreen> {
         endDate: Timestamp.fromDate(endDate),
         location: GeoPoint(location.latitude, location.longitude),
         temperature: currentWeather.currently.temperature.toStringAsFixed(0),
-        weatherIcon: currentWeather.currently.icon);
+        weatherIcon: currentWeather.currently.icon,
+        searchIndex: indexList,
+        endDateInMs: endDateInMs,
+      );
+      await db.updateTrip(docId: widget.existingTrip.id, updatedTrip: trip);
+    }
 
-    await db.updateTrip(
-        docId: widget.existingTrip.id, updatedTrip: updatedTrip);
     Navigator.pop(context);
     Navigator.pop(context);
   }
@@ -236,9 +238,9 @@ class _TripScreenState extends State<TripScreen> {
                                   );
                                 });
                             if (widget.existingTrip == null) {
-                              addTrip(context);
+                              addOrUpdateTrip(context, TripActionType.Add);
                             } else {
-                              updateTrip(context);
+                              addOrUpdateTrip(context, TripActionType.Update);
                             }
                           }
                         },

@@ -26,26 +26,10 @@ class _WrapperState extends State<Wrapper> {
   int _selectedIndex = 0;
   Future<String> deviceId;
   String filterString;
+  bool isPast = false;
+
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.w100);
-//  static const List<Widget> _widgetOptions = <Widget>[
-//    Text(
-//      'Index 0: Home',
-//      style: optionStyle,
-//    ),
-//    Text(
-//      'Index 1: Trips',
-//      style: optionStyle,
-//    ),
-//    Text(
-//      'Index 2: Saved',
-//      style: optionStyle,
-//    ),
-//    Text(
-//      'Index 3: Settings',
-//      style: optionStyle,
-//    ),
-//  ];
 
   void _onItemTapped(int index) {
     setState(() {
@@ -77,6 +61,12 @@ class _WrapperState extends State<Wrapper> {
     });
   }
 
+  void setIsPast(bool value) {
+    setState(() {
+      isPast = value;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final db = DatabaseService();
@@ -100,11 +90,12 @@ class _WrapperState extends State<Wrapper> {
                     ? Provider.of<User>(context).uid
                     : '',
                 filterString: filterString,
+                isPast: isPast,
               )),
             ],
             child: Consumer<PlaceData>(
               builder: (_, placeData, __) => MaterialApp(
-                title: 'Despicable Me Characters',
+                title: 'Book My Weather',
                 debugShowCheckedModeBanner: false,
                 theme: ThemeData(
                   primarySwatch: Colors.blue,
@@ -128,18 +119,6 @@ class _WrapperState extends State<Wrapper> {
                 ),
 //                navigatorObservers: [MyRouteObserver()],
                 home: Scaffold(
-//                  body: _selectedIndex == 0
-//                      ? WeatherListingScreen(
-//                          places: placeData.places,
-//                          deviceId: snapshot.data,
-//                          // setting: setting,
-//                        )
-//                      : _selectedIndex == 1
-//                          ? TripsScreen(
-//                              setFilterString: setFilterStringForTrips,
-//                              selectedScreenIndex: _selectedIndex,
-//                            )
-//                          : Scaffold(),
                   body: IndexedStack(
                     index: _selectedIndex,
                     children: <Widget>[
@@ -150,6 +129,7 @@ class _WrapperState extends State<Wrapper> {
                       ),
                       TripsScreen(
                         setFilterString: setFilterStringForTrips,
+                        setIsPast: setIsPast,
                       )
                     ],
                   ),
