@@ -1,10 +1,12 @@
 import 'package:book_my_weather/models/place.dart';
+import 'package:book_my_weather/models/place_data.dart';
 import 'package:book_my_weather/styleguide.dart';
 import 'package:book_my_weather/widgets/daily_weather_heading.dart';
 import 'package:book_my_weather/widgets/daily_weather_widget.dart';
 import 'package:book_my_weather/widgets/hourly_weather_widget.dart';
 import 'package:book_my_weather/widgets/weather_detail_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../styleguide.dart';
 
@@ -31,6 +33,15 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen>
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
 //    final screenWidth = MediaQuery.of(context).size.width;
+
+    final placeData = Provider.of<PlaceData>(context);
+    final hourlyWeatherList =
+        placeData.places[placeData.currentPlaceIndex].weather.hourly.data;
+    final dailyWeatherList =
+        placeData.places[placeData.currentPlaceIndex].weather.daily.data;
+
+    print(hourlyWeatherList.length);
+    print(dailyWeatherList.length);
 
     return Scaffold(
       body: Stack(
@@ -102,9 +113,10 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen>
                     children: <Widget>[
                       ListView.builder(
                         padding: EdgeInsets.all(10.0),
-                        itemCount: 12,
+                        itemCount: hourlyWeatherList.length,
                         itemBuilder: (BuildContext context, int index) {
-//                          if (index < 12) {
+                          if (index > 11) return null;
+
                           return GestureDetector(
                             onTap: () {
                               showModalBottomSheet(
@@ -116,7 +128,7 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen>
                                 isScrollControlled: true,
                                 builder: (context) {
                                   return FractionallySizedBox(
-                                    heightFactor: 0.55,
+                                    heightFactor: 0.6,
                                     child: WeatherDetail(
                                       rowIndex: index,
                                     ),
@@ -129,15 +141,13 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen>
                               weatherIconPath: 'assets/images/sunny.png',
                             ),
                           );
-//                          }
-//                          return null;
                         },
                       ),
                       ListView.builder(
                         padding: EdgeInsets.all(10.0),
-                        itemCount: 7,
+                        itemCount: dailyWeatherList.length,
                         itemBuilder: (BuildContext context, int index) {
-//                          if (index < 7) {
+                          if (index > 6) return null;
                           return GestureDetector(
                             onTap: () {
                               showModalBottomSheet(
@@ -149,7 +159,7 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen>
                                 isScrollControlled: true,
                                 builder: (context) {
                                   return FractionallySizedBox(
-                                    heightFactor: 0.55,
+                                    heightFactor: 0.6,
                                     child: WeatherDetail(
                                       rowIndex: index,
                                       isHourly: false,
@@ -164,8 +174,6 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen>
                                   'assets/images/sunny.png',
                             ),
                           );
-//                          }
-//                          return null;
                         },
                       ),
                     ],

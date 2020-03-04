@@ -19,12 +19,16 @@ class WeatherDetail extends StatelessWidget {
     final place = placeData.places[placeData.currentPlaceIndex];
     final hourlyWeather = placeData
         .places[placeData.currentPlaceIndex].weather.hourly.data[rowIndex];
-    final dailyWeather = placeData
-        .places[placeData.currentPlaceIndex].weather.daily.data[rowIndex];
-    String date = DateFormat('EEE, MMM d')
-        .format(DateTime.fromMillisecondsSinceEpoch(
-            place.weather.daily.data[rowIndex].time * 1000))
-        .toString();
+    final dailyWeather = isHourly
+        ? null
+        : placeData
+            .places[placeData.currentPlaceIndex].weather.daily.data[rowIndex];
+    final date = isHourly
+        ? null
+        : DateFormat('EEE, MMM d')
+            .format(DateTime.fromMillisecondsSinceEpoch(
+                place.weather.daily.data[rowIndex].time * 1000))
+            .toString();
 
     return Column(
       children: <Widget>[
@@ -84,6 +88,7 @@ class WeatherDetail extends StatelessWidget {
             style: TextStyle(
               fontSize: 16.0,
             ),
+            textAlign: TextAlign.center,
           ),
         ),
         Expanded(

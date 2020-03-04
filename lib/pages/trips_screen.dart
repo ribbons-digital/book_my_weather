@@ -206,19 +206,25 @@ class _TripsScreenState extends State<TripsScreen> {
             ),
           if ((trips == null || trips.length == 0) &&
               dropdownValue == 'Upcoming')
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 20.0,
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12.0),
-                child: Opacity(
-                  opacity: 0.7,
-                  child: Image.asset(
-                    'assets/images/Hot_Air_Ballon.jpg',
-                    fit: BoxFit.cover,
+            Expanded(
+              child: ListView(
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 20.0,
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12.0),
+                      child: Opacity(
+                        opacity: 0.7,
+                        child: Image.asset(
+                          'assets/images/Hot_Air_Ballon.jpg',
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
             ),
         ],

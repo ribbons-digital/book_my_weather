@@ -1,3 +1,4 @@
+import 'package:book_my_weather/constants.dart';
 import 'package:book_my_weather/models/place_data.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -17,16 +18,8 @@ class DailyWeather extends StatelessWidget {
     @required this.weatherConditionImgPath,
     this.tempRange,
     @required this.dayIndex,
-    this.dateTextStyle = const TextStyle(
-      fontWeight: FontWeight.w100,
-      fontSize: 20,
-      color: Colors.white,
-    ),
-    this.tempRangeTextStyle = const TextStyle(
-      fontWeight: FontWeight.w100,
-      fontSize: 20,
-      color: Colors.white,
-    ),
+    this.dateTextStyle = kDateTextStyle,
+    this.tempRangeTextStyle = kTempRangeTextStyle,
     this.weatherBoxBackgroundColor = Colors.black,
   });
 

@@ -36,13 +36,16 @@ class WeatherCondition extends StatelessWidget {
                 fontFamily: 'Roboto',
               ),
             ),
-            Text(
-              condition,
-              style: TextStyle(
+            FittedBox(
+              fit: BoxFit.fitWidth,
+              child: Text(
+                condition,
+                style: TextStyle(
 //                color: Colors.white,
-                fontSize: 20.0,
-                fontFamily: 'Roboto',
-                letterSpacing: 1.2,
+                  fontSize: 20.0,
+                  fontFamily: 'Roboto',
+                  letterSpacing: 1.2,
+                ),
               ),
             ),
           ],

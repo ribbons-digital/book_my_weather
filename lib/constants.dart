@@ -7,6 +7,18 @@ const kTextFieldStyle = TextStyle(
   fontSize: 24.0,
 );
 
+const kDateTextStyle = TextStyle(
+  fontWeight: FontWeight.w100,
+  fontSize: 20,
+  color: Colors.white,
+);
+
+const kTempRangeTextStyle = TextStyle(
+  fontWeight: FontWeight.w100,
+  fontSize: 20,
+  color: Colors.white,
+);
+
 const kGPlaceAutoCompleteURL =
     'https://maps.googleapis.com/maps/api/place/autocomplete/json';
 
