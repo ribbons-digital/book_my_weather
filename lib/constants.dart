@@ -25,6 +25,9 @@ const kGPlaceAutoCompleteURL =
 const kGPlaceSearchURL =
     'https://maps.googleapis.com/maps/api/place/findplacefromtext/json?fields=photos';
 
+const kGPlaceNearbySearchBaseURL =
+    'https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=$kGooglePlacesAPIKey&radius=5000';
+
 const kGPlacePhotoSearchURL =
     'https://maps.googleapis.com/maps/api/place/photo';
 
