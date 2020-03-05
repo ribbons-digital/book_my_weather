@@ -1,3 +1,4 @@
+import 'package:book_my_weather/constants.dart';
 import 'package:book_my_weather/models/weather.dart';
 import 'package:book_my_weather/secure/keys.dart';
 import 'package:book_my_weather/services/location.dart';
@@ -16,6 +17,8 @@ class WeatherModel {
     double longitude,
   }) async {
     String requestUrl;
+    String aqiRequestUrl;
+
     print('called');
     List<String> excludes = type == RequestedWeatherType.Hourly
         ? ["currently", "minutely", "daily", "alerts", "flags"]
@@ -28,18 +31,30 @@ class WeatherModel {
       requestUrl = useCelsius
           ? '$darkSkyApiUrl/$kDarkSkyAPIKey/$latitude,$longitude?units=si&?exclude=$excludes'
           : '$darkSkyApiUrl/$kDarkSkyAPIKey/$latitude,$longitude?exclude=$excludes';
+      aqiRequestUrl =
+          kAqiCNAPIBaseURL + '$latitude;$longitude/?token=$kAqiCNAPIToken';
     } else {
       Location location = Location();
       await location.getLocation();
+      final latitude = location.latitude;
+      final longitude = location.longitude;
+
       requestUrl = useCelsius
-          ? '$darkSkyApiUrl/$kDarkSkyAPIKey/${location.latitude},${location.longitude}?units=si&?exclude=$excludes'
-          : '$darkSkyApiUrl/$kDarkSkyAPIKey/${location.latitude},${location.longitude}?exclude=$excludes';
+          ? '$darkSkyApiUrl/$kDarkSkyAPIKey/$latitude,$longitude?units=si&?exclude=$excludes'
+          : '$darkSkyApiUrl/$kDarkSkyAPIKey/$latitude,$longitude?exclude=$excludes';
+      aqiRequestUrl =
+          kAqiCNAPIBaseURL + '$latitude;$longitude/?token=$kAqiCNAPIToken';
     }
 
     NetworkHelper networkHelper = NetworkHelper(requestUrl);
 
+    NetworkHelper aqiNetworkHelper = NetworkHelper(aqiRequestUrl);
+
     Map<String, dynamic> hourlyWeatherMap = await networkHelper.getData();
-//
+
+    Map<String, dynamic> aqi = await aqiNetworkHelper.getData();
+
+    hourlyWeatherMap['aqi'] = aqi['data']['aqi'];
 
     return Weather.fromJson(hourlyWeatherMap);
   }

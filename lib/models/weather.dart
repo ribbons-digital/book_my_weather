@@ -14,6 +14,7 @@ class Weather {
     this.hourly,
     this.daily,
     this.currently,
+    this.aqi,
   });
 
   double latitude;
@@ -25,6 +26,7 @@ class Weather {
   DailyWeather daily;
   @JsonKey(required: false)
   CurrentlyWeather currently;
+  double aqi;
 
   factory Weather.fromJson(Map<String, dynamic> json) =>
       _$WeatherFromJson(json);

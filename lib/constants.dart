@@ -30,3 +30,5 @@ const kGPlacePhotoSearchURL =
 
 const kUnsplashAPIURL =
     'https://api.unsplash.com/photos/random?count=1&client_id=$kUnsplashAPIKey';
+
+const kAqiCNAPIBaseURL = 'https://api.waqi.info/feed/geo:';

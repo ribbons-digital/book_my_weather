@@ -40,9 +40,6 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen>
     final dailyWeatherList =
         placeData.places[placeData.currentPlaceIndex].weather.daily.data;
 
-    print(hourlyWeatherList.length);
-    print(dailyWeatherList.length);
-
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,
@@ -75,7 +72,7 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen>
               Align(
                 alignment: Alignment.center,
                 child: Text(
-                  widget.place.name,
+                  widget.place.address,
                   style: AppTheme.display1,
                 ),
               ),

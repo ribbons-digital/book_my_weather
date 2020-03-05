@@ -116,6 +116,66 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
         .updatePlaceWeather(index, updatedWeather);
   }
 
+  Color getAqiColor() {
+    final aqi = widget.places[currentPage].weather.aqi;
+
+    if (aqi >= 0 && aqi <= 50) {
+      return Colors.green;
+    }
+
+    if (aqi >= 51 && aqi <= 100) {
+      return Colors.yellow;
+    }
+
+    if (aqi >= 101 && aqi <= 150) {
+      return Colors.orange;
+    }
+
+    if (aqi >= 151 && aqi <= 200) {
+      return Colors.red;
+    }
+
+    if (aqi >= 201 && aqi <= 300) {
+      return Colors.purple;
+    }
+
+    if (aqi >= 301 && aqi <= 500) {
+      return Color(0XFF800000);
+    }
+
+    return Colors.white;
+  }
+
+  String getAqiEmoji() {
+    final aqi = widget.places[currentPage].weather.aqi;
+
+    if (aqi >= 0 && aqi <= 50) {
+      return '🙂';
+    }
+
+    if (aqi >= 51 && aqi <= 100) {
+      return '😐';
+    }
+
+    if (aqi >= 101 && aqi <= 150) {
+      return '☹️';
+    }
+
+    if (aqi >= 151 && aqi <= 200) {
+      return '😷';
+    }
+
+    if (aqi >= 201 && aqi <= 300) {
+      return '😱';
+    }
+
+    if (aqi >= 301 && aqi <= 500) {
+      return '😵';
+    }
+
+    return '🤪';
+  }
+
   @override
   void didChangeDependencies() async {
     super.didChangeDependencies();
@@ -196,6 +256,8 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final height = MediaQuery.of(context).size.height;
+
     return Scaffold(
       appBar: AppBar(
         //leading: Icon(Icons.arrow_back_ios),
@@ -273,14 +335,83 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
                           SizedBox(
                             height: 8.0,
                           ),
-                          Text(
-                            date,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w100,
-                              fontSize: 30,
+                          if (height > 600)
+                            Text(
+                              date,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w100,
+                                fontSize: 30,
+                              ),
                             ),
-                          ),
+                          if (height > 600)
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: Column(
+                                children: <Widget>[
+                                  Text(
+                                    widget.places[currentPage].weather.aqi
+                                            .toStringAsFixed(0) +
+                                        ' ' +
+                                        getAqiEmoji(),
+                                    style: TextStyle(
+                                      color: getAqiColor(),
+                                      fontWeight: FontWeight.w300,
+                                      fontSize: 45,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Air Quality Index',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w100,
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          if (height > 600)
+                            SizedBox(
+                              height: 18.0,
+                            ),
+                          if (height < 600)
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Text(
+                                  date,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w100,
+                                    fontSize: 30,
+                                  ),
+                                ),
+                                Column(
+                                  children: <Widget>[
+                                    Text(
+                                      widget.places[currentPage].weather.aqi
+                                              .toStringAsFixed(0) +
+                                          ' ' +
+                                          getAqiEmoji(),
+                                      style: TextStyle(
+                                        color: getAqiColor(),
+                                        fontWeight: FontWeight.w300,
+                                        fontSize: 25,
+                                      ),
+                                    ),
+                                    Text(
+                                      'Air Quality Index',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w100,
+                                        fontSize: 15,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
                         ],
                       ),
                     ),
