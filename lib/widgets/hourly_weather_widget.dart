@@ -1,3 +1,4 @@
+import 'package:book_my_weather/constants.dart';
 import 'package:book_my_weather/models/place_data.dart';
 import 'package:book_my_weather/styleguide.dart';
 import 'package:flutter/material.dart';
@@ -29,48 +30,54 @@ class HourlyWeatherWidget extends StatelessWidget {
     final place = placeData.places[placeData.currentPlaceIndex];
     final hourlyWeatherData = place.weather.hourly.data;
 
-    return Row(
-      children: <Widget>[
-        Container(
-          width: MediaQuery.of(context).size.width / 5,
-          child: Text(
-            '${DateFormat('Ka').format(DateTime.fromMillisecondsSinceEpoch(hourlyWeatherData[hourIndex].time * 1000)).toString()}',
-            style: hourTextStyle,
-          ),
-        ),
-        SizedBox(
-          width: 40.0,
-        ),
-        Expanded(
-          child: Container(
-            decoration: BoxDecoration(
-              color: weatherBoxBackgroundColor,
-              borderRadius: BorderRadius.all(
-                Radius.circular(20.0),
-              ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.only(
-                left: 8.0,
-                right: 8.0,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Text(
-                    '${hourlyWeatherData[hourIndex].temperature.toStringAsFixed(0)}',
-                    style: tempTextStyle,
-                  ),
-                  Image.asset(
-                    weatherIconPath,
-                    scale: 2.5,
-                  )
-                ],
-              ),
+    return Container(
+      margin: EdgeInsets.only(
+        bottom: 10.0,
+      ),
+      child: Row(
+        children: <Widget>[
+          Container(
+            alignment: Alignment.center,
+            width: MediaQuery.of(context).size.width / 5,
+            child: Text(
+              '${DateFormat('ha').format(DateTime.fromMillisecondsSinceEpoch(hourlyWeatherData[hourIndex].time * 1000)).toString()}',
+              style: kDateTextStyle,
             ),
           ),
-        ),
-      ],
+          SizedBox(
+            width: 40.0,
+          ),
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                color: weatherBoxBackgroundColor,
+                borderRadius: BorderRadius.all(
+                  Radius.circular(20.0),
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  left: 8.0,
+                  right: 8.0,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    Text(
+                      '${hourlyWeatherData[hourIndex].temperature.toStringAsFixed(0)}º',
+                      style: kTempRangeTextStyle,
+                    ),
+                    Image.asset(
+                      weatherIconPath,
+                      scale: 3.5,
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

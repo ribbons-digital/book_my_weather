@@ -1,17 +1,13 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:book_my_weather/models/place.dart';
 import 'package:book_my_weather/models/place_data.dart';
-import 'package:book_my_weather/models/setting_data.dart';
 import 'package:book_my_weather/models/weather.dart';
-import 'package:book_my_weather/secure/keys.dart';
-import 'package:book_my_weather/services/db.dart';
 import 'package:book_my_weather/services/location.dart';
 import 'package:book_my_weather/services/weather.dart';
+import 'package:book_my_weather/utilities/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
 class SearchPlaceScreen extends StatefulWidget {
@@ -42,31 +38,18 @@ class _SearchPlaceScreenState extends State<SearchPlaceScreen> {
   }
 
   void getLocationResults(String input) async {
-    if (input.length > 0) {
-      if (this.mounted) {
-        setState(() {
-          isLoading = true;
-        });
-      }
-      String gPlacesURL =
-          'https://maps.googleapis.com/maps/api/place/autocomplete/json';
-      String type = '(regions)';
-      String request =
-          '$gPlacesURL?input=$input&key=$kGooglePlacesAPIKey&type=$type';
-      http.Response response = await http.get(request);
-      if (response.statusCode == 200) {
-        List<String> placesResult = [];
-        final predictions = jsonDecode(response.body)['predictions'];
-        for (var i = 0; i < predictions.length; i++) {
-          placesResult.add(predictions[i]['description']);
-        }
-        if (this.mounted) {
-          setState(() {
-            _placeList = placesResult;
-            isLoading = false;
-          });
-        }
-      }
+    if (this.mounted) {
+      setState(() {
+        isLoading = true;
+      });
+    }
+
+    final result = await gPlaceAutoCompleteResult(input);
+    if (this.mounted) {
+      setState(() {
+        _placeList = result;
+        isLoading = false;
+      });
     }
   }
 
@@ -79,8 +62,6 @@ class _SearchPlaceScreenState extends State<SearchPlaceScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final db = DatabaseService();
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Search'),
@@ -144,11 +125,8 @@ class _SearchPlaceScreenState extends State<SearchPlaceScreen> {
 
                                 Weather currentPlaceWeather =
                                     await weather.getLocationWeather(
-                                  type: RequestedWeatherType.Both,
-                                  useCelsius: Provider.of<SettingData>(context,
-                                          listen: false)
-                                      .setting
-                                      .useCelsius,
+                                  type: RequestedWeatherType.All,
+                                  useCelsius: true,
                                   latitude: location.latitude,
                                   longitude: location.longitude,
                                 );

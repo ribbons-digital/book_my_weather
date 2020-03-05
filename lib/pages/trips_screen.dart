@@ -1,7 +1,8 @@
+import 'package:book_my_weather/models/trip.dart';
 import 'package:book_my_weather/models/user.dart';
-import 'package:book_my_weather/pages/new_trip_screen.dart';
 import 'package:book_my_weather/pages/signin_register_screen.dart';
 import 'package:book_my_weather/pages/trip_detail_screen.dart';
+import 'package:book_my_weather/pages/trip_screen.dart';
 import 'package:book_my_weather/widgets/trip_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,10 @@ import 'package:provider/provider.dart';
 
 class TripsScreen extends StatefulWidget {
   static const String id = 'trips';
+  final Function setFilterString;
+  final Function setIsPast;
+
+  TripsScreen({@required this.setFilterString, @required this.setIsPast});
 
   @override
   _TripsScreenState createState() => _TripsScreenState();
@@ -18,7 +23,6 @@ class _TripsScreenState extends State<TripsScreen> {
   TextEditingController _textEditingController;
 
   String dropdownValue = 'Upcoming';
-  bool isEmpty = false;
 
   @override
   void initState() {
@@ -36,6 +40,8 @@ class _TripsScreenState extends State<TripsScreen> {
   Widget build(BuildContext context) {
     final double h = MediaQuery.of(context).size.width < 600 ? 20.0 : 50.0;
     final User user = Provider.of<User>(context);
+    final trips = Provider.of<List<Trip>>(context);
+
     return Scaffold(
       appBar: AppBar(
         //leading: Icon(Icons.arrow_back_ios),
@@ -59,6 +65,11 @@ class _TripsScreenState extends State<TripsScreen> {
                       );
                     }).toList(),
                     onChanged: (String newValue) {
+                      if (newValue == 'Upcoming') {
+                        widget.setIsPast(false);
+                      } else {
+                        widget.setIsPast(true);
+                      }
                       setState(() {
                         dropdownValue = newValue;
                       });
@@ -74,23 +85,9 @@ class _TripsScreenState extends State<TripsScreen> {
                     ),
                     onPressed: () {
                       if (user != null) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return NewTrip();
-                            },
-                          ),
-                        );
+                        Navigator.pushNamed(context, TripScreen.id);
                       } else {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return SignInRegisterScreen();
-                            },
-                          ),
-                        );
+                        Navigator.pushNamed(context, SignInRegisterScreen.id);
                       }
                     },
                   ),
@@ -111,11 +108,17 @@ class _TripsScreenState extends State<TripsScreen> {
             ),
             child: TextField(
               controller: _textEditingController,
+              onChanged: (String newValue) {
+                widget.setFilterString(newValue);
+              },
+              style: TextStyle(
+                fontSize: 22.0,
+              ),
               decoration: InputDecoration(
                 prefixIcon: Icon(Icons.search),
                 contentPadding:
                     EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                hintText: 'Search',
+                hintText: 'Search by destination',
                 hintStyle: TextStyle(color: Color(0XFF8D9093)),
                 filled: true,
                 fillColor: Color(0XFFE5E7EA),
@@ -146,7 +149,7 @@ class _TripsScreenState extends State<TripsScreen> {
               ),
             ),
           ),
-          isEmpty
+          (trips == null || trips.length == 0) && dropdownValue == 'Upcoming'
               ? Align(
                   child: Padding(
                     padding: const EdgeInsets.all(10.0),
@@ -161,7 +164,7 @@ class _TripsScreenState extends State<TripsScreen> {
                   ),
                 )
               : SizedBox(),
-          isEmpty
+          (trips == null || trips.length == 0) && dropdownValue == 'Upcoming'
               ? Align(
                   child: Padding(
                     padding: const EdgeInsets.all(10.0),
@@ -176,90 +179,54 @@ class _TripsScreenState extends State<TripsScreen> {
                   ),
                 )
               : SizedBox(),
-          Expanded(
-            child: ListView(
-              children: <Widget>[
-                GestureDetector(
-                  onTap: () {
+          if (trips != null && trips.length > 0)
+            Expanded(
+              child: ListView.builder(
+                  itemCount: trips.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return GestureDetector(
+                      onTap: () {
 //                    Navigator.pushNamed(context, TripDetail.id);
-                    Navigator.push(
-                      context,
-                      PageRouteBuilder(
-                        transitionDuration: const Duration(milliseconds: 550),
-                        pageBuilder: (context, _, __) => TripDetail(
-                          imgPath: 'assets/images/budapest.jpg',
-                          tripName: 'Hungary',
-                          city: 'Budapest',
-                          index: 0,
-                          currentTemp: '31',
-                          precipitation: '0',
-                          startDate: '2020-02-20 00:00:00.000',
-                        ),
+                        Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                            transitionDuration:
+                                const Duration(milliseconds: 550),
+                            pageBuilder: (context, _, __) => TripDetail(
+                              index: index,
+                            ),
+                          ),
+                        );
+                      },
+                      child: TripWidget(
+                        index: index,
                       ),
                     );
-                  },
-                  child: TripWidget(
-                    imgPath: 'assets/images/budapest.jpg',
-                    tripName: 'Hungary',
-                    city: 'Budapest',
-                    index: 0,
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-//                    Navigator.pushNamed(context, TripDetail.id);
-                    Navigator.push(
-                      context,
-                      PageRouteBuilder(
-                        transitionDuration: const Duration(milliseconds: 550),
-                        pageBuilder: (context, _, __) => TripDetail(
-                          imgPath: 'assets/images/taipei.jpg',
-                          tripName: 'Taiwan',
-                          city: 'Taipei',
-                          index: 1,
-                          currentTemp: '31',
-                          precipitation: '0',
-                          startDate: '2020-02-20 00:00:00.000',
-                        ),
-                      ),
-                    );
-                  },
-                  child: TripWidget(
-                    imgPath: 'assets/images/taipei.jpg',
-                    tripName: 'Taiwan',
-                    city: 'Taipei',
-                    index: 1,
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-//                    Navigator.pushNamed(context, TripDetail.id);
-                    Navigator.push(
-                      context,
-                      PageRouteBuilder(
-                        transitionDuration: const Duration(milliseconds: 550),
-                        pageBuilder: (context, _, __) => TripDetail(
-                          imgPath: 'assets/images/shanghai.jpg',
-                          tripName: 'China',
-                          city: 'Shanghai',
-                          index: 2,
-                          currentTemp: '31',
-                          precipitation: '0',
-                          startDate: '2020-02-20 00:00:00.000',
-                        ),
-                      ),
-                    );
-                  },
-                  child: TripWidget(
-                    imgPath: 'assets/images/shanghai.jpg',
-                    tripName: 'China',
-                    city: 'Shanghai',
-                    index: 2,
-                  ),
-                ),
-              ],
+                  }),
             ),
-          ),
+          if ((trips == null || trips.length == 0) &&
+              dropdownValue == 'Upcoming')
+            Expanded(
+              child: ListView(
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 20.0,
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12.0),
+                      child: Opacity(
+                        opacity: 0.7,
+                        child: Image.asset(
+                          'assets/images/Hot_Air_Ballon.jpg',
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
         ],
       ),
     );

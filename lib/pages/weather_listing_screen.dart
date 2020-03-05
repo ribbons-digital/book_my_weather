@@ -52,39 +52,42 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
 
   Future<Weather> getWeather() async {
     WeatherModel weather = WeatherModel();
-    if (widget.places.length > 0) {
-      setState(() {
-        placeName = widget.places[0].address;
-      });
-      return await weather.getLocationWeather(
-        type: RequestedWeatherType.Both,
-        latitude: widget.places[0].latitude,
-        longitude: widget.places[0].longitude,
-      );
-    } else {
-      Location location = Location();
-      await location.getLocation();
+//    if (widget.places.length > 0) {
+//      setState(() {
+//        placeName = widget.places[0].address;
+//      });
+//      return await weather.getLocationWeather(
+//        type: RequestedWeatherType.All,
+//        useCelsius: true,
+//        latitude: widget.places[0].latitude,
+//        longitude: widget.places[0].longitude,
+//      );
+//    } else
+//    if (widget.places.length == 0) {
+    Location location = Location();
+    await location.getLocation();
 
-      await location.getPlaceMarkFromCoordinates(
-          lat: location.latitude, lng: location.longitude);
+    await location.getPlaceMarkFromCoordinates(
+        lat: location.latitude, lng: location.longitude);
 
-      setState(() {
-        placeName = location.placeMark[0].locality;
-      });
-      Weather currentPlaceWeather = await weather.getLocationWeather(
-        type: RequestedWeatherType.Both,
-        latitude: location.latitude,
-        longitude: location.longitude,
-      );
+    setState(() {
+      placeName = location.placeMark[0].locality;
+    });
+    Weather currentPlaceWeather = await weather.getLocationWeather(
+      type: RequestedWeatherType.All,
+      useCelsius: true,
+      latitude: location.latitude,
+      longitude: location.longitude,
+    );
 
-      List<Place> places = [];
-      places.add(Place(
-        name: location.placeMark[0].name,
-        address: location.placeMark[0].locality,
-        latitude: location.latitude,
-        longitude: location.longitude,
-        weather: currentPlaceWeather,
-      ));
+    List<Place> places = [];
+    places.add(Place(
+      name: location.placeMark[0].name,
+      address: location.placeMark[0].locality,
+      latitude: location.latitude,
+      longitude: location.longitude,
+      weather: currentPlaceWeather,
+    ));
 //      _addPlace(Place(
 //        name: location.placeMark[0].name,
 //        address: location.placeMark[0].locality,
@@ -92,10 +95,10 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
 //        longitude: location.longitude,
 //        weather: currentPlaceWeather,
 //      ));
-      Provider.of<PlaceData>(context, listen: false).updatePlaces(places);
+    Provider.of<PlaceData>(context, listen: false).updatePlaces(places);
 
-      return currentPlaceWeather;
-    }
+    return currentPlaceWeather;
+//    }
   }
 
   @override
@@ -104,19 +107,78 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
     _pageController.dispose();
   }
 
-  void _addPlace(Place newPlace) {
-    Provider.of<PlaceData>(context, listen: false).addPlace(newPlace);
-  }
+//  void _addPlace(Place newPlace) {
+//    Provider.of<PlaceData>(context, listen: false).addPlace(newPlace);
+//  }
 
   void _updatePlaceWeather(int index, Weather updatedWeather) {
     Provider.of<PlaceData>(context, listen: false)
         .updatePlaceWeather(index, updatedWeather);
   }
 
+  Color getAqiColor() {
+    final aqi = widget.places[currentPage].weather.aqi;
+
+    if (aqi >= 0 && aqi <= 50) {
+      return Colors.green;
+    }
+
+    if (aqi >= 51 && aqi <= 100) {
+      return Colors.yellow;
+    }
+
+    if (aqi >= 101 && aqi <= 150) {
+      return Colors.orange;
+    }
+
+    if (aqi >= 151 && aqi <= 200) {
+      return Colors.red;
+    }
+
+    if (aqi >= 201 && aqi <= 300) {
+      return Colors.purple;
+    }
+
+    if (aqi >= 301 && aqi <= 500) {
+      return Color(0XFF800000);
+    }
+
+    return Colors.white;
+  }
+
+  String getAqiEmoji() {
+    final aqi = widget.places[currentPage].weather.aqi;
+
+    if (aqi >= 0 && aqi <= 50) {
+      return '🙂';
+    }
+
+    if (aqi >= 51 && aqi <= 100) {
+      return '😐';
+    }
+
+    if (aqi >= 101 && aqi <= 150) {
+      return '☹️';
+    }
+
+    if (aqi >= 151 && aqi <= 200) {
+      return '😷';
+    }
+
+    if (aqi >= 201 && aqi <= 300) {
+      return '😱';
+    }
+
+    if (aqi >= 301 && aqi <= 500) {
+      return '😵';
+    }
+
+    return '🤪';
+  }
+
   @override
   void didChangeDependencies() async {
     super.didChangeDependencies();
-
     if (Provider.of<Setting>(context) != null &&
         widget.places.length > Provider.of<Setting>(context).places.length &&
         widget.places.length > 1) {
@@ -146,13 +208,19 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
       WeatherModel weather = WeatherModel();
       final tempPlaces = Provider.of<Setting>(context).places;
       Weather placeWeather = await weather.getLocationWeather(
-        type: RequestedWeatherType.Both,
+        type: RequestedWeatherType.All,
         useCelsius: true,
         latitude: tempPlaces[0].latitude,
         longitude: tempPlaces[0].longitude,
       );
 
       List<Place> places = [];
+
+      if (widget.places.length > 0) {
+        places = widget.places[0].name == tempPlaces[0].name
+            ? []
+            : List.from(widget.places);
+      }
       for (var i = 0; i <= tempPlaces.length - 1; i++) {
         places.add(Place(
           name: tempPlaces[i].name,
@@ -188,6 +256,8 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final height = MediaQuery.of(context).size.height;
+
     return Scaffold(
       appBar: AppBar(
         //leading: Icon(Icons.arrow_back_ios),
@@ -265,14 +335,83 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
                           SizedBox(
                             height: 8.0,
                           ),
-                          Text(
-                            date,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w100,
-                              fontSize: 30,
+                          if (height > 600)
+                            Text(
+                              date,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w100,
+                                fontSize: 30,
+                              ),
                             ),
-                          ),
+                          if (height > 600)
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: Column(
+                                children: <Widget>[
+                                  Text(
+                                    widget.places[currentPage].weather.aqi
+                                            .toStringAsFixed(0) +
+                                        ' ' +
+                                        getAqiEmoji(),
+                                    style: TextStyle(
+                                      color: getAqiColor(),
+                                      fontWeight: FontWeight.w300,
+                                      fontSize: 45,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Air Quality Index',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w100,
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          if (height > 600)
+                            SizedBox(
+                              height: 18.0,
+                            ),
+                          if (height < 600)
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Text(
+                                  date,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w100,
+                                    fontSize: 30,
+                                  ),
+                                ),
+                                Column(
+                                  children: <Widget>[
+                                    Text(
+                                      widget.places[currentPage].weather.aqi
+                                              .toStringAsFixed(0) +
+                                          ' ' +
+                                          getAqiEmoji(),
+                                      style: TextStyle(
+                                        color: getAqiColor(),
+                                        fontWeight: FontWeight.w300,
+                                        fontSize: 25,
+                                      ),
+                                    ),
+                                    Text(
+                                      'Air Quality Index',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w100,
+                                        fontSize: 15,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
                         ],
                       ),
                     ),
@@ -296,7 +435,7 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
                               WeatherModel weather = WeatherModel();
                               Weather updatedWeather =
                                   await weather.getLocationWeather(
-                                type: RequestedWeatherType.Both,
+                                type: RequestedWeatherType.All,
                                 useCelsius: true,
                                 latitude: place.latitude,
                                 longitude: place.longitude,

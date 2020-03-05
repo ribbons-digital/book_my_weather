@@ -11,10 +11,12 @@ class Setting {
   factory Setting.fromFirestore(DocumentSnapshot doc) {
     Map data = doc.data;
 
-   List<Place> places = [];
-   if (data['places'] != null) {
-     places = (data['places'] as List).map((place) => Place.fromJson(place)).toList();
-   }
+    List<Place> places = [];
+    if (data['places'] != null) {
+      places = (data['places'] as List)
+          .map((place) => Place.fromJson(place))
+          .toList();
+    }
 
     return Setting(
       id: doc.documentID,
@@ -22,12 +24,4 @@ class Setting {
       places: places,
     );
   }
-}
-
-class _PlaceInSetting {
-  final String address;
-  final String name;
-  final Map position;
-
-  _PlaceInSetting({this.address, this.name, this.position});
 }

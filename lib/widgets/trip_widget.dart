@@ -1,30 +1,67 @@
+import 'package:book_my_weather/models/trip.dart';
+import 'package:book_my_weather/models/weather.dart';
+import 'package:book_my_weather/services/db.dart';
+import 'package:book_my_weather/services/weather.dart';
+import 'package:book_my_weather/utilities/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
-class TripWidget extends StatelessWidget {
-  final String imgPath;
-  final String currentTemp;
-  final String precipitation;
-  final String tripName;
-  final String city;
-  final String startDate;
+class TripWidget extends StatefulWidget {
   final int index;
 
   TripWidget({
-    @required this.imgPath,
-    this.currentTemp = '31',
-    this.precipitation = '0',
-    @required this.tripName,
-    @required this.city,
-    this.startDate = '2020-02-20 00:00:00.000',
     @required this.index,
   });
 
   @override
+  _TripWidgetState createState() => _TripWidgetState();
+}
+
+class _TripWidgetState extends State<TripWidget> {
+  String getTimeMessage(BuildContext context) {
+    String timeMessage = '';
+    final trips = Provider.of<List<Trip>>(context);
+
+    final startDateISOString =
+        timeStampToISOString(trips[widget.index].startDate);
+
+    final endDateISOString = timeStampToISOString(trips[widget.index].endDate);
+    final isPast =
+        trips[widget.index].endDateInMs < DateTime.now().millisecondsSinceEpoch;
+    int daysLeft =
+        DateTime.parse(startDateISOString).difference(DateTime.now()).inDays;
+
+    int endedDaysAgo =
+        DateTime.parse(endDateISOString).difference(DateTime.now()).inDays;
+
+    if (daysLeft.isNegative && !isPast) {
+      timeMessage =
+          ' Started ${daysLeft.toString().substring(1, daysLeft.toString().length)} days ago';
+    }
+
+    if (daysLeft.isNegative && isPast) {
+      timeMessage =
+          ' Ended ${endedDaysAgo.toString().substring(1, daysLeft.toString().length)} days ago';
+    }
+
+    if (!daysLeft.isNegative && !isPast) {
+      timeMessage = ' $daysLeft days, from today';
+    }
+
+    if (daysLeft == 0) {
+      timeMessage = ' Trip starts today';
+    }
+
+    return timeMessage;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    String daysLeft =
-        DateTime.parse(startDate).difference(DateTime.now()).inDays.toString();
+    final trips = Provider.of<List<Trip>>(context);
+    final startDateToDateString =
+        timeStampToDateString(trips[widget.index].startDate);
+
     return Padding(
       padding: const EdgeInsets.only(
           left: 20.0, right: 20.0, top: 10.0, bottom: 10.0),
@@ -33,20 +70,11 @@ class TripWidget extends StatelessWidget {
             ? MediaQuery.of(context).size.width - 40
             : MediaQuery.of(context).size.width - 100,
         height: 161,
-//        decoration: BoxDecoration(
-//          borderRadius: BorderRadius.circular(12.0),
-//          image: DecorationImage(
-//            image: AssetImage(imgPath),
-//            fit: BoxFit.cover,
-//            colorFilter: new ColorFilter.mode(
-//                Colors.black.withOpacity(0.6), BlendMode.dstATop),
-//          ),
-//        ),
         child: Stack(
           fit: StackFit.expand,
           children: <Widget>[
             Hero(
-              tag: 'card-background-$index',
+              tag: 'card-background-${widget.index}',
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12.0),
@@ -57,10 +85,13 @@ class TripWidget extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(12.0),
               child: Hero(
-                tag: 'city-img-$index',
-                child: Image.asset(
-                  imgPath,
-                  fit: BoxFit.cover,
+                tag: 'city-img-${widget.index}',
+                child: Opacity(
+                  opacity: 0.6,
+                  child: Image.network(
+                    trips[widget.index].heroImages[0],
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
             ),
@@ -75,17 +106,17 @@ class TripWidget extends StatelessWidget {
                       Row(
                         children: <Widget>[
                           Hero(
-                            tag: 'tempIcon-$index',
+                            tag: 'tempIcon-${widget.index}',
                             child: SvgPicture.asset('assets/images/sunny.svg',
                                 color: Colors.white,
                                 semanticsLabel: 'sunny-line'),
                           ),
                           Hero(
-                            tag: 'temp-$index',
+                            tag: 'temp-${widget.index}',
                             child: Material(
                               color: Color(0X00FFFFFF),
                               child: Text(
-                                '$currentTempº currently',
+                                '${trips[widget.index].temperature}º currently',
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w200,
@@ -95,31 +126,38 @@ class TripWidget extends StatelessWidget {
                           ),
                         ],
                       ),
-                      Hero(
-                        tag: 'precipitation-$index',
-                        child: Material(
-                          color: Color(0X00FFFFFF),
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: <Widget>[
-                              Image.asset('assets/images/rain-solid.png'),
-                              Text(
-                                '$precipitation%',
-                              )
-                            ],
-                          ),
-                        ),
+                      IconButton(
+                        icon: Icon(Icons.refresh),
+                        onPressed: () async {
+                          final db = DatabaseService();
+                          WeatherModel weather = WeatherModel();
+                          Weather updatedWeather =
+                              await weather.getLocationWeather(
+                            type: RequestedWeatherType.Currently,
+                            useCelsius: true,
+                            latitude: trips[widget.index].location.latitude,
+                            longitude: trips[widget.index].location.longitude,
+                          );
+                          db.updateTripCurrentWeather(
+                            docId: trips[widget.index].id,
+                            newTemp: updatedWeather.currently.temperature
+                                .toStringAsFixed(0),
+                            newIcon: updatedWeather.currently.icon,
+                          );
+                        },
+                        iconSize: 24.0,
+                        color: Colors.white,
                       )
                     ],
                   ),
                   Column(
                     children: <Widget>[
                       Hero(
-                        tag: 'city-$index',
+                        tag: 'city-${widget.index}',
                         child: Material(
                           color: Color(0X00FFFFFF),
                           child: Text(
-                            city,
+                            trips[widget.index].destination,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 22.0,
@@ -129,11 +167,11 @@ class TripWidget extends StatelessWidget {
                         ),
                       ),
                       Hero(
-                        tag: 'tripName-$index',
+                        tag: 'tripName-${widget.index}',
                         child: Material(
                           color: Color(0X00FFFFFF),
                           child: Text(
-                            tripName,
+                            trips[widget.index].name,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 18.0,
@@ -150,18 +188,18 @@ class TripWidget extends StatelessWidget {
                       Row(
                         children: <Widget>[
                           Hero(
-                            tag: 'timer-icon-$index',
+                            tag: 'timer-icon-${widget.index}',
                             child: Icon(
                               Icons.timer,
                               color: Colors.white,
                             ),
                           ),
                           Hero(
-                            tag: 'daysLeft-$index',
+                            tag: 'daysLeft-${widget.index}',
                             child: Material(
                               color: Color(0X00FFFFFF),
                               child: Text(
-                                '$daysLeft days, from today',
+                                getTimeMessage(context),
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w200,
@@ -172,12 +210,11 @@ class TripWidget extends StatelessWidget {
                         ],
                       ),
                       Hero(
-                        tag: 'startDate-$index',
+                        tag: 'startDate-${widget.index}',
                         child: Material(
                           color: Color(0X00FFFFFF),
                           child: Text(
-                            DateFormat.yMd('en_US')
-                                .format(DateTime.parse(startDate)),
+                            startDateToDateString,
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.w200,

@@ -1,32 +1,30 @@
+import 'package:book_my_weather/models/trip.dart';
 import 'package:book_my_weather/pages/places_screen.dart';
+import 'package:book_my_weather/pages/trip_screen.dart';
+import 'package:book_my_weather/utilities/index.dart';
 import 'package:book_my_weather/widgets/trip_detail_grid_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class TripDetail extends StatelessWidget {
   static const String id = 'tripDetail';
 
-  final String imgPath;
-  final String currentTemp;
-  final String precipitation;
-  final String tripName;
-  final String city;
-  final String startDate;
   final int index;
 
   TripDetail({
-    @required this.imgPath,
-    @required this.currentTemp,
-    @required this.precipitation,
-    @required this.tripName,
-    @required this.city,
-    @required this.startDate,
     @required this.index,
   });
 
   @override
   Widget build(BuildContext context) {
+    final trip = Provider.of<List<Trip>>(context)[index];
+    final startDateISOString = timeStampToISOString(trip.startDate);
+    final startDateToDateString = timeStampToDateString(trip.startDate);
+    String daysLeft = DateTime.parse(startDateISOString)
+        .difference(DateTime.now())
+        .inDays
+        .toString();
     return Scaffold(
       body: Column(
         children: <Widget>[
@@ -38,9 +36,12 @@ class TripDetail extends StatelessWidget {
               children: <Widget>[
                 Hero(
                   tag: 'city-img-$index',
-                  child: Image.asset(
-                    imgPath,
-                    fit: BoxFit.cover,
+                  child: Opacity(
+                    opacity: 0.6,
+                    child: Image.network(
+                      trip.heroImages[0],
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
                 Align(
@@ -60,10 +61,22 @@ class TripDetail extends StatelessWidget {
                       ),
                       Padding(
                         padding: const EdgeInsets.only(right: 9.0),
-                        child: Icon(
-                          Icons.edit,
-                          size: 30.0,
-                          color: Colors.white,
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.edit,
+                            size: 30.0,
+                            color: Colors.white,
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                pageBuilder: (context, _, __) => TripScreen(
+                                  existingTrip: trip,
+                                ),
+                              ),
+                            );
+                          },
                         ),
                       )
                     ],
@@ -76,7 +89,7 @@ class TripDetail extends StatelessWidget {
                     child: Material(
                       color: Color(0X00FFFFFF),
                       child: Text(
-                        city,
+                        trip.destination,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 22.0,
@@ -93,7 +106,7 @@ class TripDetail extends StatelessWidget {
                     child: Material(
                       color: Color(0X00FFFFFF),
                       child: Text(
-                        tripName,
+                        trip.name,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 18.0,
@@ -111,7 +124,7 @@ class TripDetail extends StatelessWidget {
                       right: 8.0,
                     ),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Row(
                           children: <Widget>[
@@ -126,31 +139,31 @@ class TripDetail extends StatelessWidget {
                               child: Material(
                                 color: Color(0X00FFFFFF),
                                 child: Text(
-                                  currentTemp + 'º currently',
+                                  '${trip.temperature}º currently',
                                   style: TextStyle(
                                     color: Colors.white,
-                                    fontWeight: FontWeight.w200,
+                                    fontWeight: FontWeight.w300,
                                   ),
                                 ),
                               ),
                             ),
                           ],
                         ),
-                        Hero(
-                          tag: 'precipitation-1',
-                          child: Material(
-                            color: Color(0X00FFFFFF),
-                            child: Stack(
-                              alignment: Alignment.center,
-                              children: <Widget>[
-                                Image.asset('assets/images/rain-solid.png'),
-                                Text(
-                                  precipitation + '%',
-                                )
-                              ],
-                            ),
-                          ),
-                        )
+//                        Hero(
+//                          tag: 'precipitation-1',
+//                          child: Material(
+//                            color: Color(0X00FFFFFF),
+//                            child: Stack(
+//                              alignment: Alignment.center,
+//                              children: <Widget>[
+//                                Image.asset('assets/images/rain-solid.png'),
+//                                Text(
+//                                  precipitation + '%',
+//                                )
+//                              ],
+//                            ),
+//                          ),
+//                        )
                       ],
                     ),
                   ),
@@ -179,7 +192,7 @@ class TripDetail extends StatelessWidget {
                               child: Material(
                                 color: Color(0X00FFFFFF),
                                 child: Text(
-                                  '13 days, from today',
+                                  '$daysLeft days, from today',
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w200,
@@ -194,9 +207,7 @@ class TripDetail extends StatelessWidget {
                           child: Material(
                             color: Color(0X00FFFFFF),
                             child: Text(
-                              DateFormat.yMd('en_US').format(
-                                DateTime.parse(startDate),
-                              ),
+                              startDateToDateString,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w200,

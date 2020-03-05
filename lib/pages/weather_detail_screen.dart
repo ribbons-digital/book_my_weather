@@ -1,10 +1,12 @@
 import 'package:book_my_weather/models/place.dart';
+import 'package:book_my_weather/models/place_data.dart';
 import 'package:book_my_weather/styleguide.dart';
 import 'package:book_my_weather/widgets/daily_weather_heading.dart';
 import 'package:book_my_weather/widgets/daily_weather_widget.dart';
 import 'package:book_my_weather/widgets/hourly_weather_widget.dart';
 import 'package:book_my_weather/widgets/weather_detail_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../styleguide.dart';
 
@@ -31,6 +33,12 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen>
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
 //    final screenWidth = MediaQuery.of(context).size.width;
+
+    final placeData = Provider.of<PlaceData>(context);
+    final hourlyWeatherList =
+        placeData.places[placeData.currentPlaceIndex].weather.hourly.data;
+    final dailyWeatherList =
+        placeData.places[placeData.currentPlaceIndex].weather.daily.data;
 
     return Scaffold(
       body: Stack(
@@ -64,7 +72,7 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen>
               Align(
                 alignment: Alignment.center,
                 child: Text(
-                  widget.place.name,
+                  widget.place.address,
                   style: AppTheme.display1,
                 ),
               ),
@@ -102,68 +110,67 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen>
                     children: <Widget>[
                       ListView.builder(
                         padding: EdgeInsets.all(10.0),
+                        itemCount: hourlyWeatherList.length,
                         itemBuilder: (BuildContext context, int index) {
-                          if (index < 12) {
-                            return GestureDetector(
-                              onTap: () {
-                                showModalBottomSheet(
-                                  backgroundColor: Colors.white,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                  ),
-                                  context: context,
-                                  isScrollControlled: true,
-                                  builder: (context) {
-                                    return FractionallySizedBox(
-                                      heightFactor: 0.55,
-                                      child: WeatherDetail(
-                                        rowIndex: index,
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
-                              child: HourlyWeatherWidget(
-                                hourIndex: index,
-                                weatherIconPath: 'assets/images/sunny.png',
-                              ),
-                            );
-                          }
-                          return null;
+                          if (index > 11) return null;
+
+                          return GestureDetector(
+                            onTap: () {
+                              showModalBottomSheet(
+                                backgroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                ),
+                                context: context,
+                                isScrollControlled: true,
+                                builder: (context) {
+                                  return FractionallySizedBox(
+                                    heightFactor: 0.6,
+                                    child: WeatherDetail(
+                                      rowIndex: index,
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                            child: HourlyWeatherWidget(
+                              hourIndex: index,
+                              weatherIconPath: 'assets/images/sunny.png',
+                            ),
+                          );
                         },
                       ),
                       ListView.builder(
                         padding: EdgeInsets.all(10.0),
+                        itemCount: dailyWeatherList.length,
                         itemBuilder: (BuildContext context, int index) {
-                          if (index < 7) {
-                            return GestureDetector(
-                              onTap: () {
-                                showModalBottomSheet(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                  ),
-                                  backgroundColor: Colors.white,
-                                  context: context,
-                                  isScrollControlled: true,
-                                  builder: (context) {
-                                    return FractionallySizedBox(
-                                      heightFactor: 0.55,
-                                      child: WeatherDetail(
-                                        rowIndex: index,
-                                        isHourly: false,
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
-                              child: DailyWeather(
-                                dayIndex: index,
-                                weatherConditionImgPath:
-                                    'assets/images/sunny.png',
-                              ),
-                            );
-                          }
-                          return null;
+                          if (index > 6) return null;
+                          return GestureDetector(
+                            onTap: () {
+                              showModalBottomSheet(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                ),
+                                backgroundColor: Colors.white,
+                                context: context,
+                                isScrollControlled: true,
+                                builder: (context) {
+                                  return FractionallySizedBox(
+                                    heightFactor: 0.6,
+                                    child: WeatherDetail(
+                                      rowIndex: index,
+                                      isHourly: false,
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                            child: DailyWeather(
+                              dayIndex: index,
+                              weatherConditionImgPath:
+                                  'assets/images/sunny.png',
+                            ),
+                          );
                         },
                       ),
                     ],
