@@ -1,13 +1,13 @@
 import 'dart:math' as math;
 
 import 'package:book_my_weather/models/google_place_detail.dart';
+import 'package:book_my_weather/pages/image_full_screen.dart';
 import 'package:book_my_weather/secure/keys.dart';
 import 'package:book_my_weather/services/google_places.dart';
 import 'package:book_my_weather/services/networking.dart';
 import 'package:book_my_weather/utilities/index.dart';
-import 'package:book_my_weather/widgets/daily_weather_widget.dart';
-import 'package:book_my_weather/widgets/hourly_weather_widget.dart';
 import 'package:book_my_weather/widgets/place_detail_widget.dart';
+import 'package:book_my_weather/widgets/place_weather_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
@@ -83,14 +83,27 @@ class _PlaceDetailState extends State<PlaceDetail>
     });
   }
 
-  List<Widget> heroImages(List<String> photoReferences) {
+  List<Widget> heroImages(BuildContext context, List<String> photoReferences) {
     List<String> photoUrls = photoReferences.map((photoReference) {
       return buildPhotoURL(photoReference);
     }).toList();
     return photoUrls.map((url) {
-      return Image.network(
-        url,
-        fit: BoxFit.cover,
+      return GestureDetector(
+        onTap: () {
+          Navigator.push(context, MaterialPageRoute(builder: (_) {
+            return ImageFullScreen(
+              tag: url,
+              url: url,
+            );
+          }));
+        },
+        child: Hero(
+          tag: url,
+          child: Image.network(
+            url,
+            fit: BoxFit.cover,
+          ),
+        ),
       );
     }).toList();
   }
@@ -166,26 +179,11 @@ class _PlaceDetailState extends State<PlaceDetail>
                     ),
                   ],
                   flexibleSpace: FlexibleSpaceBar(
-//                title: Text(
-//                  'Taipei 101',
-//                  style: TextStyle(
-//                    color: Colors.white,
-//                  ),
-//                ),
-                      background: PageView(
-                    scrollDirection: Axis.horizontal,
-                    children: heroImages(placeDetail.photos),
-//                    children: <Widget>[
-//                      Image.asset(
-//                        'assets/images/taipei_101.jpg',
-//                        fit: BoxFit.cover,
-//                      ),
-//                      Image.asset(
-//                        'assets/images/shanghai.jpg',
-//                        fit: BoxFit.cover,
-//                      ),
-//                    ],
-                  )),
+                    background: PageView(
+                      scrollDirection: Axis.horizontal,
+                      children: heroImages(context, placeDetail.photos),
+                    ),
+                  ),
                 ),
                 SliverToBoxAdapter(
                   child: Column(
@@ -231,18 +229,6 @@ class _PlaceDetailState extends State<PlaceDetail>
                           ],
                         ),
                       ),
-//                      Padding(
-//                        padding: const EdgeInsets.only(
-//                            left: 15.0, top: 10.0, bottom: 8.0),
-//                        child: Text(
-//                          'Towering landmark skyscrapper offering shops, eateries and an observation platform on the 89th floor.',
-//                          style: TextStyle(
-//                            fontSize: 16.0,
-//                          ),
-//                          maxLines: 3,
-//                          overflow: TextOverflow.ellipsis,
-//                        ),
-//                      ),
                       Padding(
                         padding: const EdgeInsets.only(
                           left: 15.0,
@@ -451,21 +437,14 @@ class _PlaceDetailState extends State<PlaceDetail>
                       googleUrl: placeDetail.googleUrl,
                     ),
                   ),
-                  PlaceWeather(),
-                  SliverGrid.count(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 8.0,
-                    crossAxisSpacing: 8.0,
-                    children: List.generate(20, (i) {
-                      return Container(
-                        color: Colors.teal[100 * (i % 9)],
-                        child: Image.network(
-                          'https://communication-skills.info/wp-content/uploads/European-common-cat.jpg',
-                          fit: BoxFit.cover,
-                        ),
-                      );
-                    }),
+                  PlaceWeather(
+                    address: placeDetail.address,
                   ),
+                  SliverGrid.count(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 8.0,
+                      crossAxisSpacing: 8.0,
+                      children: heroImages(context, placeDetail.photos)),
                   SliverToBoxAdapter(
                     child: Text('4'),
                   ),
@@ -486,112 +465,6 @@ class _PlaceDetailState extends State<PlaceDetail>
 
         return Container();
       },
-    );
-  }
-}
-
-class PlaceWeather extends StatefulWidget {
-  const PlaceWeather({
-    Key key,
-  }) : super(key: key);
-
-  @override
-  _PlaceWeatherState createState() => _PlaceWeatherState();
-}
-
-class _PlaceWeatherState extends State<PlaceWeather> {
-  bool isHourly = true;
-
-  void switchWeatherView() {
-    setState(() {
-      isHourly = !isHourly;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return SliverList(
-      delegate: SliverChildListDelegate(List.generate(isHourly ? 24 : 7, (i) {
-        if (i == 0) {
-          return Theme(
-            data: ThemeData(
-              canvasColor: Colors.white,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.only(
-                left: 16.0,
-                top: 8.0,
-                right: 8.0,
-                bottom: 8.0,
-              ),
-              child: DropdownButton(
-                value: isHourly ? 'Hourly' : 'Daily',
-                elevation: 16,
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.w200,
-                  fontSize: 20.0,
-                ),
-                items: <String>['Hourly', 'Daily']
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                onChanged: (String newValue) {
-                  setState(() {
-                    newValue == 'Hourly' ? isHourly = true : isHourly = false;
-                  });
-                },
-              ),
-            ),
-          );
-        }
-        return isHourly
-            ? Padding(
-                padding: const EdgeInsets.only(
-                  left: 16.0,
-                  bottom: 16.0,
-                ),
-                child: HourlyWeatherWidget(
-                  hourIndex: 0,
-                  hour: '$i:00',
-                  temperature: '31º',
-                  weatherIconPath: 'assets/images/sunny.png',
-                  hourTextStyle: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w100,
-                    fontSize: 28.0,
-                  ),
-                  weatherBoxBackgroundColor: Colors.white,
-                  tempTextStyle: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w100,
-                    fontSize: 28.0,
-                  ),
-                ),
-              )
-            : Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: DailyWeather(
-                  date: 'Sat. 25, Jan.',
-                  weatherConditionImgPath: 'assets/images/sunny.png',
-                  tempRange: '32º / 22º',
-                  tempRangeTextStyle: TextStyle(
-                    fontWeight: FontWeight.w100,
-                    fontSize: 20,
-                    color: Colors.black,
-                  ),
-                  weatherBoxBackgroundColor: Colors.white,
-                  dateTextStyle: TextStyle(
-                    fontWeight: FontWeight.w100,
-                    fontSize: 20,
-                    color: Colors.black,
-                  ),
-                ),
-              );
-      })),
     );
   }
 }

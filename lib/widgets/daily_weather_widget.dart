@@ -1,8 +1,7 @@
 import 'package:book_my_weather/constants.dart';
-import 'package:book_my_weather/models/place_data.dart';
+import 'package:book_my_weather/models/dailyWeatherData.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 
 class DailyWeather extends StatelessWidget {
   final String date;
@@ -12,6 +11,7 @@ class DailyWeather extends StatelessWidget {
   final TextStyle dateTextStyle;
   final TextStyle tempRangeTextStyle;
   final Color weatherBoxBackgroundColor;
+  final List<DailyWeatherData> dailyWeatherData;
 
   DailyWeather({
     this.date,
@@ -21,16 +21,14 @@ class DailyWeather extends StatelessWidget {
     this.dateTextStyle = kDateTextStyle,
     this.tempRangeTextStyle = kTempRangeTextStyle,
     this.weatherBoxBackgroundColor = Colors.black,
+    @required this.dailyWeatherData,
   });
 
   @override
   Widget build(BuildContext context) {
-    final placeData = Provider.of<PlaceData>(context);
-    final place = placeData.places[placeData.currentPlaceIndex];
-    final dailyWeatherData = place.weather.daily.data;
     String currentDate = DateFormat('EEE, MMM d')
         .format(DateTime.fromMillisecondsSinceEpoch(
-            place.weather.daily.data[dayIndex].time * 1000))
+            dailyWeatherData[dayIndex].time * 1000))
         .toString();
     return Container(
       margin: EdgeInsets.only(

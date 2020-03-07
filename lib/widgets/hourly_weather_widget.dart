@@ -1,9 +1,8 @@
 import 'package:book_my_weather/constants.dart';
-import 'package:book_my_weather/models/place_data.dart';
+import 'package:book_my_weather/models/hourlyWeatherData.dart';
 import 'package:book_my_weather/styleguide.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 
 class HourlyWeatherWidget extends StatelessWidget {
   final String weatherIconPath;
@@ -13,6 +12,7 @@ class HourlyWeatherWidget extends StatelessWidget {
   final TextStyle hourTextStyle;
   final TextStyle tempTextStyle;
   final Color weatherBoxBackgroundColor;
+  final List<HourlyWeatherData> hourlyWeatherData;
 
   HourlyWeatherWidget({
     @required this.weatherIconPath,
@@ -21,15 +21,12 @@ class HourlyWeatherWidget extends StatelessWidget {
     this.temperature,
     this.hourTextStyle = AppTheme.display2,
     this.weatherBoxBackgroundColor = Colors.black,
-    this.tempTextStyle = AppTheme.display1,
+    this.tempTextStyle = kTempRangeTextStyle,
+    @required this.hourlyWeatherData,
   });
 
   @override
   Widget build(BuildContext context) {
-    final placeData = Provider.of<PlaceData>(context);
-    final place = placeData.places[placeData.currentPlaceIndex];
-    final hourlyWeatherData = place.weather.hourly.data;
-
     return Container(
       margin: EdgeInsets.only(
         bottom: 10.0,
@@ -41,7 +38,7 @@ class HourlyWeatherWidget extends StatelessWidget {
             width: MediaQuery.of(context).size.width / 5,
             child: Text(
               '${DateFormat('ha').format(DateTime.fromMillisecondsSinceEpoch(hourlyWeatherData[hourIndex].time * 1000)).toString()}',
-              style: kDateTextStyle,
+              style: hourTextStyle,
             ),
           ),
           SizedBox(
@@ -65,7 +62,7 @@ class HourlyWeatherWidget extends StatelessWidget {
                   children: <Widget>[
                     Text(
                       '${hourlyWeatherData[hourIndex].temperature.toStringAsFixed(0)}º',
-                      style: kTempRangeTextStyle,
+                      style: tempTextStyle,
                     ),
                     Image.asset(
                       weatherIconPath,

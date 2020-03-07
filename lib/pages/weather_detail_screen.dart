@@ -112,6 +112,11 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen>
                         padding: EdgeInsets.all(10.0),
                         itemCount: hourlyWeatherList.length,
                         itemBuilder: (BuildContext context, int index) {
+                          final placeData = Provider.of<PlaceData>(context);
+                          final place =
+                              placeData.places[placeData.currentPlaceIndex];
+                          final hourlyWeatherData = place.weather.hourly.data;
+
                           if (index > 11) return null;
 
                           return GestureDetector(
@@ -136,6 +141,7 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen>
                             child: HourlyWeatherWidget(
                               hourIndex: index,
                               weatherIconPath: 'assets/images/sunny.png',
+                              hourlyWeatherData: hourlyWeatherData,
                             ),
                           );
                         },
@@ -144,6 +150,11 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen>
                         padding: EdgeInsets.all(10.0),
                         itemCount: dailyWeatherList.length,
                         itemBuilder: (BuildContext context, int index) {
+                          final placeData = Provider.of<PlaceData>(context);
+                          final place =
+                              placeData.places[placeData.currentPlaceIndex];
+                          final dailyWeatherData = place.weather.daily.data;
+
                           if (index > 6) return null;
                           return GestureDetector(
                             onTap: () {
@@ -167,6 +178,7 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen>
                             },
                             child: DailyWeather(
                               dayIndex: index,
+                              dailyWeatherData: dailyWeatherData,
                               weatherConditionImgPath:
                                   'assets/images/sunny.png',
                             ),
