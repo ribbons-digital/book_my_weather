@@ -1,6 +1,7 @@
 import 'package:book_my_weather/models/place_data.dart';
 import 'package:book_my_weather/models/setting.dart';
 import 'package:book_my_weather/models/trip.dart';
+import 'package:book_my_weather/models/trip_state.dart';
 import 'package:book_my_weather/models/user.dart';
 import 'package:book_my_weather/pages/place_detail_screen.dart';
 import 'package:book_my_weather/pages/places_screen.dart';
@@ -80,6 +81,9 @@ class _WrapperState extends State<Wrapper> {
             providers: [
               ChangeNotifierProvider<PlaceData>(
                 create: (_) => PlaceData(),
+              ),
+              ChangeNotifierProvider<TripState>(
+                create: (_) => TripState(),
               ),
               StreamProvider<Setting>.value(
                 value: db.streamSetting(snapshot.data),

@@ -25,6 +25,9 @@ const kGPlaceAutoCompleteURL =
 const kGPlaceSearchURL =
     'https://maps.googleapis.com/maps/api/place/findplacefromtext/json?fields=photos';
 
+const kGPlaceNearbyShoppingSearchBaseURL =
+    'https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=$kGooglePlacesAPIKey&radius=5000&type=shopping_mall';
+
 const kGPlaceNearbySearchBaseURL =
     'https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=$kGooglePlacesAPIKey&radius=5000';
 
@@ -35,3 +38,6 @@ const kUnsplashAPIURL =
     'https://api.unsplash.com/photos/random?count=1&client_id=$kUnsplashAPIKey';
 
 const kAqiCNAPIBaseURL = 'https://api.waqi.info/feed/geo:';
+
+const kGPlaceDetailBaseURL =
+    'https://maps.googleapis.com/maps/api/place/details/json?key=$kGooglePlacesAPIKey&fields=url,formatted_address,photos,formatted_phone_number,opening_hours/weekday_text,website';

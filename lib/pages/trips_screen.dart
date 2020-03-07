@@ -1,4 +1,5 @@
 import 'package:book_my_weather/models/trip.dart';
+import 'package:book_my_weather/models/trip_state.dart';
 import 'package:book_my_weather/models/user.dart';
 import 'package:book_my_weather/pages/signin_register_screen.dart';
 import 'package:book_my_weather/pages/trip_detail_screen.dart';
@@ -187,14 +188,14 @@ class _TripsScreenState extends State<TripsScreen> {
                     return GestureDetector(
                       onTap: () {
 //                    Navigator.pushNamed(context, TripDetail.id);
+                        Provider.of<TripState>(context, listen: false)
+                            .updateSelectedIndex(index);
                         Navigator.push(
                           context,
                           PageRouteBuilder(
                             transitionDuration:
                                 const Duration(milliseconds: 550),
-                            pageBuilder: (context, _, __) => TripDetail(
-                              index: index,
-                            ),
+                            pageBuilder: (context, _, __) => TripDetail(),
                           ),
                         );
                       },

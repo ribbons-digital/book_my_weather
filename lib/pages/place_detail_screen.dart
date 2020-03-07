@@ -1,13 +1,40 @@
 import 'dart:math' as math;
 
+import 'package:book_my_weather/models/google_place_detail.dart';
+import 'package:book_my_weather/secure/keys.dart';
+import 'package:book_my_weather/services/google_places.dart';
+import 'package:book_my_weather/services/networking.dart';
+import 'package:book_my_weather/utilities/index.dart';
 import 'package:book_my_weather/widgets/daily_weather_widget.dart';
 import 'package:book_my_weather/widgets/hourly_weather_widget.dart';
 import 'package:book_my_weather/widgets/place_detail_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:intl/intl.dart';
+import 'package:share/share.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PlaceDetail extends StatefulWidget {
   static const String id = 'placeDetail';
+
+  final String placeId;
+  final String placeName;
+  final String placeType;
+  final double placeRating;
+  final int placeRatingTotals;
+  final bool placeOpenNow;
+  final String placeAddress;
+
+  PlaceDetail({
+    @required this.placeId,
+    @required this.placeName,
+    @required this.placeType,
+    @required this.placeRating,
+    @required this.placeOpenNow,
+    @required this.placeRatingTotals,
+    @required this.placeAddress,
+  });
 
   @override
   _PlaceDetailState createState() => _PlaceDetailState();
@@ -16,6 +43,7 @@ class PlaceDetail extends StatefulWidget {
 class _PlaceDetailState extends State<PlaceDetail>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
+  Future<GooglePlaceDetail> placeDetail;
 
   double tabViewHeight = 1000.0;
 
@@ -34,7 +62,13 @@ class _PlaceDetailState extends State<PlaceDetail>
   void initState() {
     _tabController = TabController(length: 4, vsync: this);
     _tabController.addListener(_handleTabSelection);
+    placeDetail = getPlaceDetail(widget.placeId);
     super.initState();
+  }
+
+  Future<GooglePlaceDetail> getPlaceDetail(String placeId) async {
+    GooglePlaces place = GooglePlaces();
+    return await place.getPlaceDetail(placeId: placeId);
   }
 
   void _handleTabSelection() {
@@ -49,6 +83,18 @@ class _PlaceDetailState extends State<PlaceDetail>
     });
   }
 
+  List<Widget> heroImages(List<String> photoReferences) {
+    List<String> photoUrls = photoReferences.map((photoReference) {
+      return buildPhotoURL(photoReference);
+    }).toList();
+    return photoUrls.map((url) {
+      return Image.network(
+        url,
+        fit: BoxFit.cover,
+      );
+    }).toList();
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -60,305 +106,386 @@ class _PlaceDetailState extends State<PlaceDetail>
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: CustomScrollView(
-        slivers: <Widget>[
-          SliverAppBar(
-            expandedHeight: height / 4,
-            pinned: true,
-            leading: IconButton(
-              icon: Icon(
-                Icons.chevron_left,
-                size: 35.0,
-              ),
-              color: Colors.white,
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-            actions: <Widget>[
-              IconButton(
-                icon: Icon(
-                  Icons.more_vert,
-                  size: 35.0,
-                ),
-                color: Colors.white,
-                onPressed: () {},
-              ),
-            ],
-            flexibleSpace: FlexibleSpaceBar(
+    return FutureBuilder(
+      future: placeDetail,
+      builder:
+          (BuildContext context, AsyncSnapshot<GooglePlaceDetail> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return SpinKitWave(
+            color: Colors.white,
+            size: 50.0,
+          );
+        }
+
+        if (snapshot.hasData &&
+            snapshot.connectionState == ConnectionState.done) {
+          final placeDetail = snapshot.data;
+          final day = DateFormat('E').format(DateTime.now());
+
+          final todayOpenHour = placeDetail.openingHours
+                  .where((hour) => hour.contains(day))
+                  .toList()[0]
+                  .split(':')[1] +
+              ':' +
+              placeDetail.openingHours
+                  .where((hour) => hour.contains(day))
+                  .toList()[0]
+                  .split(':')[2]
+                  .split(' ')[0] +
+              placeDetail.openingHours
+                  .where((hour) => hour.contains(day))
+                  .toList()[0]
+                  .split(':')[2]
+                  .split(' ')[1];
+
+          return Scaffold(
+            backgroundColor: Colors.white,
+            body: CustomScrollView(
+              slivers: <Widget>[
+                SliverAppBar(
+                  expandedHeight: height / 4,
+                  pinned: true,
+                  leading: IconButton(
+                    icon: Icon(
+                      Icons.chevron_left,
+                      size: 35.0,
+                    ),
+                    color: Colors.white,
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  actions: <Widget>[
+                    IconButton(
+                      icon: Icon(
+                        Icons.more_vert,
+                        size: 35.0,
+                      ),
+                      color: Colors.white,
+                      onPressed: () {},
+                    ),
+                  ],
+                  flexibleSpace: FlexibleSpaceBar(
 //                title: Text(
 //                  'Taipei 101',
 //                  style: TextStyle(
 //                    color: Colors.white,
 //                  ),
 //                ),
-                background: PageView(
-              scrollDirection: Axis.horizontal,
-              children: <Widget>[
-                Image.asset(
-                  'assets/images/taipei_101.jpg',
-                  fit: BoxFit.cover,
+                      background: PageView(
+                    scrollDirection: Axis.horizontal,
+                    children: heroImages(placeDetail.photos),
+//                    children: <Widget>[
+//                      Image.asset(
+//                        'assets/images/taipei_101.jpg',
+//                        fit: BoxFit.cover,
+//                      ),
+//                      Image.asset(
+//                        'assets/images/shanghai.jpg',
+//                        fit: BoxFit.cover,
+//                      ),
+//                    ],
+                  )),
                 ),
-                Image.asset(
-                  'assets/images/shanghai.jpg',
-                  fit: BoxFit.cover,
-                ),
-              ],
-            )),
-          ),
-          SliverToBoxAdapter(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                ListTile(
-                  title: Text('Taipei 101'),
-                  subtitle: Text('Shopping'),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 15.0),
-                  child: Row(
+                SliverToBoxAdapter(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(
-                        '4.5',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 15,
-                        ),
+                      ListTile(
+                        title: Text(widget.placeName),
+                        subtitle: Text(widget.placeType),
                       ),
-                      SmoothStarRating(
-                        allowHalfRating: true,
-                        onRatingChanged: (v) {
+                      Padding(
+                        padding: EdgeInsets.only(left: 15.0),
+                        child: Row(
+                          children: <Widget>[
+                            Text(
+                              '${widget.placeRating}',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 15,
+                              ),
+                            ),
+                            SmoothStarRating(
+                              allowHalfRating: true,
+                              onRatingChanged: (v) {
 //                              rating = v;
 //                              setState(() {});
-                        },
-                        starCount: 5,
-                        rating: 4.3,
-                        size: 18.0,
-                        filledIconData: Icons.star,
-                        halfFilledIconData: Icons.star_half,
-                        color: Color(0XFF69A4FF),
-                        borderColor: Color(0XFF69A4FF),
-                        spacing: 0.0,
+                              },
+                              starCount: 5,
+                              rating: widget.placeRating,
+                              size: 18.0,
+                              filledIconData: Icons.star,
+                              halfFilledIconData: Icons.star_half,
+                              color: Color(0XFF69A4FF),
+                              borderColor: Color(0XFF69A4FF),
+                              spacing: 0.0,
+                            ),
+                            Text(
+                              '(${widget.placeRatingTotals})',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 15,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      Text(
-                        '(45,867)',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 15,
+//                      Padding(
+//                        padding: const EdgeInsets.only(
+//                            left: 15.0, top: 10.0, bottom: 8.0),
+//                        child: Text(
+//                          'Towering landmark skyscrapper offering shops, eateries and an observation platform on the 89th floor.',
+//                          style: TextStyle(
+//                            fontSize: 16.0,
+//                          ),
+//                          maxLines: 3,
+//                          overflow: TextOverflow.ellipsis,
+//                        ),
+//                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          left: 15.0,
+                          bottom: 8.0,
+                          top: 8.0,
+                        ),
+                        child: RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: widget.placeOpenNow
+                                    ? 'Open now'
+                                    : 'Closed - ',
+                                style: TextStyle(
+                                  color: widget.placeOpenNow
+                                      ? Colors.green
+                                      : Colors.red,
+                                  fontSize: 15,
+                                ),
+                              ),
+                              if (!widget.placeOpenNow)
+                                TextSpan(
+                                  text: 'Opens$todayOpenHour',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Container(
+                        width: double.infinity,
+                        height: 40.0,
+                        padding: EdgeInsets.only(left: 15.0),
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          children: <Widget>[
+                            FlatButton(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: new BorderRadius.circular(18.0),
+                                side: BorderSide(
+                                  color: Color(0XFF69A4FF),
+                                ),
+                              ),
+                              child: Row(
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.phone,
+                                    color: Color(0XFF69A4FF),
+                                  ),
+                                  SizedBox(
+                                    width: 5.0,
+                                  ),
+                                  Text(
+                                    'Call',
+                                    style: TextStyle(
+                                      color: Color(0XFF69A4FF),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              onPressed: () async {
+                                final url = 'tel:${placeDetail.phoneNumber}';
+                                if (await canLaunch(url)) {
+                                  await launch(url);
+                                } else {
+                                  throw 'Something is wrong';
+                                }
+                              },
+                            ),
+                            SizedBox(
+                              width: 20.0,
+                            ),
+                            FlatButton(
+                              child: Row(
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.share,
+                                    color: Color(0XFF69A4FF),
+                                  ),
+                                  SizedBox(
+                                    width: 5.0,
+                                  ),
+                                  Text(
+                                    'Share',
+                                    style: TextStyle(
+                                      color: Color(0XFF69A4FF),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: new BorderRadius.circular(18.0),
+                                side: BorderSide(
+                                  color: Color(0XFF69A4FF),
+                                ),
+                              ),
+                              onPressed: () async {
+                                final url =
+                                    'https://maps.googleapis.com/maps/api/place/details/json?key=$kGooglePlacesAPIKey&fields=url&place_id=${widget.placeId}';
+                                NetworkHelper networkHelper =
+                                    NetworkHelper(url);
+
+                                try {
+                                  Map<String, dynamic> result =
+                                      await networkHelper.getData();
+                                  Share.share(result['result']['url']);
+                                } catch (e) {
+                                  print(e.toString());
+                                }
+                              },
+                            ),
+                            SizedBox(
+                              width: 20.0,
+                            ),
+                            FlatButton(
+                              child: Row(
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.bookmark,
+                                    color: Color(0XFF69A4FF),
+                                  ),
+                                  SizedBox(
+                                    width: 5.0,
+                                  ),
+                                  Text(
+                                    'Save',
+                                    style: TextStyle(
+                                      color: Color(0XFF69A4FF),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: new BorderRadius.circular(18.0),
+                                side: BorderSide(
+                                  color: Color(0XFF69A4FF),
+                                ),
+                              ),
+                              onPressed: () {},
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20.0,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10.0,
+                          ),
+                          child: Divider(
+                            color: Colors.black26,
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
-                Padding(
-                  padding:
-                      const EdgeInsets.only(left: 15.0, top: 10.0, bottom: 8.0),
-                  child: Text(
-                    'Towering landmark skyscrapper offering shops, eateries and an observation platform on the 89th floor.',
-                    style: TextStyle(
-                      fontSize: 16.0,
-                    ),
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 15.0, bottom: 8.0),
-                  child: RichText(
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: 'Closed - ',
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontSize: 15,
+                makeHeader(
+                  Container(
+                    color: Colors.white,
+                    child: Center(
+                      child: TabBar(
+                        isScrollable: true,
+                        labelColor: Color(0XFF69A4FF),
+                        unselectedLabelColor: Colors.black26,
+                        indicatorSize: TabBarIndicatorSize.label,
+                        indicatorWeight: 10.0,
+                        indicatorColor: Color(0XFF69A4FF),
+                        indicatorPadding: EdgeInsets.symmetric(horizontal: 8.0),
+                        labelStyle: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15.0,
+                        ),
+                        controller: _tabController,
+                        tabs: <Widget>[
+                          Tab(
+                            child: Text('Overview'),
                           ),
-                        ),
-                        TextSpan(
-                          text: 'Opens 11am',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 15,
+                          Tab(
+                            child: Text('Weather'),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Container(
-                  width: double.infinity,
-                  height: 40.0,
-                  padding: EdgeInsets.only(left: 15.0),
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    children: <Widget>[
-                      FlatButton(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: new BorderRadius.circular(18.0),
-                          side: BorderSide(
-                            color: Color(0XFF69A4FF),
+                          Tab(
+                            child: Text('Photos'),
                           ),
-                        ),
-                        child: Row(
-                          children: <Widget>[
-                            Icon(
-                              Icons.phone,
-                              color: Color(0XFF69A4FF),
-                            ),
-                            SizedBox(
-                              width: 5.0,
-                            ),
-                            Text(
-                              'Call',
-                              style: TextStyle(
-                                color: Color(0XFF69A4FF),
-                              ),
-                            ),
-                          ],
-                        ),
-                        onPressed: () {},
-                      ),
-                      SizedBox(
-                        width: 20.0,
-                      ),
-                      FlatButton(
-                        child: Row(
-                          children: <Widget>[
-                            Icon(
-                              Icons.share,
-                              color: Color(0XFF69A4FF),
-                            ),
-                            SizedBox(
-                              width: 5.0,
-                            ),
-                            Text(
-                              'Share',
-                              style: TextStyle(
-                                color: Color(0XFF69A4FF),
-                              ),
-                            ),
-                          ],
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: new BorderRadius.circular(18.0),
-                          side: BorderSide(
-                            color: Color(0XFF69A4FF),
+                          Tab(
+                            child: Text('Notes'),
                           ),
-                        ),
-                        onPressed: () {},
+                        ].toList(),
                       ),
-                      SizedBox(
-                        width: 20.0,
-                      ),
-                      FlatButton(
-                        child: Row(
-                          children: <Widget>[
-                            Icon(
-                              Icons.bookmark,
-                              color: Color(0XFF69A4FF),
-                            ),
-                            SizedBox(
-                              width: 5.0,
-                            ),
-                            Text(
-                              'Save',
-                              style: TextStyle(
-                                color: Color(0XFF69A4FF),
-                              ),
-                            ),
-                          ],
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: new BorderRadius.circular(18.0),
-                          side: BorderSide(
-                            color: Color(0XFF69A4FF),
-                          ),
-                        ),
-                        onPressed: () {},
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 20.0,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10.0,
-                    ),
-                    child: Divider(
-                      color: Colors.black26,
                     ),
                   ),
                 ),
+                <Widget>[
+                  SliverToBoxAdapter(
+                    child: PlaceOverview(
+                      height: height,
+                      width: width,
+                      goToWeatherTab: goToWeatherTab,
+                      address: placeDetail.address,
+                      phoneNumber: placeDetail.phoneNumber,
+                      website: placeDetail.website,
+                      openingHours: placeDetail.openingHours,
+                      googleUrl: placeDetail.googleUrl,
+                    ),
+                  ),
+                  PlaceWeather(),
+                  SliverGrid.count(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 8.0,
+                    crossAxisSpacing: 8.0,
+                    children: List.generate(20, (i) {
+                      return Container(
+                        color: Colors.teal[100 * (i % 9)],
+                        child: Image.network(
+                          'https://communication-skills.info/wp-content/uploads/European-common-cat.jpg',
+                          fit: BoxFit.cover,
+                        ),
+                      );
+                    }),
+                  ),
+                  SliverToBoxAdapter(
+                    child: Text('4'),
+                  ),
+                ][_tabController.index]
               ],
             ),
-          ),
-          makeHeader(
-            Container(
+          );
+        }
+
+        if (snapshot.hasError) {
+          return Text(
+            snapshot.error.toString(),
+            style: TextStyle(
               color: Colors.white,
-              child: Center(
-                child: TabBar(
-                  isScrollable: true,
-                  labelColor: Color(0XFF69A4FF),
-                  unselectedLabelColor: Colors.black26,
-                  indicatorSize: TabBarIndicatorSize.label,
-                  indicatorWeight: 10.0,
-                  indicatorColor: Color(0XFF69A4FF),
-                  indicatorPadding: EdgeInsets.symmetric(horizontal: 8.0),
-                  labelStyle: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15.0,
-                  ),
-                  controller: _tabController,
-                  tabs: <Widget>[
-                    Tab(
-                      child: Text('Overview'),
-                    ),
-                    Tab(
-                      child: Text('Weather'),
-                    ),
-                    Tab(
-                      child: Text('Photos'),
-                    ),
-                    Tab(
-                      child: Text('Notes'),
-                    ),
-                  ].toList(),
-                ),
-              ),
             ),
-          ),
-          <Widget>[
-            SliverToBoxAdapter(
-              child: PlaceOverview(
-                height: height,
-                width: width,
-                goToWeatherTab: goToWeatherTab,
-              ),
-            ),
-            PlaceWeather(),
-            SliverGrid.count(
-              crossAxisCount: 2,
-              mainAxisSpacing: 8.0,
-              crossAxisSpacing: 8.0,
-              children: List.generate(20, (i) {
-                return Container(
-                  color: Colors.teal[100 * (i % 9)],
-                  child: Image.network(
-                    'https://communication-skills.info/wp-content/uploads/European-common-cat.jpg',
-                    fit: BoxFit.cover,
-                  ),
-                );
-              }),
-            ),
-            SliverToBoxAdapter(
-              child: Text('4'),
-            ),
-          ][_tabController.index]
-        ],
-      ),
+          );
+        }
+
+        return Container();
+      },
     );
   }
 }

@@ -1,8 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
 
 class ExplorePlaceCardWidget extends StatelessWidget {
+  final String name;
+  final String placeId;
+  final String type;
+  final double rating;
+  final int ratingTotals;
+  final bool openNow;
+  final String photo;
+
+  ExplorePlaceCardWidget({
+    this.name,
+    this.placeId,
+    this.type,
+    this.ratingTotals,
+    this.rating,
+    this.openNow,
+    this.photo,
+  });
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -23,8 +40,8 @@ class ExplorePlaceCardWidget extends StatelessWidget {
                   topLeft: Radius.circular(12.0),
                   topRight: Radius.circular(12.0),
                 ),
-                child: Image.asset(
-                  'assets/images/taipei_101.jpg',
+                child: Image.network(
+                  photo,
                   fit: BoxFit.cover,
                 ),
               ),
@@ -36,16 +53,19 @@ class ExplorePlaceCardWidget extends StatelessWidget {
               heightFactor: 0.55,
               child: Padding(
                 padding: const EdgeInsets.only(
-                  left: 8.0,
-                  right: 8.0,
+                  top: 8.0,
+                  bottom: 8.0,
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
                     ListTile(
-                      title: Text('Taipei 101'),
-                      subtitle: Text('Shopping mall'),
+                      title: Text(
+                        name,
+                        maxLines: 3,
+                      ),
+                      subtitle: Text(type),
                       contentPadding: EdgeInsets.only(
                         left: 0.0,
                         bottom: 0.0,
@@ -54,7 +74,7 @@ class ExplorePlaceCardWidget extends StatelessWidget {
                     Row(
                       children: <Widget>[
                         Text(
-                          '4.3 ',
+                          '$rating ',
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 15,
@@ -67,7 +87,7 @@ class ExplorePlaceCardWidget extends StatelessWidget {
 //                              setState(() {});
                           },
                           starCount: 1,
-                          rating: 4.3,
+                          rating: rating,
                           size: 18.0,
                           filledIconData: Icons.star,
                           halfFilledIconData: Icons.star_half,
@@ -76,7 +96,7 @@ class ExplorePlaceCardWidget extends StatelessWidget {
                           spacing: 0.0,
                         ),
                         Text(
-                          ' (45,867)',
+                          ' ($ratingTotals)',
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 15,
@@ -84,62 +104,63 @@ class ExplorePlaceCardWidget extends StatelessWidget {
                         ),
                       ],
                     ),
-                    FittedBox(
-                      fit: BoxFit.contain,
-                      child: RichText(
-                        text: TextSpan(
-                          children: [
-                            TextSpan(
-                              text: 'Closed - ',
-                              style: TextStyle(
-                                color: Colors.red,
-                                fontSize: 15,
-                              ),
-                            ),
-                            TextSpan(
-                              text: 'Opens 11am',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 15,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Text('31º currently'),
-                        SvgPicture.asset(
-                          'assets/images/sunny.svg',
-                          color: Colors.black,
-                          semanticsLabel: 'sunny-line',
-                        ),
-                      ],
-                    ),
+//                    if (openNow != null)
+//                      FittedBox(
+//                        fit: BoxFit.contain,
+//                        child: RichText(
+//                          text: TextSpan(
+//                            children: [
+//                              TextSpan(
+//                                text: openNow ? 'Open now' : 'Closed',
+//                                style: TextStyle(
+//                                  color: openNow ? Colors.green : Colors.red,
+//                                  fontSize: 15,
+//                                ),
+//                              ),
+////                            TextSpan(
+////                              text: 'Opens 11am',
+////                              style: TextStyle(
+////                                color: Colors.black,
+////                                fontSize: 15,
+////                              ),
+////                            ),
+//                            ],
+//                          ),
+//                        ),
+//                      ),
+//                    Row(
+//                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                      children: <Widget>[
+//                        Text('31º currently'),
+//                        SvgPicture.asset(
+//                          'assets/images/sunny.svg',
+//                          color: Colors.black,
+//                          semanticsLabel: 'sunny-line',
+//                        ),
+//                      ],
+//                    ),
                   ],
                 ),
               ),
             ),
           ),
-          Align(
-            alignment: Alignment(0.9, -0.9),
-            child: Container(
-              width: 40,
-              height: 40,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(50.0),
-                color: Color(0x42000000),
-              ),
-              child: IconButton(
-                icon: Icon(Icons.more_vert),
-                color: Colors.white,
-                onPressed: () {},
-              ),
-            ),
-          ),
+//          Align(
+//            alignment: Alignment(0.9, -0.9),
+//            child: Container(
+//              width: 40,
+//              height: 40,
+//              alignment: Alignment.center,
+//              decoration: BoxDecoration(
+//                borderRadius: BorderRadius.circular(50.0),
+//                color: Color(0x42000000),
+//              ),
+//              child: IconButton(
+//                icon: Icon(Icons.more_vert),
+//                color: Colors.white,
+//                onPressed: () {},
+//              ),
+//            ),
+//          ),
         ],
       ),
     );

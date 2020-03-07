@@ -9,10 +9,11 @@ class TripDetailGridItem extends StatelessWidget {
   final String gridImgPath;
   final String gridItemText;
 
-  TripDetailGridItem(
-      {@required this.tag,
-      @required this.gridImgPath,
-      @required this.gridItemText});
+  TripDetailGridItem({
+    @required this.tag,
+    @required this.gridImgPath,
+    @required this.gridItemText,
+  });
 
   @override
   Widget build(BuildContext context) {

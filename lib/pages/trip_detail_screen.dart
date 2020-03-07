@@ -1,4 +1,5 @@
 import 'package:book_my_weather/models/trip.dart';
+import 'package:book_my_weather/models/trip_state.dart';
 import 'package:book_my_weather/pages/places_screen.dart';
 import 'package:book_my_weather/pages/trip_screen.dart';
 import 'package:book_my_weather/utilities/index.dart';
@@ -10,15 +11,11 @@ import 'package:provider/provider.dart';
 class TripDetail extends StatelessWidget {
   static const String id = 'tripDetail';
 
-  final int index;
-
-  TripDetail({
-    @required this.index,
-  });
-
   @override
   Widget build(BuildContext context) {
+    final index = Provider.of<TripState>(context).selectedIndex;
     final trip = Provider.of<List<Trip>>(context)[index];
+
     final startDateISOString = timeStampToISOString(trip.startDate);
     final startDateToDateString = timeStampToDateString(trip.startDate);
     String daysLeft = DateTime.parse(startDateISOString)

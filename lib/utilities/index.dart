@@ -33,3 +33,7 @@ Future<List<String>> gPlaceAutoCompleteResult(String input) async {
   }
   return [''];
 }
+
+String buildPhotoURL(String photoReference) {
+  return '$kGPlacePhotoSearchURL?maxwidth=800&photoreference=$photoReference&key=$kGooglePlacesAPIKey';
+}
