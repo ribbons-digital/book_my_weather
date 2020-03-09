@@ -1,11 +1,11 @@
 import 'package:book_my_weather/constants.dart';
 import 'package:book_my_weather/models/dailyWeatherData.dart';
+import 'package:book_my_weather/services/weather.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class DailyWeather extends StatelessWidget {
   final String date;
-  final String weatherConditionImgPath;
   final String tempRange;
   final int dayIndex;
   final TextStyle dateTextStyle;
@@ -15,7 +15,6 @@ class DailyWeather extends StatelessWidget {
 
   DailyWeather({
     this.date,
-    @required this.weatherConditionImgPath,
     this.tempRange,
     @required this.dayIndex,
     this.dateTextStyle = kDateTextStyle,
@@ -30,6 +29,8 @@ class DailyWeather extends StatelessWidget {
         .format(DateTime.fromMillisecondsSinceEpoch(
             dailyWeatherData[dayIndex].time * 1000))
         .toString();
+    WeatherModel weatherModel = WeatherModel();
+
     return Container(
       margin: EdgeInsets.only(
         bottom: 20.0,
@@ -60,9 +61,11 @@ class DailyWeather extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Image.asset(
-                    weatherConditionImgPath,
-                    scale: 3.5,
+                  weatherModel.getWeatherIcon(
+                    condition: dailyWeatherData[dayIndex].icon,
+                    iconColor: Color(0xFFFFA500),
+                    width: 40.0,
+                    height: 40.0,
                   ),
                   Text(
                     '${dailyWeatherData[dayIndex].temperatureHigh.toStringAsFixed(0)}º / ${dailyWeatherData[dayIndex].temperatureLow.toStringAsFixed(0)}º',

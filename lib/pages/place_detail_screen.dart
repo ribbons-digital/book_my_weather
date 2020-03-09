@@ -10,7 +10,6 @@ import 'package:book_my_weather/widgets/place_detail_widget.dart';
 import 'package:book_my_weather/widgets/place_weather_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:intl/intl.dart';
 import 'package:share/share.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -43,7 +42,7 @@ class PlaceDetail extends StatefulWidget {
 class _PlaceDetailState extends State<PlaceDetail>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
-  Future<GooglePlaceDetail> placeDetail;
+  Future<GooglePlaceDetail> placeDetails;
 
   double tabViewHeight = 1000.0;
 
@@ -60,9 +59,9 @@ class _PlaceDetailState extends State<PlaceDetail>
 
   @override
   void initState() {
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
     _tabController.addListener(_handleTabSelection);
-    placeDetail = getPlaceDetail(widget.placeId);
+    placeDetails = getPlaceDetail(widget.placeId);
     super.initState();
   }
 
@@ -84,21 +83,20 @@ class _PlaceDetailState extends State<PlaceDetail>
   }
 
   List<Widget> heroImages(BuildContext context, List<String> photoReferences) {
-    List<String> photoUrls = photoReferences.map((photoReference) {
-      return buildPhotoURL(photoReference);
-    }).toList();
-    return photoUrls.map((url) {
+    return photoReferences.map((reference) {
+      final url = buildPhotoURL(reference);
+
       return GestureDetector(
         onTap: () {
           Navigator.push(context, MaterialPageRoute(builder: (_) {
             return ImageFullScreen(
-              tag: url,
+              tag: DateTime.now().toIso8601String(),
               url: url,
             );
           }));
         },
         child: Hero(
-          tag: url,
+          tag: DateTime.now().toIso8601String(),
           child: Image.network(
             url,
             fit: BoxFit.cover,
@@ -120,7 +118,7 @@ class _PlaceDetailState extends State<PlaceDetail>
     final width = MediaQuery.of(context).size.width;
 
     return FutureBuilder(
-      future: placeDetail,
+      future: placeDetails,
       builder:
           (BuildContext context, AsyncSnapshot<GooglePlaceDetail> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -133,23 +131,6 @@ class _PlaceDetailState extends State<PlaceDetail>
         if (snapshot.hasData &&
             snapshot.connectionState == ConnectionState.done) {
           final placeDetail = snapshot.data;
-          final day = DateFormat('E').format(DateTime.now());
-
-          final todayOpenHour = placeDetail.openingHours
-                  .where((hour) => hour.contains(day))
-                  .toList()[0]
-                  .split(':')[1] +
-              ':' +
-              placeDetail.openingHours
-                  .where((hour) => hour.contains(day))
-                  .toList()[0]
-                  .split(':')[2]
-                  .split(' ')[0] +
-              placeDetail.openingHours
-                  .where((hour) => hour.contains(day))
-                  .toList()[0]
-                  .split(':')[2]
-                  .split(' ')[1];
 
           return Scaffold(
             backgroundColor: Colors.white,
@@ -229,38 +210,47 @@ class _PlaceDetailState extends State<PlaceDetail>
                           ],
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          left: 15.0,
-                          bottom: 8.0,
-                          top: 8.0,
-                        ),
-                        child: RichText(
-                          text: TextSpan(
-                            children: [
-                              TextSpan(
-                                text: widget.placeOpenNow
-                                    ? 'Open now'
-                                    : 'Closed - ',
-                                style: TextStyle(
-                                  color: widget.placeOpenNow
-                                      ? Colors.green
-                                      : Colors.red,
-                                  fontSize: 15,
-                                ),
-                              ),
-                              if (!widget.placeOpenNow)
+                      if (widget.placeOpenNow != null)
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            left: 15.0,
+                            bottom: 8.0,
+                            top: 8.0,
+                          ),
+                          child: RichText(
+                            text: TextSpan(
+                              children: [
                                 TextSpan(
-                                  text: 'Opens$todayOpenHour',
+                                  text: widget.placeOpenNow
+                                      ? 'Open now'
+                                      : 'Closed - ',
                                   style: TextStyle(
-                                    color: Colors.black,
+                                    color: widget.placeOpenNow
+                                        ? Colors.green
+                                        : Colors.red,
                                     fontSize: 15,
                                   ),
                                 ),
-                            ],
+                                if (!widget.placeOpenNow ||
+                                    placeDetail.todayOpeningHour.length > 0)
+                                  TextSpan(
+                                    text: placeDetail.todayOpeningHour ==
+                                            '24 Hours'
+                                        ? ' Opens ${placeDetail.todayOpeningHour}'
+                                        : ' Opens at ${placeDetail.todayOpeningHour}',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
+                      if (widget.placeOpenNow == null)
+                        SizedBox(
+                          height: 10.0,
+                        ),
                       Container(
                         width: double.infinity,
                         height: 40.0,
@@ -416,9 +406,6 @@ class _PlaceDetailState extends State<PlaceDetail>
                           Tab(
                             child: Text('Photos'),
                           ),
-                          Tab(
-                            child: Text('Notes'),
-                          ),
                         ].toList(),
                       ),
                     ),
@@ -441,12 +428,10 @@ class _PlaceDetailState extends State<PlaceDetail>
                     address: placeDetail.address,
                   ),
                   SliverGrid.count(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 8.0,
-                      crossAxisSpacing: 8.0,
-                      children: heroImages(context, placeDetail.photos)),
-                  SliverToBoxAdapter(
-                    child: Text('4'),
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 8.0,
+                    crossAxisSpacing: 8.0,
+                    children: heroImages(context, placeDetail.photos),
                   ),
                 ][_tabController.index]
               ],

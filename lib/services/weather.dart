@@ -4,6 +4,8 @@ import 'package:book_my_weather/secure/keys.dart';
 import 'package:book_my_weather/services/location.dart';
 import 'package:book_my_weather/services/networking.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 const darkSkyApiUrl = 'https://api.darksky.net/forecast';
 
@@ -59,29 +61,96 @@ class WeatherModel {
     return Weather.fromJson(hourlyWeatherMap);
   }
 
-  String getMessage(String condition) {
-    if (condition == 'clear-day') {
-      return '1';
-    } else if (condition == 'clear-night') {
-      return '2';
-    } else if (condition == 'rain') {
-      return '3';
-    } else if (condition == 'snow') {
-      return '4';
-    } else if (condition == 'sleet') {
-      return '5';
-    } else if (condition == 'wind') {
-      return '6';
-    } else if (condition == 'fog') {
-      return '7';
-    } else if (condition == 'cloudy') {
-      return '8';
-    } else if (condition == 'partly-cloudy-day') {
-      return '9';
-    } else if (condition == 'partly-cloudy-night') {
-      return '10';
+  Widget getWeatherIcon(
+      {String condition, Color iconColor, double width, double height}) {
+    if (condition == kClearDay) {
+      return SvgPicture.asset(
+        'assets/images/weather_icons/wi-day-sunny-overcast.svg',
+        color: iconColor,
+        semanticsLabel: kClearDay,
+        width: width,
+        height: height,
+      );
+    } else if (condition == kClearNight) {
+      return SvgPicture.asset(
+        'assets/images/weather_icons/wi-night-clear.svg',
+        color: iconColor,
+        semanticsLabel: kClearNight,
+        width: width,
+        height: height,
+      );
+    } else if (condition == kRain) {
+      return SvgPicture.asset(
+        'assets/images/weather_icons/wi-rain.svg',
+        color: iconColor,
+        semanticsLabel: kRain,
+        width: width,
+        height: height,
+      );
+    } else if (condition == kSnow) {
+      return SvgPicture.asset(
+        'assets/images/weather_icons/wi-snow.svg',
+        color: iconColor,
+        semanticsLabel: kSnow,
+        width: width,
+        height: height,
+      );
+    } else if (condition == kSleet) {
+      return SvgPicture.asset(
+        'assets/images/weather_icons/wi-sleet.svg',
+        color: iconColor,
+        semanticsLabel: kSleet,
+        width: width,
+        height: height,
+      );
+    } else if (condition == kWind) {
+      return SvgPicture.asset(
+        'assets/images/weather_icons/wi-windy.svg',
+        color: iconColor,
+        semanticsLabel: kWind,
+        width: width,
+        height: height,
+      );
+    } else if (condition == kFog) {
+      return SvgPicture.asset(
+        'assets/images/weather_icons/wi-fog.svg',
+        color: iconColor,
+        semanticsLabel: kFog,
+        width: width,
+        height: height,
+      );
+    } else if (condition == kCloudy) {
+      return SvgPicture.asset(
+        'assets/images/weather_icons/wi-cloudy.svg',
+        color: iconColor,
+        semanticsLabel: kCloudy,
+        width: width,
+        height: height,
+      );
+    } else if (condition == kPartlyCloudyDay) {
+      return SvgPicture.asset(
+        'assets/images/weather_icons/wi-day-cloudy.svg',
+        color: iconColor,
+        semanticsLabel: kPartlyCloudyDay,
+        width: width,
+        height: height,
+      );
+    } else if (condition == kPartlyCloudyNight) {
+      return SvgPicture.asset(
+        'assets/images/weather_icons/wi-night-cloudy.svg',
+        color: iconColor,
+        semanticsLabel: kPartlyCloudyNight,
+        width: width,
+        height: height,
+      );
     } else {
-      return '0';
+      return SvgPicture.asset(
+        'assets/images/weather_icons/wi-day-sunny-overcast.svg',
+        color: iconColor,
+        semanticsLabel: kClearDay,
+        width: width,
+        height: height,
+      );
     }
   }
 }

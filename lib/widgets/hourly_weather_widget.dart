@@ -1,11 +1,11 @@
 import 'package:book_my_weather/constants.dart';
 import 'package:book_my_weather/models/hourlyWeatherData.dart';
+import 'package:book_my_weather/services/weather.dart';
 import 'package:book_my_weather/styleguide.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class HourlyWeatherWidget extends StatelessWidget {
-  final String weatherIconPath;
   final String hour;
   final String temperature;
   final int hourIndex;
@@ -15,7 +15,6 @@ class HourlyWeatherWidget extends StatelessWidget {
   final List<HourlyWeatherData> hourlyWeatherData;
 
   HourlyWeatherWidget({
-    @required this.weatherIconPath,
     @required this.hourIndex,
     this.hour,
     this.temperature,
@@ -27,6 +26,8 @@ class HourlyWeatherWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    WeatherModel weatherModel = WeatherModel();
+
     return Container(
       margin: EdgeInsets.only(
         bottom: 10.0,
@@ -64,9 +65,11 @@ class HourlyWeatherWidget extends StatelessWidget {
                       '${hourlyWeatherData[hourIndex].temperature.toStringAsFixed(0)}º',
                       style: tempTextStyle,
                     ),
-                    Image.asset(
-                      weatherIconPath,
-                      scale: 3.5,
+                    weatherModel.getWeatherIcon(
+                      condition: hourlyWeatherData[hourIndex].icon,
+                      iconColor: Color(0xFFFFA500),
+                      width: 40.0,
+                      height: 40.0,
                     )
                   ],
                 ),

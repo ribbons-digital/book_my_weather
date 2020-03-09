@@ -2,10 +2,10 @@ import 'package:book_my_weather/models/trip.dart';
 import 'package:book_my_weather/models/trip_state.dart';
 import 'package:book_my_weather/pages/places_screen.dart';
 import 'package:book_my_weather/pages/trip_screen.dart';
+import 'package:book_my_weather/services/weather.dart';
 import 'package:book_my_weather/utilities/index.dart';
 import 'package:book_my_weather/widgets/trip_detail_grid_item_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 class TripDetail extends StatelessWidget {
@@ -22,6 +22,8 @@ class TripDetail extends StatelessWidget {
         .difference(DateTime.now())
         .inDays
         .toString();
+    WeatherModel weatherModel = WeatherModel();
+
     return Scaffold(
       body: Column(
         children: <Widget>[
@@ -127,9 +129,12 @@ class TripDetail extends StatelessWidget {
                           children: <Widget>[
                             Hero(
                               tag: 'tempIcon-$index',
-                              child: SvgPicture.asset('assets/images/sunny.svg',
-                                  color: Colors.white,
-                                  semanticsLabel: 'sunny-line'),
+                              child: weatherModel.getWeatherIcon(
+                                condition: trip.weatherIcon,
+                                iconColor: Color(0xFFFFA500),
+                                width: 30.0,
+                                height: 30.0,
+                              ),
                             ),
                             Hero(
                               tag: 'temp-$index',
@@ -229,7 +234,20 @@ class TripDetail extends StatelessWidget {
               children: <Widget>[
                 GestureDetector(
                   onTap: () {
-                    Navigator.pushNamed(context, PlacesScreen.id);
+                    final index = Provider.of<TripState>(context, listen: false)
+                        .selectedIndex;
+                    final trip =
+                        Provider.of<List<Trip>>(context, listen: false)[index];
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        transitionDuration: const Duration(milliseconds: 550),
+                        pageBuilder: (context, _, __) => PlacesScreen(
+                          trip: trip,
+                          placeType: PlaceType.General,
+                        ),
+                      ),
+                    );
                   },
                   child: TripDetailGridItem(
                     tag: 'places',
@@ -237,30 +255,66 @@ class TripDetail extends StatelessWidget {
                     gridItemText: 'Places',
                   ),
                 ),
-                TripDetailGridItem(
-                  tag: 'foods',
-                  gridImgPath: 'assets/images/food.jpg',
-                  gridItemText: 'Foods',
+                GestureDetector(
+                  onTap: () {
+                    final index = Provider.of<TripState>(context, listen: false)
+                        .selectedIndex;
+                    final trip =
+                        Provider.of<List<Trip>>(context, listen: false)[index];
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        transitionDuration: const Duration(milliseconds: 550),
+                        pageBuilder: (context, _, __) => PlacesScreen(
+                          trip: trip,
+                          placeType: PlaceType.Food,
+                        ),
+                      ),
+                    );
+                  },
+                  child: TripDetailGridItem(
+                    tag: 'foods',
+                    gridImgPath: 'assets/images/food.jpg',
+                    gridItemText: 'Foods',
+                  ),
                 ),
-                TripDetailGridItem(
-                  tag: 'hotels',
-                  gridImgPath: 'assets/images/hotels.jpg',
-                  gridItemText: 'Hotels',
+                GestureDetector(
+                  onTap: () {
+                    final index = Provider.of<TripState>(context, listen: false)
+                        .selectedIndex;
+                    final trip =
+                        Provider.of<List<Trip>>(context, listen: false)[index];
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        transitionDuration: const Duration(milliseconds: 550),
+                        pageBuilder: (context, _, __) => PlacesScreen(
+                          trip: trip,
+                          placeType: PlaceType.Hotel,
+                        ),
+                      ),
+                    );
+                  },
+                  child: TripDetailGridItem(
+                    tag: 'hotels',
+                    gridImgPath: 'assets/images/hotels.jpg',
+                    gridItemText: 'Hotels',
+                  ),
                 ),
                 TripDetailGridItem(
                   tag: 'flights',
-                  gridImgPath: 'assets/images/flights.jpg',
-                  gridItemText: 'Flights',
-                ),
-                TripDetailGridItem(
-                  tag: 'weather',
                   gridImgPath: 'assets/images/weather-2.jpg',
                   gridItemText: 'Weather',
                 ),
                 TripDetailGridItem(
+                  tag: 'weather',
+                  gridImgPath: 'assets/images/todo.jpg',
+                  gridItemText: 'To Dos',
+                ),
+                TripDetailGridItem(
                   tag: 'saved-places',
                   gridImgPath: 'assets/images/saved_places.jpg',
-                  gridItemText: 'Saved Places',
+                  gridItemText: 'Visiting',
                 ),
               ],
             ),

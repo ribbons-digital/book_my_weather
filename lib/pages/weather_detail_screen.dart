@@ -140,7 +140,6 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen>
                             },
                             child: HourlyWeatherWidget(
                               hourIndex: index,
-                              weatherIconPath: 'assets/images/sunny.png',
                               hourlyWeatherData: hourlyWeatherData,
                             ),
                           );
@@ -179,8 +178,6 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen>
                             child: DailyWeather(
                               dayIndex: index,
                               dailyWeatherData: dailyWeatherData,
-                              weatherConditionImgPath:
-                                  'assets/images/sunny.png',
                             ),
                           );
                         },

@@ -46,7 +46,7 @@ class PlaceCard extends StatelessWidget {
             color: Color(0XFF69A4FF),
           ),
           title: Text(
-            'Add note',
+            'Add a ToDo',
             style: TextStyle(
               fontSize: 18.0,
               color: Color(0XFF69A4FF),
@@ -248,134 +248,6 @@ class PlaceCard extends StatelessWidget {
                         ),
                       ),
                     ),
-//                  Container(
-//                    width: double.infinity,
-//                    height: 40.0,
-//                    padding: EdgeInsets.only(left: 15.0),
-//                    child: ListView(
-//                      scrollDirection: Axis.horizontal,
-//                      children: <Widget>[
-//                        FlatButton(
-//                          shape: RoundedRectangleBorder(
-//                            borderRadius: new BorderRadius.circular(18.0),
-//                            side: BorderSide(
-//                              color: Color(0XFF69A4FF),
-//                            ),
-//                          ),
-//                          child: Row(
-//                            children: <Widget>[
-//                              SvgPicture.asset(
-//                                'assets/images/note_solid.svg',
-//                                width: 14.0,
-//                                height: 16.0,
-//                                color: Color(0XFF69A4FF),
-//                              ),
-//                              SizedBox(
-//                                width: 5.0,
-//                              ),
-//                              Text(
-//                                'Add note',
-//                                style: TextStyle(
-//                                  color: Color(0XFF69A4FF),
-//                                ),
-//                              ),
-//                            ],
-//                          ),
-//                          onPressed: () {},
-//                        ),
-//                        SizedBox(
-//                          width: 20.0,
-//                        ),
-//                        FlatButton(
-//                          child: Row(
-//                            children: <Widget>[
-//                              SvgPicture.asset(
-//                                'assets/images/share_solid.svg',
-//                                width: 14.0,
-//                                height: 16.0,
-//                                color: Color(0XFF69A4FF),
-//                              ),
-//                              SizedBox(
-//                                width: 5.0,
-//                              ),
-//                              Text(
-//                                'Share',
-//                                style: TextStyle(
-//                                  color: Color(0XFF69A4FF),
-//                                ),
-//                              ),
-//                            ],
-//                          ),
-//                          shape: RoundedRectangleBorder(
-//                            borderRadius: new BorderRadius.circular(18.0),
-//                            side: BorderSide(
-//                              color: Color(0XFF69A4FF),
-//                            ),
-//                          ),
-//                          onPressed: () async {
-//                            final url =
-//                                'https://maps.googleapis.com/maps/api/place/details/json?key=$kGooglePlacesAPIKey&fields=url&place_id=$placeId';
-////                            http.Response response = await http.get(url);
-//                            NetworkHelper networkHelper = NetworkHelper(url);
-//
-//                            try {
-//                              Map<String, dynamic> result =
-//                                  await networkHelper.getData();
-//                              Share.share(result['result']['url']);
-//                            } catch (e) {
-//                              print(e.toString());
-//                            }
-//                          },
-//                        ),
-//                        SizedBox(
-//                          width: 20.0,
-//                        ),
-//                        FlatButton(
-//                          child: Row(
-//                            children: <Widget>[
-//                              SvgPicture.asset(
-//                                'assets/images/map_solid.svg',
-//                                width: 15.0,
-//                                height: 15.0,
-//                                color: Color(0XFF69A4FF),
-//                              ),
-//                              SizedBox(
-//                                width: 5.0,
-//                              ),
-//                              Text(
-//                                'Direction',
-//                                style: TextStyle(
-//                                  color: Color(0XFF69A4FF),
-//                                ),
-//                              ),
-//                            ],
-//                          ),
-//                          shape: RoundedRectangleBorder(
-//                            borderRadius: new BorderRadius.circular(18.0),
-//                            side: BorderSide(
-//                              color: Color(0XFF69A4FF),
-//                            ),
-//                          ),
-//                          onPressed: () async {
-//                            final url =
-//                                'https://maps.googleapis.com/maps/api/place/details/json?key=$kGooglePlacesAPIKey&fields=formatted_address&place_id=$placeId';
-////                            http.Response response = await http.get(url);
-//                            NetworkHelper networkHelper = NetworkHelper(url);
-//
-//                            try {
-//                              Map<String, dynamic> result =
-//                                  await networkHelper.getData();
-//                              final address =
-//                                  result['result']['formatted_address'];
-//                              MapsLauncher.launchQuery(address);
-//                            } catch (e) {
-//                              print(e.toString());
-//                            }
-//                          },
-//                        ),
-//                      ],
-//                    ),
-//                  ),
                 ],
               ),
             ),

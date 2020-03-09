@@ -40,4 +40,15 @@ const kUnsplashAPIURL =
 const kAqiCNAPIBaseURL = 'https://api.waqi.info/feed/geo:';
 
 const kGPlaceDetailBaseURL =
-    'https://maps.googleapis.com/maps/api/place/details/json?key=$kGooglePlacesAPIKey&fields=url,formatted_address,photos,formatted_phone_number,opening_hours/weekday_text,website';
+    'https://maps.googleapis.com/maps/api/place/details/json?key=$kGooglePlacesAPIKey&fields=url,formatted_address,photos,formatted_phone_number,opening_hours/weekday_text,opening_hours/periods,website';
+
+const kClearDay = 'clear-day';
+const kClearNight = 'clear-night';
+const kRain = 'rain';
+const kSnow = 'snow';
+const kSleet = 'sleet';
+const kWind = 'wind';
+const kFog = 'fog';
+const kCloudy = 'cloudy';
+const kPartlyCloudyDay = 'partly-cloudy-day';
+const kPartlyCloudyNight = 'partly-cloudy-night';

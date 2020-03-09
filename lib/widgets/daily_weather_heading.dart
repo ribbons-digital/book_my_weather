@@ -1,4 +1,5 @@
 import 'package:book_my_weather/models/place_data.dart';
+import 'package:book_my_weather/services/weather.dart';
 import 'package:book_my_weather/styleguide.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -20,6 +21,10 @@ class DailyWeatherHeading extends StatelessWidget {
         .format(DateTime.fromMillisecondsSinceEpoch(
             place.weather.daily.data[0].time * 1000))
         .toString();
+    final hourlyWeather = place.weather.hourly.data;
+    final dailyWeather = place.weather.daily.data;
+    WeatherModel weatherModel = WeatherModel();
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12.0),
       child: Row(
@@ -27,9 +32,11 @@ class DailyWeatherHeading extends StatelessWidget {
         children: <Widget>[
           Hero(
             tag: "weather-icon",
-            child: Image.asset(
-              'assets/images/sunny.png',
-              scale: 1 / (screenHeight / 100) * 10,
+            child: weatherModel.getWeatherIcon(
+              condition: hourlyWeather[0].icon,
+              iconColor: Color(0xFFFFA500),
+              width: 100.0,
+              height: 100.0,
             ),
           ),
           SizedBox(
@@ -38,14 +45,14 @@ class DailyWeatherHeading extends StatelessWidget {
           Expanded(
             flex: 2,
             child: Text(
-              '${place.weather.hourly.data[0].temperature.toStringAsFixed(0)} º',
+              '${hourlyWeather[0].temperature.toStringAsFixed(0)} º',
               style: AppTheme.display1,
             ),
           ),
           Column(
             children: <Widget>[
               Text(
-                '${place.weather.daily.data[0].temperatureHigh.toStringAsFixed(0)}º / ${place.weather.daily.data[0].temperatureLow.toStringAsFixed(0)}º',
+                '${dailyWeather[0].temperatureHigh.toStringAsFixed(0)}º / ${dailyWeather[0].temperatureLow.toStringAsFixed(0)}º',
                 style: AppTheme.display2,
               ),
               Text(date, style: AppTheme.display2),

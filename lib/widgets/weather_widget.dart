@@ -1,5 +1,6 @@
 import 'package:book_my_weather/models/place_data.dart';
 import 'package:book_my_weather/pages/weather_detail_screen.dart';
+import 'package:book_my_weather/services/weather.dart';
 import 'package:book_my_weather/styleguide.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,9 @@ class WeatherWidget extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     final placeData = Provider.of<PlaceData>(context);
     final places = placeData.places;
+    WeatherModel weatherModel = WeatherModel();
+    final currentHourlyWeather = places[placeIndex].weather.hourly.data[0];
+    final currentDailyWeather = places[placeIndex].weather.daily.data[0];
 
     return InkWell(
       onTap: () {
@@ -60,20 +64,19 @@ class WeatherWidget extends StatelessWidget {
                 children: <Widget>[
                   Hero(
                     tag: "weather-icon",
-                    child: Image.asset(
-                      'assets/images/sunny.png',
-                      scale: 1 / (screenHeight / 100) * 10,
+                    child: weatherModel.getWeatherIcon(
+                      condition: currentHourlyWeather.icon,
+                      iconColor: Color(0xFFFFA500),
+                      width: 100.0,
+                      height: 100.0,
                     ),
                   ),
-                  SizedBox(
-                    height: screenHeight / 100,
-                  ),
                   Text(
-                    '${places[placeIndex].weather.hourly.data[0].temperature.toStringAsFixed(0)}º',
+                    '${currentHourlyWeather.temperature.toStringAsFixed(0)}º',
                     style: AppTheme.display1,
                   ),
                   Text(
-                    '${places[placeIndex].weather.daily.data[0].temperatureHigh.toStringAsFixed(0)}º / ${places[placeIndex].weather.daily.data[0].temperatureLow.toStringAsFixed(0)}º',
+                    '${currentDailyWeather.temperatureHigh.toStringAsFixed(0)}º / ${places[placeIndex].weather.daily.data[0].temperatureLow.toStringAsFixed(0)}º',
                     style: TextStyle(
                       fontSize: 26,
                       fontWeight: FontWeight.w100,
@@ -92,35 +95,34 @@ class WeatherWidget extends StatelessWidget {
             child: Container(
               width: screenWidth * 0.9,
               child: Row(
-                  children: places[placeIndex]
-                      .weather
-                      .hourly
-                      .data
-                      .getRange(0, 5)
-                      .map((data) {
-                return Expanded(
-                  child: Column(
-                    children: <Widget>[
-                      Text(
-                        '${DateFormat('ha').format(DateTime.fromMillisecondsSinceEpoch(data.time * 1000)).toString()}',
-                        style: AppTheme.small,
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(top: 5, bottom: 10),
-//                          child: _SpinningSun(),
-                        child: Image.asset(
-                          'assets/images/sunny.png',
-                          scale: 2.5,
+                children: List.generate(5, (index) {
+                  final data = places[placeIndex].weather.hourly.data[index];
+                  return Expanded(
+                    child: Column(
+                      children: <Widget>[
+                        Text(
+                          '${DateFormat('ha').format(DateTime.fromMillisecondsSinceEpoch(data.time * 1000)).toString()}',
+                          style: AppTheme.small,
                         ),
-                      ),
-                      Text(
-                        '${data.temperature.toStringAsFixed(0)}º',
-                        style: AppTheme.small,
-                      ),
-                    ],
-                  ),
-                );
-              }).toList()),
+                        Container(
+                          margin: EdgeInsets.only(top: 5),
+//                          child: _SpinningSun(),
+                          child: weatherModel.getWeatherIcon(
+                            condition: data.icon,
+                            iconColor: Color(0xFFFFA500),
+                            width: 50.0,
+                            height: 50.0,
+                          ),
+                        ),
+                        Text(
+                          '${data.temperature.toStringAsFixed(0)}º',
+                          style: AppTheme.small,
+                        ),
+                      ],
+                    ),
+                  );
+                }),
+              ),
             ),
           ),
         ],

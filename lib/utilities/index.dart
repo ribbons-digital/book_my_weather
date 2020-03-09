@@ -37,3 +37,62 @@ Future<List<String>> gPlaceAutoCompleteResult(String input) async {
 String buildPhotoURL(String photoReference) {
   return '$kGPlacePhotoSearchURL?maxwidth=800&photoreference=$photoReference&key=$kGooglePlacesAPIKey';
 }
+
+enum NearbySearchType {
+  AmusementPark,
+  ArtGallery,
+  ATM,
+  Bakery,
+  Bank,
+  Bar,
+  BookStore,
+  BusStation,
+  Cafe,
+  CarRepair,
+  GasStation,
+  SuperMarket,
+  Laundry,
+  Lodging,
+  LiquorStore,
+  Meseum,
+  NightClub,
+  Park,
+  Parking,
+  Pharmacy,
+  Store,
+  TrainStation,
+  ShoppingMall,
+  Restaurant,
+  TransitStation,
+  SubwayStation,
+}
+
+String getSearchTypeString(NearbySearchType searchType) {
+  if (searchType == NearbySearchType.AmusementPark) return 'amusement_park';
+  if (searchType == NearbySearchType.ArtGallery) return 'art_gallery';
+  if (searchType == NearbySearchType.ATM) return 'atm';
+  if (searchType == NearbySearchType.Bakery) return 'bakery';
+  if (searchType == NearbySearchType.Bank) return 'bank';
+  if (searchType == NearbySearchType.Bar) return 'bar';
+  if (searchType == NearbySearchType.BookStore) return 'book_store';
+  if (searchType == NearbySearchType.Cafe) return 'cafe';
+  if (searchType == NearbySearchType.CarRepair) return 'car_repair';
+  if (searchType == NearbySearchType.BusStation) return 'bus_station';
+  if (searchType == NearbySearchType.GasStation) return 'gas_station';
+  if (searchType == NearbySearchType.Laundry) return 'laundry';
+  if (searchType == NearbySearchType.Lodging) return 'lodging';
+  if (searchType == NearbySearchType.LiquorStore) return 'liquor_store';
+  if (searchType == NearbySearchType.Meseum) return 'museum';
+  if (searchType == NearbySearchType.NightClub) return 'night_club';
+  if (searchType == NearbySearchType.Park) return 'park';
+  if (searchType == NearbySearchType.Parking) return 'parking';
+  if (searchType == NearbySearchType.Pharmacy) return 'pharmacy';
+  if (searchType == NearbySearchType.Restaurant) return 'restaurant';
+  if (searchType == NearbySearchType.ShoppingMall) return 'shopping_mall';
+  if (searchType == NearbySearchType.Store) return 'store';
+  if (searchType == NearbySearchType.SuperMarket) return 'supermarket';
+  if (searchType == NearbySearchType.TrainStation) return 'train_station';
+  if (searchType == NearbySearchType.TransitStation) return 'transit_station';
+  if (searchType == NearbySearchType.SubwayStation) return 'subway_station';
+  return 'shopping_mall';
+}

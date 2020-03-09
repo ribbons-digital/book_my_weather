@@ -123,7 +123,6 @@ class _PlaceWeatherState extends State<PlaceWeather> {
                         child: HourlyWeatherWidget(
                           hourIndex: i,
                           hourlyWeatherData: hourlyWeatherData,
-                          weatherIconPath: 'assets/images/sunny.png',
                           hourTextStyle: TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.w100,
@@ -142,7 +141,6 @@ class _PlaceWeatherState extends State<PlaceWeather> {
                         child: DailyWeather(
                           dayIndex: i,
                           dailyWeatherData: dailyWeatherData,
-                          weatherConditionImgPath: 'assets/images/sunny.png',
                           tempRangeTextStyle: TextStyle(
                             fontWeight: FontWeight.w100,
                             fontSize: 20,

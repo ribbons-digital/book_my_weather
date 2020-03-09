@@ -4,7 +4,6 @@ import 'package:book_my_weather/services/db.dart';
 import 'package:book_my_weather/services/weather.dart';
 import 'package:book_my_weather/utilities/index.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 class TripWidget extends StatefulWidget {
@@ -62,6 +61,8 @@ class _TripWidgetState extends State<TripWidget> {
     final startDateToDateString =
         timeStampToDateString(trips[widget.index].startDate);
 
+    WeatherModel weatherModel = WeatherModel();
+
     return Padding(
       padding: const EdgeInsets.only(
           left: 20.0, right: 20.0, top: 10.0, bottom: 10.0),
@@ -107,9 +108,12 @@ class _TripWidgetState extends State<TripWidget> {
                         children: <Widget>[
                           Hero(
                             tag: 'tempIcon-${widget.index}',
-                            child: SvgPicture.asset('assets/images/sunny.svg',
-                                color: Colors.white,
-                                semanticsLabel: 'sunny-line'),
+                            child: weatherModel.getWeatherIcon(
+                              condition: trips[widget.index].weatherIcon,
+                              iconColor: Color(0xFFFFA500),
+                              width: 30.0,
+                              height: 30.0,
+                            ),
                           ),
                           Hero(
                             tag: 'temp-${widget.index}',

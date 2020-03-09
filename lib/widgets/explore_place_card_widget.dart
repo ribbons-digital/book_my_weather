@@ -40,10 +40,15 @@ class ExplorePlaceCardWidget extends StatelessWidget {
                   topLeft: Radius.circular(12.0),
                   topRight: Radius.circular(12.0),
                 ),
-                child: Image.network(
-                  photo,
-                  fit: BoxFit.cover,
-                ),
+                child: photo.contains('https')
+                    ? Image.network(
+                        photo,
+                        fit: BoxFit.cover,
+                      )
+                    : Image.asset(
+                        photo,
+                        fit: BoxFit.cover,
+                      ),
               ),
             ),
           ),
@@ -96,7 +101,7 @@ class ExplorePlaceCardWidget extends StatelessWidget {
                           spacing: 0.0,
                         ),
                         Text(
-                          ' ($ratingTotals)',
+                          ratingTotals != null ? ' ($ratingTotals)' : ' (0)',
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 15,
