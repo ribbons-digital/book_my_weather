@@ -6,6 +6,7 @@ import 'package:book_my_weather/widgets/daily_weather_widget.dart';
 import 'package:book_my_weather/widgets/hourly_weather_widget.dart';
 import 'package:book_my_weather/widgets/weather_detail_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../styleguide.dart';
@@ -39,6 +40,11 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen>
         placeData.places[placeData.currentPlaceIndex].weather.hourly.data;
     final dailyWeatherList =
         placeData.places[placeData.currentPlaceIndex].weather.daily.data;
+
+    final today = DateFormat('EEE, MMM d')
+        .format(DateTime.fromMillisecondsSinceEpoch(
+            dailyWeatherList[0].time * 1000))
+        .toString();
 
     return Scaffold(
       body: Stack(
@@ -79,7 +85,12 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen>
               SizedBox(
                 height: 20,
               ),
-              DailyWeatherHeading(screenHeight: screenHeight),
+              DailyWeatherHeading(
+                screenHeight: screenHeight,
+                dailyWeather: dailyWeatherList[0],
+                hourlyWeather: hourlyWeatherList[0],
+                today: today,
+              ),
               Container(
                 padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
                 child: TabBar(
@@ -112,11 +123,6 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen>
                         padding: EdgeInsets.all(10.0),
                         itemCount: hourlyWeatherList.length,
                         itemBuilder: (BuildContext context, int index) {
-                          final placeData = Provider.of<PlaceData>(context);
-                          final place =
-                              placeData.places[placeData.currentPlaceIndex];
-                          final hourlyWeatherData = place.weather.hourly.data;
-
                           if (index > 11) return null;
 
                           return GestureDetector(
@@ -140,7 +146,7 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen>
                             },
                             child: HourlyWeatherWidget(
                               hourIndex: index,
-                              hourlyWeatherData: hourlyWeatherData,
+                              hourlyWeatherData: hourlyWeatherList,
                             ),
                           );
                         },
@@ -149,11 +155,6 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen>
                         padding: EdgeInsets.all(10.0),
                         itemCount: dailyWeatherList.length,
                         itemBuilder: (BuildContext context, int index) {
-                          final placeData = Provider.of<PlaceData>(context);
-                          final place =
-                              placeData.places[placeData.currentPlaceIndex];
-                          final dailyWeatherData = place.weather.daily.data;
-
                           if (index > 6) return null;
                           return GestureDetector(
                             onTap: () {
@@ -177,7 +178,7 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen>
                             },
                             child: DailyWeather(
                               dayIndex: index,
-                              dailyWeatherData: dailyWeatherData,
+                              dailyWeatherData: dailyWeatherList,
                             ),
                           );
                         },

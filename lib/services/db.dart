@@ -4,6 +4,8 @@ import 'package:book_my_weather/models/place.dart';
 import 'package:book_my_weather/models/setting.dart';
 import 'package:book_my_weather/models/trip.dart';
 import 'package:book_my_weather/models/trip_place.dart';
+import 'package:book_my_weather/models/trip_todo.dart';
+import 'package:book_my_weather/models/trip_visiting.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DatabaseService {
@@ -166,5 +168,101 @@ class DatabaseService {
       'temperature': newTemp,
       'weatherIcon': newIcon,
     });
+  }
+
+  Stream<List<TripTodo>> streamTripTodos(String tripId) {
+    return _db
+        .collection('trips')
+        .document(tripId)
+        .collection('todos')
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.documents.map((document) {
+        return TripTodo.fromFirestore(document);
+      }).toList();
+    });
+  }
+
+  Future<void> addTodoToTrip(String tripId, TripTodo tripTodo) {
+    return _db
+        .collection('trips')
+        .document(tripId)
+        .collection('todos')
+        .document()
+        .setData({
+      'content': tripTodo.content,
+      'isFinished': false,
+    });
+  }
+
+  Future<void> toggleTripTodoStatus(
+      String tripId, String toDoId, bool currentStatus) {
+    return _db
+        .collection('trips')
+        .document(tripId)
+        .collection('todos')
+        .document(toDoId)
+        .updateData({
+      'isFinished': !currentStatus,
+    });
+  }
+
+  Future<void> updateTripTodoContent(
+      String tripId, String toDoId, String newContent) {
+    return _db
+        .collection('trips')
+        .document(tripId)
+        .collection('todos')
+        .document(toDoId)
+        .updateData({
+      'content': newContent,
+    });
+  }
+
+  Future<void> deleteTripTodo(String tripId, String toDoId) {
+    return _db
+        .collection('trips')
+        .document(tripId)
+        .collection('todos')
+        .document(toDoId)
+        .delete();
+  }
+
+  Stream<List<TripVisiting>> streamTripVisitings(String tripId) {
+    return _db
+        .collection('trips')
+        .document(tripId)
+        .collection('visitings')
+        .orderBy('visitingDate')
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.documents.map((document) {
+        return TripVisiting.fromFirestore(document);
+      }).toList();
+    });
+  }
+
+  Future<void> addTripVisiting(String tripId, TripVisiting tripVisiting) {
+    return _db
+        .collection('trips')
+        .document(tripId)
+        .collection('visitings')
+        .document()
+        .setData({
+      'photo': tripVisiting.photo,
+      'placeId': tripVisiting.placeId,
+      'placeName': tripVisiting.placeName,
+      'placeType': tripVisiting.placeType,
+      'visitingDate': tripVisiting.visitingDate,
+    });
+  }
+
+  Future<void> deleteTripVisiting(String tripId, String tripVisitingId) {
+    return _db
+        .collection('trips')
+        .document(tripId)
+        .collection('visitings')
+        .document(tripVisitingId)
+        .delete();
   }
 }

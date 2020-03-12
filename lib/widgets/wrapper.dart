@@ -9,6 +9,9 @@ import 'package:book_my_weather/pages/search_place_screen.dart';
 import 'package:book_my_weather/pages/signin_register_screen.dart';
 import 'package:book_my_weather/pages/trip_detail_screen.dart';
 import 'package:book_my_weather/pages/trip_screen.dart';
+import 'package:book_my_weather/pages/trip_todos_screen.dart';
+import 'package:book_my_weather/pages/trip_visiting_screen.dart';
+import 'package:book_my_weather/pages/trip_weather_screen.dart';
 import 'package:book_my_weather/pages/trips_screen.dart';
 import 'package:book_my_weather/pages/weather_listing_screen.dart';
 import 'package:book_my_weather/services/db.dart';
@@ -71,7 +74,6 @@ class _WrapperState extends State<Wrapper> {
   @override
   Widget build(BuildContext context) {
     final db = DatabaseService();
-//    final auth = AuthService();
 
     return FutureBuilder(
       future: deviceId,
@@ -89,13 +91,14 @@ class _WrapperState extends State<Wrapper> {
                 value: db.streamSetting(snapshot.data),
               ),
               StreamProvider<List<Trip>>.value(
-                  value: db.streamTrips(
-                uid: Provider.of<User>(context) != null
-                    ? Provider.of<User>(context).uid
-                    : '',
-                filterString: filterString,
-                isPast: isPast,
-              )),
+                value: db.streamTrips(
+                  uid: Provider.of<User>(context) != null
+                      ? Provider.of<User>(context).uid
+                      : '',
+                  filterString: filterString,
+                  isPast: isPast,
+                ),
+              ),
             ],
             child: Consumer<PlaceData>(
               builder: (_, placeData, __) => MaterialApp(
@@ -170,6 +173,9 @@ class _WrapperState extends State<Wrapper> {
                   SearchPlaceScreen.id: (context) => SearchPlaceScreen(),
                   TripsScreen.id: (context) => TripsScreen(),
                   SignInRegisterScreen.id: (context) => SignInRegisterScreen(),
+                  TripWeatherScreen.id: (context) => TripWeatherScreen(),
+                  TripTodosScreen.id: (context) => TripTodosScreen(),
+                  TripVisitingScreen.id: (context) => TripVisitingScreen(),
                 },
               ),
             ),

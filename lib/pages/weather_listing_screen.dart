@@ -28,8 +28,10 @@ class WeatherListingScreen extends StatefulWidget {
   _WeatherListingScreenState createState() => _WeatherListingScreenState();
 }
 
-class _WeatherListingScreenState extends State<WeatherListingScreen> {
+class _WeatherListingScreenState extends State<WeatherListingScreen>
+    with WidgetsBindingObserver {
   PageController _pageController;
+  AppLifecycleState _notification;
 
   int currentPage = 0;
   String placeName = '';
@@ -40,8 +42,18 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
   final _auth = AuthService();
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    setState(() {
+      _notification = state;
+    });
+    ;
+  }
+
+  @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _pageController = PageController(
       viewportFraction: 1.0,
       initialPage: currentPage,
@@ -52,23 +64,14 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
 
   Future<Weather> getWeather() async {
     WeatherModel weather = WeatherModel();
-//    if (widget.places.length > 0) {
-//      setState(() {
-//        placeName = widget.places[0].address;
-//      });
-//      return await weather.getLocationWeather(
-//        type: RequestedWeatherType.All,
-//        useCelsius: true,
-//        latitude: widget.places[0].latitude,
-//        longitude: widget.places[0].longitude,
-//      );
-//    } else
-//    if (widget.places.length == 0) {
+
     Location location = Location();
     await location.getLocation();
 
     await location.getPlaceMarkFromCoordinates(
-        lat: location.latitude, lng: location.longitude);
+      lat: location.latitude,
+      lng: location.longitude,
+    );
 
     setState(() {
       placeName = location.placeMark[0].locality;
@@ -88,28 +91,18 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
       longitude: location.longitude,
       weather: currentPlaceWeather,
     ));
-//      _addPlace(Place(
-//        name: location.placeMark[0].name,
-//        address: location.placeMark[0].locality,
-//        latitude: location.latitude,
-//        longitude: location.longitude,
-//        weather: currentPlaceWeather,
-//      ));
+
     Provider.of<PlaceData>(context, listen: false).updatePlaces(places);
 
     return currentPlaceWeather;
-//    }
   }
 
   @override
   void dispose() {
     super.dispose();
+    WidgetsBinding.instance.removeObserver(this);
     _pageController.dispose();
   }
-
-//  void _addPlace(Place newPlace) {
-//    Provider.of<PlaceData>(context, listen: false).addPlace(newPlace);
-//  }
 
   void _updatePlaceWeather(int index, Weather updatedWeather) {
     Provider.of<PlaceData>(context, listen: false)
@@ -179,6 +172,10 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
   @override
   void didChangeDependencies() async {
     super.didChangeDependencies();
+    if (_notification != null) {
+      print(_notification.index);
+    }
+
     if (Provider.of<Setting>(context) != null &&
         widget.places.length > Provider.of<Setting>(context).places.length &&
         widget.places.length > 1) {
@@ -236,11 +233,6 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
 
     if (Provider.of<Setting>(context, listen: false) != null &&
         Provider.of<Setting>(context, listen: false).places.length == 0) {
-//      Location location = Location();
-//      await location.getLocation();
-//
-//      await location.getPlaceMarkFromCoordinates(
-//          lat: location.latitude, lng: location.longitude);
       if (widget.places.length > 0) {
         final place = Place(
           name: widget.places[0].name,
@@ -257,7 +249,7 @@ class _WeatherListingScreenState extends State<WeatherListingScreen> {
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
-
+    print(_notification);
     return Scaffold(
       appBar: AppBar(
         //leading: Icon(Icons.arrow_back_ios),

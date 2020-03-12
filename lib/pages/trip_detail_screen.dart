@@ -2,6 +2,9 @@ import 'package:book_my_weather/models/trip.dart';
 import 'package:book_my_weather/models/trip_state.dart';
 import 'package:book_my_weather/pages/places_screen.dart';
 import 'package:book_my_weather/pages/trip_screen.dart';
+import 'package:book_my_weather/pages/trip_todos_screen.dart';
+import 'package:book_my_weather/pages/trip_visiting_screen.dart';
+import 'package:book_my_weather/pages/trip_weather_screen.dart';
 import 'package:book_my_weather/services/weather.dart';
 import 'package:book_my_weather/utilities/index.dart';
 import 'package:book_my_weather/widgets/trip_detail_grid_item_widget.dart';
@@ -44,22 +47,43 @@ class TripDetail extends StatelessWidget {
                   ),
                 ),
                 Align(
-                  alignment: Alignment(0, -0.8),
+                  alignment: Alignment(0, -0.7),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      IconButton(
-                        icon: Icon(
-                          Icons.close,
-                          size: 30.0,
-                          color: Colors.white,
+                      Container(
+                        width: 50,
+                        height: 50,
+                        margin: EdgeInsets.only(
+                          left: 8.0,
                         ),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(50.0),
+                          color: Color(0x42FFFFFF),
+                        ),
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.close,
+                            size: 30.0,
+                            color: Colors.white,
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 9.0),
+                      Container(
+                        width: 50,
+                        height: 50,
+                        margin: EdgeInsets.only(
+                          right: 8.0,
+                        ),
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(50.0),
+                          color: Color(0x42FFFFFF),
+                        ),
                         child: IconButton(
                           icon: Icon(
                             Icons.edit,
@@ -151,21 +175,6 @@ class TripDetail extends StatelessWidget {
                             ),
                           ],
                         ),
-//                        Hero(
-//                          tag: 'precipitation-1',
-//                          child: Material(
-//                            color: Color(0X00FFFFFF),
-//                            child: Stack(
-//                              alignment: Alignment.center,
-//                              children: <Widget>[
-//                                Image.asset('assets/images/rain-solid.png'),
-//                                Text(
-//                                  precipitation + '%',
-//                                )
-//                              ],
-//                            ),
-//                          ),
-//                        )
                       ],
                     ),
                   ),
@@ -234,10 +243,6 @@ class TripDetail extends StatelessWidget {
               children: <Widget>[
                 GestureDetector(
                   onTap: () {
-                    final index = Provider.of<TripState>(context, listen: false)
-                        .selectedIndex;
-                    final trip =
-                        Provider.of<List<Trip>>(context, listen: false)[index];
                     Navigator.push(
                       context,
                       PageRouteBuilder(
@@ -257,10 +262,6 @@ class TripDetail extends StatelessWidget {
                 ),
                 GestureDetector(
                   onTap: () {
-                    final index = Provider.of<TripState>(context, listen: false)
-                        .selectedIndex;
-                    final trip =
-                        Provider.of<List<Trip>>(context, listen: false)[index];
                     Navigator.push(
                       context,
                       PageRouteBuilder(
@@ -280,10 +281,6 @@ class TripDetail extends StatelessWidget {
                 ),
                 GestureDetector(
                   onTap: () {
-                    final index = Provider.of<TripState>(context, listen: false)
-                        .selectedIndex;
-                    final trip =
-                        Provider.of<List<Trip>>(context, listen: false)[index];
                     Navigator.push(
                       context,
                       PageRouteBuilder(
@@ -301,20 +298,43 @@ class TripDetail extends StatelessWidget {
                     gridItemText: 'Hotels',
                   ),
                 ),
-                TripDetailGridItem(
-                  tag: 'flights',
-                  gridImgPath: 'assets/images/weather-2.jpg',
-                  gridItemText: 'Weather',
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        transitionDuration: const Duration(milliseconds: 550),
+                        pageBuilder: (context, _, __) => TripWeatherScreen(
+                          trip: trip,
+                        ),
+                      ),
+                    );
+                  },
+                  child: TripDetailGridItem(
+                    tag: 'weather',
+                    gridImgPath: 'assets/images/weather-2.jpg',
+                    gridItemText: 'Weather',
+                  ),
                 ),
-                TripDetailGridItem(
-                  tag: 'weather',
-                  gridImgPath: 'assets/images/todo.jpg',
-                  gridItemText: 'To Dos',
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, TripTodosScreen.id);
+                  },
+                  child: TripDetailGridItem(
+                    tag: 'todos',
+                    gridImgPath: 'assets/images/todo.jpg',
+                    gridItemText: 'To Dos',
+                  ),
                 ),
-                TripDetailGridItem(
-                  tag: 'saved-places',
-                  gridImgPath: 'assets/images/saved_places.jpg',
-                  gridItemText: 'Visiting',
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, TripVisitingScreen.id);
+                  },
+                  child: TripDetailGridItem(
+                    tag: 'visiting',
+                    gridImgPath: 'assets/images/saved_places.jpg',
+                    gridItemText: 'Visiting',
+                  ),
                 ),
               ],
             ),

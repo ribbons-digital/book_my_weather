@@ -1,12 +1,17 @@
+import 'package:book_my_weather/models/trip.dart';
+import 'package:book_my_weather/models/trip_state.dart';
+import 'package:book_my_weather/models/trip_todo.dart';
 import 'package:book_my_weather/secure/keys.dart';
+import 'package:book_my_weather/services/db.dart';
 import 'package:book_my_weather/services/networking.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:maps_launcher/maps_launcher.dart';
+import 'package:provider/provider.dart';
 import 'package:share/share.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
 
-class PlaceCard extends StatelessWidget {
+class PlaceCard extends StatefulWidget {
 //  final String currentTemp;
 //  final String currentWeatherIconPath;
   final String placeImgPath;
@@ -35,6 +40,19 @@ class PlaceCard extends StatelessWidget {
     this.placeId,
   });
 
+  @override
+  _PlaceCardState createState() => _PlaceCardState();
+}
+
+class _PlaceCardState extends State<PlaceCard> {
+  String toDoContent = '';
+
+  void setToDoContent(String newContent) {
+    setState(() {
+      toDoContent = newContent;
+    });
+  }
+
   Column _buildBottomSheetMenu(BuildContext context) {
     return Column(
       children: <Widget>[
@@ -52,6 +70,54 @@ class PlaceCard extends StatelessWidget {
               color: Color(0XFF69A4FF),
             ),
           ),
+          onTap: () {
+            Navigator.pop(context);
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text('Add a ToDo'),
+                    content: TextField(
+                      keyboardType: TextInputType.multiline,
+                      maxLength: null,
+                      maxLines: null,
+                      onChanged: (String newValue) {
+                        setToDoContent(newValue);
+                      },
+                    ),
+                    actions: <Widget>[
+                      FlatButton(
+                        child: Text('Cancel'),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                      FlatButton(
+                        child: Text('Add'),
+                        onPressed: () async {
+                          final trips =
+                              Provider.of<List<Trip>>(context, listen: false);
+                          final tripIndex =
+                              Provider.of<TripState>(context, listen: false)
+                                  .selectedIndex;
+                          final db = DatabaseService();
+
+                          TripTodo tripTodo = TripTodo(
+                            content: toDoContent,
+                          );
+                          await db.addTodoToTrip(trips[tripIndex].id, tripTodo);
+//                          Scaffold.of(context).showSnackBar(
+//                            SnackBar(
+//                              content: Text('ToDo Added.'),
+//                            ),
+//                          );
+                          Navigator.pop(context);
+                        },
+                      )
+                    ],
+                  );
+                });
+          },
         ),
         ListTile(
           leading: SvgPicture.asset(
@@ -69,7 +135,7 @@ class PlaceCard extends StatelessWidget {
           ),
           onTap: () async {
             final url =
-                'https://maps.googleapis.com/maps/api/place/details/json?key=$kGooglePlacesAPIKey&fields=url&place_id=$placeId';
+                'https://maps.googleapis.com/maps/api/place/details/json?key=$kGooglePlacesAPIKey&fields=url&place_id=${widget.placeId}';
             NetworkHelper networkHelper = NetworkHelper(url);
 
             try {
@@ -97,7 +163,7 @@ class PlaceCard extends StatelessWidget {
           ),
           onTap: () async {
             final url =
-                'https://maps.googleapis.com/maps/api/place/details/json?key=$kGooglePlacesAPIKey&fields=formatted_address&place_id=$placeId';
+                'https://maps.googleapis.com/maps/api/place/details/json?key=$kGooglePlacesAPIKey&fields=formatted_address&place_id=${widget.placeId}';
 //                            http.Response response = await http.get(url);
             NetworkHelper networkHelper = NetworkHelper(url);
 
@@ -136,13 +202,13 @@ class PlaceCard extends StatelessWidget {
                   topLeft: Radius.circular(12.0),
                   topRight: Radius.circular(12.0),
                 ),
-                child: placeImgPath.contains('https')
+                child: widget.placeImgPath.contains('https')
                     ? Image.network(
-                        placeImgPath,
+                        widget.placeImgPath,
                         fit: BoxFit.cover,
                       )
                     : Image.asset(
-                        placeImgPath,
+                        widget.placeImgPath,
                         fit: BoxFit.cover,
                       ),
               ),
@@ -156,8 +222,8 @@ class PlaceCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   ListTile(
-                    title: Text(placeName),
-                    subtitle: Text(placeCategory.split('_').join(' ')),
+                    title: Text(widget.placeName),
+                    subtitle: Text(widget.placeCategory.split('_').join(' ')),
                     trailing: IconButton(
                       icon: Icon(Icons.more_vert),
                       onPressed: () {
@@ -169,10 +235,6 @@ class PlaceCard extends StatelessWidget {
                                 child: _buildBottomSheetMenu(context),
                                 decoration: BoxDecoration(
                                   color: Theme.of(context).canvasColor,
-//                                    borderRadius: BorderRadius.only(
-//                                      topRight: const Radius.circular(10),
-//                                      topLeft: const Radius.circular(10),
-//                                    ),
                                 ),
                               );
                             });
@@ -184,7 +246,7 @@ class PlaceCard extends StatelessWidget {
                     child: Row(
                       children: <Widget>[
                         Text(
-                          placeRating.toString(),
+                          widget.placeRating.toString(),
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 15,
@@ -197,7 +259,7 @@ class PlaceCard extends StatelessWidget {
 //                              setState(() {});
                           },
                           starCount: 5,
-                          rating: placeRating,
+                          rating: widget.placeRating,
                           size: 18.0,
                           filledIconData: Icons.star,
                           halfFilledIconData: Icons.star_half,
@@ -206,7 +268,7 @@ class PlaceCard extends StatelessWidget {
                           spacing: 0.0,
                         ),
                         Text(
-                          placeReview,
+                          widget.placeReview,
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 15,
@@ -215,32 +277,17 @@ class PlaceCard extends StatelessWidget {
                       ],
                     ),
                   ),
-//                  Padding(
-//                    padding: const EdgeInsets.only(
-//                      left: 15.0,
-//                      top: 10.0,
-//                      bottom: 8.0,
-//                      right: 15.0,
-//                    ),
-//                    child: Text(
-//                      placeDesc,
-//                      style: TextStyle(
-//                        fontSize: 16.0,
-//                      ),
-//                      maxLines: 3,
-//                      overflow: TextOverflow.ellipsis,
-//                    ),
-//                  ),
-                  if (openNow != null)
+                  if (widget.openNow != null)
                     Padding(
                       padding: const EdgeInsets.only(left: 15.0, bottom: 8.0),
                       child: RichText(
                         text: TextSpan(
                           children: [
                             TextSpan(
-                              text: openNow ? 'Open now' : 'Closed',
+                              text: widget.openNow ? 'Open now' : 'Closed',
                               style: TextStyle(
-                                color: openNow ? Colors.green : Colors.red,
+                                color:
+                                    widget.openNow ? Colors.green : Colors.red,
                                 fontSize: 15,
                               ),
                             ),
@@ -252,7 +299,7 @@ class PlaceCard extends StatelessWidget {
               ),
             ),
           ),
-          if (!isExplore)
+          if (!widget.isExplore)
             Align(
               alignment: Alignment(0.9, -0.9),
               child: Container(

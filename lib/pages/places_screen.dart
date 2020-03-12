@@ -198,104 +198,105 @@ class _PlacesScreenState extends State<PlacesScreen>
                   ? Text('Nearby Foods')
                   : Text('Nearby Hotels'),
         ),
-        body: Column(
-          children: <Widget>[
-            if (widget.placeType != PlaceType.Hotel)
-              Container(
-                height: 35.0,
-                margin: EdgeInsets.symmetric(
-                  horizontal: 16.0,
-                ),
-                width: double.infinity,
-                child: searchTypeOptions(),
-              ),
-            FutureBuilder(
-              future: getNearbyPlaces,
-              builder: (BuildContext context,
-                  AsyncSnapshot<List<GoogleNearByPlace>> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Expanded(
-                    child: SpinKitWave(
-                      color: Colors.white,
-                      size: 50.0,
+        body: Builder(
+          builder: (BuildContext context) {
+            return Column(
+              children: <Widget>[
+                if (widget.placeType != PlaceType.Hotel)
+                  Container(
+                    height: 35.0,
+                    margin: EdgeInsets.symmetric(
+                      horizontal: 16.0,
                     ),
-                  );
-                }
+                    width: double.infinity,
+                    child: searchTypeOptions(),
+                  ),
+                FutureBuilder(
+                  future: getNearbyPlaces,
+                  builder: (BuildContext context,
+                      AsyncSnapshot<List<GoogleNearByPlace>> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Expanded(
+                        child: SpinKitWave(
+                          color: Colors.white,
+                          size: 50.0,
+                        ),
+                      );
+                    }
 
-                if (snapshot.connectionState == ConnectionState.done &&
-                    snapshot.hasData) {
-                  return Expanded(
-                    child: ListView.builder(
-                        itemCount: snapshot.data.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          final place = snapshot.data[index];
+                    if (snapshot.connectionState == ConnectionState.done &&
+                        snapshot.hasData) {
+                      return Expanded(
+                        child: ListView.builder(
+                            itemCount: snapshot.data.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              final place = snapshot.data[index];
 
-                          return GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  PageRouteBuilder(
-                                    transitionDuration:
-                                        const Duration(milliseconds: 550),
-                                    pageBuilder: (context, _, __) =>
-                                        PlaceDetail(
-                                      placeId: place.placeId,
-                                      placeName: place.name,
-                                      placeRating: place.rating,
-                                      placeRatingTotals: place.ratingTotals,
-                                      placeOpenNow: place.openNow,
-                                      placeType:
-                                          place.types[0].split('_').join(' '),
-                                      placeAddress: place.address,
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    PageRouteBuilder(
+                                      transitionDuration:
+                                          const Duration(milliseconds: 550),
+                                      pageBuilder: (context, _, __) =>
+                                          PlaceDetail(
+                                        placeId: place.placeId,
+                                        placeName: place.name,
+                                        placeRating: place.rating,
+                                        placeRatingTotals: place.ratingTotals,
+                                        placeOpenNow: place.openNow,
+                                        placeType:
+                                            place.types[0].split('_').join(' '),
+                                        placeAddress: place.address,
+                                      ),
                                     ),
-                                  ),
-                                );
-                              },
-                              child: place.openNow != null
-                                  ? PlaceCard(
-                                      placeCategory: place.types[0],
-                                      placeName: place.name,
-//                                            placeDesc:
-//                                                'Towering landmark skyscrapper offering shops, eateries and an observation platform on the 89th floor.',
-                                      placeImgPath: place.photos.length > 0
-                                          ? buildPhotoURL(place.photos[0])
-                                          : 'assets/images/no_image_found.jpg',
-                                      placeRating: place.rating,
-                                      placeReview: place.ratingTotals != null
-                                          ? '(${place.ratingTotals})'
-                                          : '(0)',
-                                      openNow: place.openNow,
-                                      isExplore: true,
-                                      placeId: place.placeId,
-                                    )
-                                  : PlaceCard(
-                                      placeCategory: place.types[0],
-                                      placeName: place.name,
-//                                            placeDesc:
-//                                                'Towering landmark skyscrapper offering shops, eateries and an observation platform on the 89th floor.',
-                                      placeImgPath: place.photos.length > 0
-                                          ? buildPhotoURL(place.photos[0])
-                                          : 'assets/images/no_image_found.jpg',
-                                      placeRating: place.rating,
-                                      placeReview: place.ratingTotals != null
-                                          ? '(${place.ratingTotals})'
-                                          : '(0)',
-                                      isExplore: true,
-                                      placeId: place.placeId,
-                                    ));
-                        }),
-                  );
-                }
+                                  );
+                                },
+                                child: place.openNow != null
+                                    ? PlaceCard(
+                                        placeCategory: place.types[0],
+                                        placeName: place.name,
+                                        placeImgPath: place.photos.length > 0
+                                            ? buildPhotoURL(place.photos[0])
+                                            : 'assets/images/no_image_found.jpg',
+                                        placeRating: place.rating,
+                                        placeReview: place.ratingTotals != null
+                                            ? '(${place.ratingTotals})'
+                                            : '(0)',
+                                        openNow: place.openNow,
+                                        isExplore: true,
+                                        placeId: place.placeId,
+                                      )
+                                    : PlaceCard(
+                                        placeCategory: place.types[0],
+                                        placeName: place.name,
+                                        placeImgPath: place.photos.length > 0
+                                            ? buildPhotoURL(place.photos[0])
+                                            : 'assets/images/no_image_found.jpg',
+                                        placeRating: place.rating,
+                                        placeReview: place.ratingTotals != null
+                                            ? '(${place.ratingTotals})'
+                                            : '(0)',
+                                        isExplore: true,
+                                        placeId: place.placeId,
+                                      ),
+                              );
+                            }),
+                      );
+                    }
 
-                if (snapshot.hasError)
-                  return Text(
-                    snapshot.error.toString(),
-                    style: TextStyle(color: Colors.white),
-                  );
-                return Container();
-              },
-            ),
-          ],
+                    if (snapshot.hasError)
+                      return Text(
+                        snapshot.error.toString(),
+                        style: TextStyle(color: Colors.white),
+                      );
+                    return Container();
+                  },
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
