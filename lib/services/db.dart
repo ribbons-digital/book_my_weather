@@ -257,6 +257,17 @@ class DatabaseService {
     });
   }
 
+  Future<void> updateTripVisiting(String tripId, TripVisiting tripVisiting) {
+    return _db
+        .collection('trips')
+        .document(tripId)
+        .collection('visitings')
+        .document(tripVisiting.id)
+        .updateData({
+      'visitingDate': tripVisiting.visitingDate,
+    });
+  }
+
   Future<void> deleteTripVisiting(String tripId, String tripVisitingId) {
     return _db
         .collection('trips')

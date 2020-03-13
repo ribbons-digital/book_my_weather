@@ -50,7 +50,9 @@ class _PlaceDetailState extends State<PlaceDetail>
   TabController _tabController;
   Future<GooglePlaceDetail> placeDetails;
   TextEditingController _dateEditingController;
+  TextEditingController _timeEditingController;
   DateTime visitingDate;
+  TimeOfDay visitingTime;
   double tabViewHeight = 1000.0;
 
   SliverPersistentHeader makeHeader(Widget child) {
@@ -69,6 +71,7 @@ class _PlaceDetailState extends State<PlaceDetail>
     _tabController = TabController(length: 3, vsync: this);
     _tabController.addListener(_handleTabSelection);
     _dateEditingController = TextEditingController();
+    _timeEditingController = TextEditingController();
     placeDetails = getPlaceDetail(widget.placeId);
     super.initState();
   }
@@ -119,6 +122,7 @@ class _PlaceDetailState extends State<PlaceDetail>
     super.dispose();
     _tabController.dispose();
     _dateEditingController.dispose();
+    _timeEditingController.dispose();
   }
 
   bool checkIsPlaceSaved(List<TripVisiting> tripVisitings, String placeId) {
@@ -142,6 +146,20 @@ class _PlaceDetailState extends State<PlaceDetail>
       _dateEditingController.text = DateFormat('yMMMMd').format(pickedDate);
       setState(() {
         visitingDate = pickedDate;
+      });
+    }
+  }
+
+  void pickTime(BuildContext context) async {
+    final TimeOfDay pickedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+    if (pickedTime != null) {
+      final time = '${pickedTime.hour} : ${pickedTime.minute}';
+      _timeEditingController.text = time;
+      setState(() {
+        visitingTime = pickedTime;
       });
     }
   }
@@ -417,30 +435,72 @@ class _PlaceDetailState extends State<PlaceDetail>
                                               return AlertDialog(
                                                 title: Text(
                                                     'When are you visiting?'),
-                                                content: TextField(
-                                                  style: TextStyle(
-                                                      color: Color(0XFF436DA6)),
-                                                  controller:
-                                                      _dateEditingController,
-                                                  onTap: () async {
-                                                    pickDate(context);
-                                                  },
-                                                  decoration: InputDecoration(
-                                                    hintText: 'Select Date',
-                                                    hintStyle: TextStyle(
-                                                      color: Color(0XFF436DA6),
-                                                      fontSize: 24.0,
-                                                      fontWeight:
-                                                          FontWeight.w100,
-                                                    ),
-                                                    enabledBorder:
-                                                        UnderlineInputBorder(
-                                                      borderSide: BorderSide(
-                                                        color:
-                                                            Color(0XFF69A4FF),
+                                                content: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: <Widget>[
+                                                    TextField(
+                                                      style: TextStyle(
+                                                          color: Color(
+                                                              0XFF436DA6)),
+                                                      controller:
+                                                          _dateEditingController,
+                                                      onTap: () async {
+                                                        pickDate(context);
+                                                      },
+                                                      decoration:
+                                                          InputDecoration(
+                                                        hintText: 'Select Date',
+                                                        hintStyle: TextStyle(
+                                                          color:
+                                                              Color(0XFF436DA6),
+                                                          fontSize: 24.0,
+                                                          fontWeight:
+                                                              FontWeight.w100,
+                                                        ),
+                                                        enabledBorder:
+                                                            UnderlineInputBorder(
+                                                          borderSide:
+                                                              BorderSide(
+                                                            color: Color(
+                                                                0XFF69A4FF),
+                                                          ),
+                                                        ),
                                                       ),
                                                     ),
-                                                  ),
+                                                    SizedBox(
+                                                      height: 10.0,
+                                                    ),
+                                                    TextField(
+                                                      style: TextStyle(
+                                                          color: Color(
+                                                              0XFF436DA6)),
+                                                      controller:
+                                                          _timeEditingController,
+                                                      onTap: () async {
+                                                        pickTime(context);
+                                                      },
+                                                      decoration:
+                                                          InputDecoration(
+                                                        hintText: 'Select Time',
+                                                        hintStyle: TextStyle(
+                                                          color:
+                                                              Color(0XFF436DA6),
+                                                          fontSize: 24.0,
+                                                          fontWeight:
+                                                              FontWeight.w100,
+                                                        ),
+                                                        enabledBorder:
+                                                            UnderlineInputBorder(
+                                                          borderSide:
+                                                              BorderSide(
+                                                            color: Color(
+                                                                0XFF69A4FF),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
                                                 actions: <Widget>[
                                                   FlatButton(
@@ -452,6 +512,19 @@ class _PlaceDetailState extends State<PlaceDetail>
                                                   FlatButton(
                                                     child: Text('Save'),
                                                     onPressed: () async {
+                                                      if (visitingDate ==
+                                                              null ||
+                                                          visitingTime == null)
+                                                        return;
+                                                      final visitingDateTime =
+                                                          DateTime(
+                                                              visitingDate.year,
+                                                              visitingDate
+                                                                  .month,
+                                                              visitingDate.day,
+                                                              visitingTime.hour,
+                                                              visitingTime
+                                                                  .minute);
                                                       TripVisiting
                                                           newTripVisiting =
                                                           TripVisiting(
@@ -469,7 +542,7 @@ class _PlaceDetailState extends State<PlaceDetail>
                                                             widget.placeType,
                                                         visitingDate: Timestamp
                                                             .fromMicrosecondsSinceEpoch(
-                                                                visitingDate
+                                                                visitingDateTime
                                                                         .millisecondsSinceEpoch *
                                                                     1000),
                                                       );
