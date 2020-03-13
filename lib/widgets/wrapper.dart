@@ -152,8 +152,8 @@ class _WrapperState extends State<Wrapper> {
                         title: Text('Trips'),
                       ),
                       BottomNavigationBarItem(
-                        icon: Icon(Icons.favorite),
-                        title: Text('Saved'),
+                        icon: Icon(Icons.public),
+                        title: Text('News'),
                       ),
                       BottomNavigationBarItem(
                         icon: Icon(Icons.settings),

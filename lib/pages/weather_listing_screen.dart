@@ -270,21 +270,14 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
                     },
                   ),
                 ),
-                IconButton(
-                  padding: EdgeInsets.only(right: 16.0),
-                  icon: Icon(Icons.my_location),
-                  onPressed: () {
-                    // final newPlace = Place(
-                    //   address: 'Taipei, Taiwan',
-                    //   name: 'Taipei City',
-                    //   latitude: 25.105497,
-                    //   longitude: 121.597366,
-                    // );
-
-                    // db.updatePlaces('9g6UjX6R9CP5KEc9PQ1r', newPlace);
-                    _auth.signOut();
-                  },
-                )
+                if (currentPage == 0)
+                  IconButton(
+                    padding: EdgeInsets.only(right: 16.0),
+                    icon: Icon(Icons.refresh),
+                    onPressed: () async {
+                      await getWeather();
+                    },
+                  )
               ],
             ),
           ),

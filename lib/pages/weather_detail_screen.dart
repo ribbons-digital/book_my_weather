@@ -136,7 +136,8 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen>
                                 isScrollControlled: true,
                                 builder: (context) {
                                   return FractionallySizedBox(
-                                    heightFactor: 0.6,
+                                    heightFactor:
+                                        screenHeight < 600 ? 0.65 : 0.55,
                                     child: WeatherDetail(
                                       rowIndex: index,
                                     ),
@@ -167,7 +168,8 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen>
                                 isScrollControlled: true,
                                 builder: (context) {
                                   return FractionallySizedBox(
-                                    heightFactor: 0.6,
+                                    heightFactor:
+                                        screenHeight < 600 ? 0.65 : 0.55,
                                     child: WeatherDetail(
                                       rowIndex: index,
                                       isHourly: false,

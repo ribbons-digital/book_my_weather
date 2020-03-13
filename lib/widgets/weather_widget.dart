@@ -67,8 +67,8 @@ class WeatherWidget extends StatelessWidget {
                     child: weatherModel.getWeatherIcon(
                       condition: currentHourlyWeather.icon,
                       iconColor: Color(0xFFFFA500),
-                      width: 100.0,
-                      height: 100.0,
+                      width: screenHeight < 600 ? 75.0 : 100.0,
+                      height: screenHeight < 600 ? 75.0 : 100.0,
                     ),
                   ),
                   Text(
