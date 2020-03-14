@@ -5,7 +5,6 @@ import 'package:book_my_weather/models/place_data.dart';
 import 'package:book_my_weather/models/setting.dart';
 import 'package:book_my_weather/models/weather.dart';
 import 'package:book_my_weather/pages/search_place_screen.dart';
-import 'package:book_my_weather/services/auth.dart';
 import 'package:book_my_weather/services/db.dart';
 import 'package:book_my_weather/services/location.dart';
 import 'package:book_my_weather/services/weather.dart';
@@ -39,7 +38,6 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
   Timer _throttle;
 
   Future<Weather> hourlyWeather;
-  final _auth = AuthService();
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -47,7 +45,6 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
     setState(() {
       _notification = state;
     });
-    ;
   }
 
   @override
@@ -172,8 +169,9 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
   @override
   void didChangeDependencies() async {
     super.didChangeDependencies();
-    if (_notification != null) {
+    if (_notification != null && _notification.index == 0) {
       print(_notification.index);
+      await getWeather();
     }
 
     if (Provider.of<Setting>(context) != null &&
@@ -249,7 +247,6 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
-    print(_notification);
     return Scaffold(
       appBar: AppBar(
         //leading: Icon(Icons.arrow_back_ios),

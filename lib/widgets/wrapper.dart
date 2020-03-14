@@ -3,6 +3,7 @@ import 'package:book_my_weather/models/setting.dart';
 import 'package:book_my_weather/models/trip.dart';
 import 'package:book_my_weather/models/trip_state.dart';
 import 'package:book_my_weather/models/user.dart';
+import 'package:book_my_weather/pages/news_screen.dart';
 import 'package:book_my_weather/pages/place_detail_screen.dart';
 import 'package:book_my_weather/pages/places_screen.dart';
 import 'package:book_my_weather/pages/search_place_screen.dart';
@@ -137,7 +138,10 @@ class _WrapperState extends State<Wrapper> {
                       TripsScreen(
                         setFilterString: setFilterStringForTrips,
                         setIsPast: setIsPast,
-                      )
+                      ),
+                      NewsScreen(
+                        selectHomeIndex: _onItemTapped,
+                      ),
                     ],
                   ),
                   bottomNavigationBar: BottomNavigationBar(

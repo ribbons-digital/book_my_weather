@@ -42,6 +42,9 @@ const kAqiCNAPIBaseURL = 'https://api.waqi.info/feed/geo:';
 const kGPlaceDetailBaseURL =
     'https://maps.googleapis.com/maps/api/place/details/json?key=$kGooglePlacesAPIKey&fields=url,formatted_address,photos,formatted_phone_number,opening_hours/weekday_text,opening_hours/periods,website';
 
+const kGuardianNewsAPIBaseURL =
+    'https://content.guardianapis.com/search?api-key=$kGuardianNewsAPIKey&page-size=20&q=';
+
 const kClearDay = 'clear-day';
 const kClearNight = 'clear-night';
 const kRain = 'rain';
