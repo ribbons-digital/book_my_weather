@@ -5,10 +5,13 @@ import 'package:book_my_weather/models/place_data.dart';
 import 'package:book_my_weather/models/setting.dart';
 import 'package:book_my_weather/models/weather.dart';
 import 'package:book_my_weather/pages/search_place_screen.dart';
+import 'package:book_my_weather/services/auth.dart';
 import 'package:book_my_weather/services/db.dart';
 import 'package:book_my_weather/services/location.dart';
 import 'package:book_my_weather/services/weather.dart';
+import 'package:book_my_weather/widgets/message_handler.dart';
 import 'package:book_my_weather/widgets/weather_widget.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
@@ -30,7 +33,6 @@ class WeatherListingScreen extends StatefulWidget {
 class _WeatherListingScreenState extends State<WeatherListingScreen>
     with WidgetsBindingObserver {
   PageController _pageController;
-  AppLifecycleState _notification;
 
   int currentPage = 0;
   String placeName = '';
@@ -39,13 +41,15 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
 
   Future<Weather> hourlyWeather;
 
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    super.didChangeAppLifecycleState(state);
-    setState(() {
-      _notification = state;
-    });
-  }
+//  @override
+//  void didChangeAppLifecycleState(AppLifecycleState state) async {
+//    super.didChangeAppLifecycleState(state);
+//    if (state == AppLifecycleState.paused) {
+//      HttpsCallable callable = CloudFunctions.instance
+//          .getHttpsCallable(functionName: 'sendNotification');
+//      await callable();
+//    }
+//  }
 
   @override
   void initState() {
@@ -169,13 +173,14 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
   @override
   void didChangeDependencies() async {
     super.didChangeDependencies();
-    if (_notification != null && _notification.index == 0) {
-      print(_notification.index);
-      await getWeather();
-    }
+//    if (_notification != null && _notification.index == 0) {
+//      print(_notification.index);
+//      await getWeather();
+//    }
 
-    if (Provider.of<Setting>(context) != null &&
-        widget.places.length > Provider.of<Setting>(context).places.length &&
+    if (Provider.of<Setting>(context, listen: false) != null &&
+        widget.places.length >
+            Provider.of<Setting>(context, listen: false).places.length &&
         widget.places.length > 1) {
       final db = DatabaseService();
 
@@ -199,9 +204,10 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
     }
 
     if (Provider.of<Setting>(context, listen: false) != null &&
-        widget.places.length < Provider.of<Setting>(context).places.length) {
+        widget.places.length <
+            Provider.of<Setting>(context, listen: false).places.length) {
       WeatherModel weather = WeatherModel();
-      final tempPlaces = Provider.of<Setting>(context).places;
+      final tempPlaces = Provider.of<Setting>(context, listen: false).places;
       Weather placeWeather = await weather.getLocationWeather(
         type: RequestedWeatherType.All,
         useCelsius: true,
@@ -247,6 +253,7 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
+    final _auth = AuthService();
     return Scaffold(
       appBar: AppBar(
         //leading: Icon(Icons.arrow_back_ios),
@@ -267,14 +274,18 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
                     },
                   ),
                 ),
+                MessageHandler(),
                 if (currentPage == 0)
                   IconButton(
-                    padding: EdgeInsets.only(right: 16.0),
-                    icon: Icon(Icons.refresh),
-                    onPressed: () async {
-                      await getWeather();
-                    },
-                  )
+                      padding: EdgeInsets.only(right: 16.0),
+                      icon: Icon(Icons.refresh),
+                      onPressed: () async {
+//                      await getWeather();
+                        HttpsCallable callable = CloudFunctions.instance
+                            .getHttpsCallable(functionName: 'sendNotification');
+                        await callable();
+//                        _auth.signOut();
+                      })
               ],
             ),
           ),

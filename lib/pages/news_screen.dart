@@ -31,7 +31,7 @@ class _NewsScreenState extends State<NewsScreen> with WidgetsBindingObserver {
     if (_notification != null && _notification.index == 0) {
       widget.selectHomeIndex(0);
     }
-    final trips = Provider.of<List<Trip>>(context);
+    final trips = Provider.of<List<Trip>>(context, listen: false);
     if (trips != null && trips.length > 0) {
       final destinations = trips.map((trip) => trip.destination).toList();
       final str = destinations.join(',').replaceAll(' ', '');

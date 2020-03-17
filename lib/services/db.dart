@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:book_my_weather/models/place.dart';
 import 'package:book_my_weather/models/setting.dart';
@@ -275,5 +276,40 @@ class DatabaseService {
         .collection('visitings')
         .document(tripVisitingId)
         .delete();
+  }
+
+  Future<bool> checkExistingDeviceToken({String token, String uid}) async {
+    DocumentSnapshot tokens = await _db
+        .collection('users')
+        .document(uid)
+        .collection('tokens')
+        .document(token)
+        .get();
+    return tokens.exists;
+  }
+
+  Future<void> setUserDeviceToken({String token, String uid}) async {
+    return _db
+        .collection('users')
+        .document(uid)
+        .collection('tokens')
+        .document(token)
+        .setData({
+      'token': token,
+      'createdAt': FieldValue.serverTimestamp(), // optional
+      'platform': Platform.operatingSystem // optional
+    });
+  }
+
+  Future<void> updateUserDeviceToken({String token, String uid}) async {
+    return _db
+        .collection('users')
+        .document(uid)
+        .collection('tokens')
+        .document(token)
+        .updateData({
+      'token': token,
+      'platform': Platform.operatingSystem // optional
+    });
   }
 }

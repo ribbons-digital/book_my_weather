@@ -1,4 +1,7 @@
+import 'package:book_my_weather/models/user.dart';
 import 'package:book_my_weather/services/auth.dart';
+import 'package:book_my_weather/services/db.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 class SignInRegisterScreen extends StatefulWidget {
@@ -115,6 +118,25 @@ class _SignInRegisterScreenState extends State<SignInRegisterScreen> {
                             }
 
                             if (result != null) {
+                              final FirebaseMessaging _fcm =
+                                  FirebaseMessaging();
+                              final _db = DatabaseService();
+                              String token = await _fcm.getToken();
+                              if (!isSignIn) {
+                                if (token != null) {
+                                  await _db.setUserDeviceToken(
+                                      token: token, uid: (result as User).uid);
+                                }
+                              } else {
+                                final isTokenExist =
+                                    await _db.checkExistingDeviceToken(
+                                        token: token,
+                                        uid: (result as User).uid);
+                                if (!isTokenExist) {
+                                  await _db.setUserDeviceToken(
+                                      token: token, uid: (result as User).uid);
+                                }
+                              }
                               Navigator.pop(context);
                             } else {
                               print(result.toString());

@@ -7,6 +7,7 @@ import 'package:book_my_weather/pages/news_screen.dart';
 import 'package:book_my_weather/pages/place_detail_screen.dart';
 import 'package:book_my_weather/pages/places_screen.dart';
 import 'package:book_my_weather/pages/search_place_screen.dart';
+import 'package:book_my_weather/pages/settings_screen.dart';
 import 'package:book_my_weather/pages/signin_register_screen.dart';
 import 'package:book_my_weather/pages/trip_detail_screen.dart';
 import 'package:book_my_weather/pages/trip_screen.dart';
@@ -142,6 +143,7 @@ class _WrapperState extends State<Wrapper> {
                       NewsScreen(
                         selectHomeIndex: _onItemTapped,
                       ),
+                      SettingsScreen(),
                     ],
                   ),
                   bottomNavigationBar: BottomNavigationBar(
