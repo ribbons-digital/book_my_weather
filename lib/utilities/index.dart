@@ -1,9 +1,12 @@
 import 'dart:convert';
 
+import 'package:book_my_weather/models/trip.dart';
 import 'package:book_my_weather/secure/keys.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 import '../constants.dart';
 
@@ -95,4 +98,39 @@ String getSearchTypeString(NearbySearchType searchType) {
   if (searchType == NearbySearchType.TransitStation) return 'transit_station';
   if (searchType == NearbySearchType.SubwayStation) return 'subway_station';
   return 'shopping_mall';
+}
+
+String getTripTimeMessage(BuildContext context, Trip trip) {
+  String timeMessage = '';
+  final trips = Provider.of<List<Trip>>(context);
+
+  final startDateISOString = timeStampToISOString(trip.startDate);
+
+  final endDateISOString = timeStampToISOString(trip.endDate);
+  final isPast = trip.endDateInMs < DateTime.now().millisecondsSinceEpoch;
+  int daysLeft =
+      DateTime.parse(startDateISOString).difference(DateTime.now()).inDays;
+
+  int endedDaysAgo =
+      DateTime.parse(endDateISOString).difference(DateTime.now()).inDays;
+
+  if (daysLeft.isNegative && !isPast) {
+    timeMessage =
+        ' Started ${daysLeft.toString().substring(1, daysLeft.toString().length)} days ago';
+  }
+
+  if (daysLeft.isNegative && isPast) {
+    timeMessage =
+        ' Ended ${endedDaysAgo.toString().substring(1, daysLeft.toString().length)} days ago';
+  }
+
+  if (!daysLeft.isNegative && !isPast) {
+    timeMessage = ' $daysLeft days, from today';
+  }
+
+  if (daysLeft == 0) {
+    timeMessage = ' Trip starts today';
+  }
+
+  return timeMessage;
 }

@@ -59,7 +59,6 @@ class ExplorePlaceCardWidget extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.only(
                   top: 8.0,
-                  bottom: 8.0,
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

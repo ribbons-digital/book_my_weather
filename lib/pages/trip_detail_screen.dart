@@ -21,10 +21,7 @@ class TripDetail extends StatelessWidget {
 
     final startDateISOString = timeStampToISOString(trip.startDate);
     final startDateToDateString = timeStampToDateString(trip.startDate);
-    String daysLeft = DateTime.parse(startDateISOString)
-        .difference(DateTime.now())
-        .inDays
-        .toString();
+
     WeatherModel weatherModel = WeatherModel();
 
     return Scaffold(
@@ -203,7 +200,7 @@ class TripDetail extends StatelessWidget {
                               child: Material(
                                 color: Color(0X00FFFFFF),
                                 child: Text(
-                                  '$daysLeft days, from today',
+                                  getTripTimeMessage(context, trip),
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w200,
