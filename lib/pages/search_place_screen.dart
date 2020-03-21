@@ -38,18 +38,20 @@ class _SearchPlaceScreenState extends State<SearchPlaceScreen> {
   }
 
   void getLocationResults(String input) async {
-    if (this.mounted) {
-      setState(() {
-        isLoading = true;
-      });
-    }
+    if (input.length > 0) {
+      if (this.mounted) {
+        setState(() {
+          isLoading = true;
+        });
+      }
 
-    final result = await gPlaceAutoCompleteResult(input);
-    if (this.mounted) {
-      setState(() {
-        _placeList = result;
-        isLoading = false;
-      });
+      final result = await gPlaceAutoCompleteResult(input);
+      if (this.mounted) {
+        setState(() {
+          _placeList = result;
+          isLoading = false;
+        });
+      }
     }
   }
 
@@ -130,21 +132,6 @@ class _SearchPlaceScreenState extends State<SearchPlaceScreen> {
                                   latitude: location.latitude,
                                   longitude: location.longitude,
                                 );
-
-//                                final docId =
-//                                    Provider.of<Setting>(context, listen: false)
-//                                        .id;
-
-//                                db.updatePlaces(
-//                                    docId,
-//                                    Place(
-//                                      name: location.placeMark[0].name,
-//                                      address: location.placeMark[0].name == ''
-//                                          ? location.placeMark[0].locality
-//                                          : location.placeMark[0].name,
-//                                      latitude: location.latitude,
-//                                      longitude: location.longitude,
-//                                    ));
 
                                 Provider.of<PlaceData>(context, listen: false)
                                     .addPlace(Place(

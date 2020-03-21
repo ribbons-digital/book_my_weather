@@ -5,7 +5,6 @@ import 'package:book_my_weather/models/place_data.dart';
 import 'package:book_my_weather/models/setting.dart';
 import 'package:book_my_weather/models/weather.dart';
 import 'package:book_my_weather/pages/search_place_screen.dart';
-import 'package:book_my_weather/services/auth.dart';
 import 'package:book_my_weather/services/db.dart';
 import 'package:book_my_weather/services/location.dart';
 import 'package:book_my_weather/services/weather.dart';
@@ -253,7 +252,6 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
-    final _auth = AuthService();
     return Scaffold(
       appBar: AppBar(
         //leading: Icon(Icons.arrow_back_ios),

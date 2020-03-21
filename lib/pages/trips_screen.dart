@@ -42,7 +42,6 @@ class _TripsScreenState extends State<TripsScreen> {
     final double h = MediaQuery.of(context).size.width < 600 ? 20.0 : 50.0;
     final User user = Provider.of<User>(context);
     final trips = Provider.of<List<Trip>>(context);
-
     return Scaffold(
       appBar: AppBar(
         //leading: Icon(Icons.arrow_back_ios),
@@ -150,7 +149,8 @@ class _TripsScreenState extends State<TripsScreen> {
               ),
             ),
           ),
-          (trips == null || trips.length == 0) && dropdownValue == 'Upcoming'
+          (trips == null || trips.length == 0 || user == null) &&
+                  dropdownValue == 'Upcoming'
               ? Align(
                   child: Padding(
                     padding: const EdgeInsets.all(10.0),
@@ -165,7 +165,8 @@ class _TripsScreenState extends State<TripsScreen> {
                   ),
                 )
               : SizedBox(),
-          (trips == null || trips.length == 0) && dropdownValue == 'Upcoming'
+          (trips == null || trips.length == 0 || user == null) &&
+                  dropdownValue == 'Upcoming'
               ? Align(
                   child: Padding(
                     padding: const EdgeInsets.all(10.0),
@@ -180,7 +181,7 @@ class _TripsScreenState extends State<TripsScreen> {
                   ),
                 )
               : SizedBox(),
-          if (trips != null && trips.length > 0)
+          if (trips != null && trips.length > 0 && user != null)
             Expanded(
               child: ListView.builder(
                   itemCount: trips.length,
@@ -205,7 +206,7 @@ class _TripsScreenState extends State<TripsScreen> {
                     );
                   }),
             ),
-          if ((trips == null || trips.length == 0) &&
+          if ((trips == null || trips.length == 0 || user == null) &&
               dropdownValue == 'Upcoming')
             Expanded(
               child: ListView(

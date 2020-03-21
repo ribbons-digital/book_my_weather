@@ -204,7 +204,7 @@ class _PlacesScreenState extends State<PlacesScreen>
               children: <Widget>[
                 if (widget.placeType != PlaceType.Hotel)
                   Container(
-                    height: 35.0,
+                    height: 40.0,
                     margin: EdgeInsets.symmetric(
                       horizontal: 16.0,
                     ),
@@ -315,21 +315,26 @@ class _PlaceSearchTypeOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FlatButton(
-      color: displayColor,
-      shape: RoundedRectangleBorder(
-        borderRadius: new BorderRadius.circular(18.0),
-        side: BorderSide(
-          color: Color(0XFF69A4FF),
-        ),
+    return Padding(
+      padding: const EdgeInsets.only(
+        bottom: 5.0,
       ),
-      child: Text(
-        getSearchTypeString(searchType).split('_').join(' '),
-        style: TextStyle(
-          color: Color(0XFF69A4FF),
+      child: FlatButton(
+        color: displayColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: new BorderRadius.circular(18.0),
+          side: BorderSide(
+            color: Color(0XFF69A4FF),
+          ),
         ),
+        child: Text(
+          getSearchTypeString(searchType).split('_').join(' '),
+          style: TextStyle(
+            color: Color(0XFF69A4FF),
+          ),
+        ),
+        onPressed: onPress,
       ),
-      onPressed: onPress,
     );
   }
 }

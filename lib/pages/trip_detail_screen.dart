@@ -19,7 +19,6 @@ class TripDetail extends StatelessWidget {
     final index = Provider.of<TripState>(context).selectedIndex;
     final trip = Provider.of<List<Trip>>(context)[index];
 
-    final startDateISOString = timeStampToISOString(trip.startDate);
     final startDateToDateString = timeStampToDateString(trip.startDate);
 
     WeatherModel weatherModel = WeatherModel();

@@ -67,7 +67,10 @@ class _TripVisitingScreenState extends State<TripVisitingScreen> {
       initialTime: TimeOfDay.now(),
     );
     if (pickedTime != null) {
-      final time = '${pickedTime.hour} : ${pickedTime.minute}';
+      final minute = pickedTime.minute <= 10
+          ? '0${pickedTime.minute}'
+          : pickedTime.minute.toString();
+      final time = '${pickedTime.hour} : $minute';
       _timeEditingController.text = time;
       setState(() {
         visitingTime = pickedTime;
@@ -111,7 +114,7 @@ class _TripVisitingScreenState extends State<TripVisitingScreen> {
           itemCount: timeStamps.length,
           itemBuilder: (BuildContext context, int index) {
             return Container(
-              height: height / 10 * sortByDateList[index].length +
+              height: height / 5 * sortByDateList[index].length +
                   50 +
                   (sortByDateList[index].length * 8),
               child: Column(
@@ -124,53 +127,15 @@ class _TripVisitingScreenState extends State<TripVisitingScreen> {
                       fontSize: 28.0,
                     ),
                   ),
-//                  Expanded(
-//                    child: ReorderableListView(
-//                      onReorder: (oldIndex, newIndex) {
-//                        _updateMyItems(oldIndex, newIndex);
-//                      },
-//                      children:
-//                          List.generate(sortByDateList[index].length, (i) {
-//                        return Container(
-//                          width: width,
-//                          height: height / 10,
-//                          key: ValueKey(sortByDateList[index][i].id),
-//                          color: Colors.white,
-//                          margin: EdgeInsets.all(
-//                            8.0,
-//                          ),
-//                          padding: EdgeInsets.all(
-//                            8.0,
-//                          ),
-//                          child: Row(
-//                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                            children: <Widget>[
-//                              Container(
-//                                width: width / 1.8,
-//                                child: ListTile(
-//                                  title: Text(
-//                                    sortByDateList[index][i].placeName,
-//                                    style: TextStyle(
-//                                      fontSize: 18.0,
-//                                    ),
-//                                  ),
-//                                  subtitle:
-//                                      Text(sortByDateList[index][i].placeType),
-//                                ),
-//                              ),
-//                              Image.network(
-//                                buildPhotoURL(sortByDateList[index][i].photo),
-//                                fit: BoxFit.cover,
-//                                width: width / 4,
-//                              )
-//                            ],
-//                          ),
-//                        );
-//                      }),
-//                    ),
-//                  )
                   Column(
                     children: List.generate(sortByDateList[index].length, (i) {
+                      final minute = sortByDateList[index][i]
+                                  .visitingDate
+                                  .toDate()
+                                  .minute <
+                              10
+                          ? '0${sortByDateList[index][i].visitingDate.toDate().minute}'
+                          : '${sortByDateList[index][i].visitingDate.toDate().minute}';
                       return Slidable(
                         actionPane: SlidableDrawerActionPane(),
                         actionExtentRatio: 0.25,
@@ -187,7 +152,9 @@ class _TripVisitingScreenState extends State<TripVisitingScreen> {
                                   visitingDateTime.month, visitingDateTime.day);
                               final time =
                                   TimeOfDay.fromDateTime(visitingDateTime);
-                              print(time);
+                              final minute = time.minute <= 10
+                                  ? '0${time.minute}'
+                                  : time.minute.toString();
                               setState(() {
                                 visitingDate = date;
                                 visitingTime = time;
@@ -195,7 +162,7 @@ class _TripVisitingScreenState extends State<TripVisitingScreen> {
                               _dateEditingController.text =
                                   DateFormat('yMMMMd').format(date);
                               _timeEditingController.text =
-                                  '${time.hour}:${time.minute}';
+                                  '${time.hour}:$minute';
                               if (_dateEditingController != null &&
                                   _timeEditingController != null) {
                                 showDialog(
@@ -296,9 +263,14 @@ class _TripVisitingScreenState extends State<TripVisitingScreen> {
                                                             1000),
                                               );
 
-                                              await db.updateTripVisiting(
-                                                  tripId, updatedTripVisiting);
-                                              Navigator.pop(context);
+                                              try {
+                                                await db.updateTripVisiting(
+                                                    tripId,
+                                                    updatedTripVisiting);
+                                                Navigator.pop(context);
+                                              } catch (e) {
+                                                print(e.toString());
+                                              }
                                             },
                                           )
                                         ],
@@ -319,7 +291,7 @@ class _TripVisitingScreenState extends State<TripVisitingScreen> {
                         ],
                         child: Container(
                           width: width,
-                          height: height / 10,
+                          height: height / 5,
                           color: Colors.white,
                           margin: EdgeInsets.all(
                             8.0,
@@ -330,18 +302,34 @@ class _TripVisitingScreenState extends State<TripVisitingScreen> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
-                              Container(
-                                width: width / 1.8,
-                                child: ListTile(
-                                  title: Text(
-                                    sortByDateList[index][i].placeName,
-                                    style: TextStyle(
-                                      fontSize: 18.0,
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Container(
+                                    width: width / 1.8,
+                                    child: ListTile(
+                                      title: Text(
+                                        sortByDateList[index][i].placeName,
+                                        style: TextStyle(
+                                          fontSize: 16.0,
+                                        ),
+                                      ),
+                                      subtitle: Text(
+                                          sortByDateList[index][i].placeType),
                                     ),
                                   ),
-                                  subtitle:
-                                      Text(sortByDateList[index][i].placeType),
-                                ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      left: 15.0,
+                                    ),
+                                    child: Text(
+                                      'Visiting at ${sortByDateList[index][i].visitingDate.toDate().hour}:$minute',
+                                      style: TextStyle(
+                                        color: Colors.blue,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                               Image.network(
                                 buildPhotoURL(sortByDateList[index][i].photo),

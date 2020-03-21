@@ -99,7 +99,7 @@ class _PlaceOverviewState extends State<PlaceOverview> {
   Widget build(BuildContext context) {
     return ConstrainedBox(
       constraints: BoxConstraints(
-        minHeight: 700,
+        minHeight: 500,
         maxHeight: 1000,
       ),
       child: DecoratedBox(
@@ -163,6 +163,7 @@ class _PlaceOverviewState extends State<PlaceOverview> {
                     fontWeight: FontWeight.w100,
                     color: Color(0XFF69A4FF),
                   ),
+                  maxLines: 2,
                 ),
                 onTap: () async {
                   if (await canLaunch(widget.website)) {
