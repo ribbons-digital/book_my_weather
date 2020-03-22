@@ -1,8 +1,9 @@
+import 'package:book_my_weather/models/loading_state.dart';
 import 'package:book_my_weather/models/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 
-class AuthService {
+class AuthService extends LoadingState {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   User _userFromFirebaseUser(FirebaseUser user) {
@@ -18,10 +19,12 @@ class AuthService {
   }
 
   Future signInWithEmailAndPassword(String email, String password) async {
+    setIsLoading(true);
     try {
       AuthResult result = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
       FirebaseUser user = result.user;
+
       return _userFromFirebaseUser(user);
     } on PlatformException catch (e) {
       return e.message;

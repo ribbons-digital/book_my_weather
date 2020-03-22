@@ -1,3 +1,4 @@
+import 'package:book_my_weather/models/loading_state.dart';
 import 'package:book_my_weather/models/place_data.dart';
 import 'package:book_my_weather/models/setting.dart';
 import 'package:book_my_weather/models/trip.dart';
@@ -89,6 +90,9 @@ class _WrapperState extends State<Wrapper> {
               ChangeNotifierProvider<TripState>(
                 create: (_) => TripState(),
               ),
+              ChangeNotifierProvider<LoadingState>(
+                create: (_) => LoadingState(),
+              ),
               StreamProvider<Setting>.value(
                 value: db.streamSetting(snapshot.data),
               ),
@@ -143,7 +147,9 @@ class _WrapperState extends State<Wrapper> {
                       NewsScreen(
                         selectHomeIndex: _onItemTapped,
                       ),
-                      SettingsScreen(),
+                      if (Provider.of<User>(context) != null) SettingsScreen(),
+                      if (Provider.of<User>(context) == null)
+                        SignInRegisterScreen(),
                     ],
                   ),
                   bottomNavigationBar: BottomNavigationBar(

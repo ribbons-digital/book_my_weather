@@ -12,17 +12,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return SafeArea(
       child: Scaffold(
         body: Container(
-          child: FlatButton(
-            child: Text(
-              'Sign Out',
-              style: TextStyle(
-                color: Colors.white,
+          child: Center(
+            child: FlatButton(
+              color: Colors.blueGrey,
+              child: Text(
+                'Sign Out',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
               ),
+              onPressed: () {
+                final _auth = AuthService();
+                _auth.signOut();
+              },
             ),
-            onPressed: () {
-              final _auth = AuthService();
-              _auth.signOut();
-            },
           ),
         ),
       ),
