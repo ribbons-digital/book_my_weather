@@ -1,8 +1,11 @@
+import 'package:book_my_weather/models/loading_state.dart';
 import 'package:book_my_weather/models/user.dart';
 import 'package:book_my_weather/services/auth.dart';
 import 'package:book_my_weather/services/db.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:provider/provider.dart';
 
 class SignInRegisterScreen extends StatefulWidget {
   static const String id = 'signInRegister';
@@ -45,6 +48,7 @@ class __SignInRegisterFormState extends State<_SignInRegisterForm> {
   String email = '';
   String password = '';
   bool isSignIn = true;
+  bool isLoading = false;
 
   void toggleIsSignIn() {
     setState(() {
@@ -114,6 +118,12 @@ class __SignInRegisterFormState extends State<_SignInRegisterForm> {
                 },
               ),
               SizedBox(height: 20.0),
+              if (isLoading)
+                SpinKitCircle(
+                  color: Colors.white,
+                  size: 20.0,
+                ),
+              if (!isLoading)
               RaisedButton(
                   color: Color(0XFF69A4FF),
                   child: Text(
@@ -122,6 +132,9 @@ class __SignInRegisterFormState extends State<_SignInRegisterForm> {
                   ),
                   onPressed: () async {
                     if (_formKey.currentState.validate()) {
+                      setState(() {
+                        isLoading = true;
+                      });
                       dynamic result;
                       if (isSignIn) {
                         result = await _auth.signInWithEmailAndPassword(
@@ -149,6 +162,9 @@ class __SignInRegisterFormState extends State<_SignInRegisterForm> {
                                 token: token, uid: result.uid);
                           }
                         }
+                        setState(() {
+                          isLoading = false;
+                        });
                         Navigator.pop(context);
                       } else if (result is String) {
                         Scaffold.of(context).showSnackBar(SnackBar(

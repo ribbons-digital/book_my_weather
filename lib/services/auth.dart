@@ -3,7 +3,7 @@ import 'package:book_my_weather/models/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 
-class AuthService extends LoadingState {
+class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   User _userFromFirebaseUser(FirebaseUser user) {
@@ -19,7 +19,7 @@ class AuthService extends LoadingState {
   }
 
   Future signInWithEmailAndPassword(String email, String password) async {
-    setIsLoading(true);
+
     try {
       AuthResult result = await _auth.signInWithEmailAndPassword(
           email: email, password: password);

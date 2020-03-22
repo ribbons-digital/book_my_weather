@@ -147,9 +147,7 @@ class _WrapperState extends State<Wrapper> {
                       NewsScreen(
                         selectHomeIndex: _onItemTapped,
                       ),
-                      if (Provider.of<User>(context) != null) SettingsScreen(),
-                      if (Provider.of<User>(context) == null)
-                        SignInRegisterScreen(),
+                      SettingsScreen(),
                     ],
                   ),
                   bottomNavigationBar: BottomNavigationBar(
