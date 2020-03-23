@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:book_my_weather/models/trip.dart';
 import 'package:book_my_weather/secure/keys.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -133,4 +134,34 @@ String getTripTimeMessage(BuildContext context, Trip trip) {
   }
 
   return timeMessage;
+}
+
+void displayErrorSnackbar(BuildContext context, String errorMsg) {
+  Flushbar(
+    messageText: Text(
+      errorMsg,
+      style: kSnackbarErrorTextStyle,
+    ),
+    duration: Duration(seconds: 3),
+    icon: Icon(
+      Icons.warning,
+      size: 20.0,
+      color: Colors.red,
+    ),
+  )..show(context);
+}
+
+void displaySuccessSnackbar(BuildContext context, String msg) {
+  Flushbar(
+    messageText: Text(
+      msg,
+      style: kSnackbarSuccessTextStyle,
+    ),
+    duration: Duration(seconds: 3),
+    icon: Icon(
+      Icons.check_box,
+      size: 20.0,
+      color: Colors.green,
+    ),
+  )..show(context);
 }

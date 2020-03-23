@@ -1,11 +1,9 @@
-import 'package:book_my_weather/models/loading_state.dart';
 import 'package:book_my_weather/models/user.dart';
 import 'package:book_my_weather/services/auth.dart';
 import 'package:book_my_weather/services/db.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:provider/provider.dart';
 
 class SignInRegisterScreen extends StatefulWidget {
   static const String id = 'signInRegister';
@@ -124,61 +122,61 @@ class __SignInRegisterFormState extends State<_SignInRegisterForm> {
                   size: 20.0,
                 ),
               if (!isLoading)
-              RaisedButton(
-                  color: Color(0XFF69A4FF),
-                  child: Text(
-                    isSignIn ? 'Sign In' : 'Register',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onPressed: () async {
-                    if (_formKey.currentState.validate()) {
-                      setState(() {
-                        isLoading = true;
-                      });
-                      dynamic result;
-                      if (isSignIn) {
-                        result = await _auth.signInWithEmailAndPassword(
-                            email, password);
-                      } else {
-                        result = await _auth.registerWithEmailAndPassword(
-                            email, password);
-                      }
-
-                      if (result is User) {
-                        final FirebaseMessaging _fcm = FirebaseMessaging();
-                        final _db = DatabaseService();
-                        String token = await _fcm.getToken();
-                        if (!isSignIn) {
-                          if (token != null) {
-                            await _db.setUserDeviceToken(
-                                token: token, uid: result.uid);
-                          }
-                        } else {
-                          final isTokenExist =
-                              await _db.checkExistingDeviceToken(
-                                  token: token, uid: result.uid);
-                          if (!isTokenExist) {
-                            await _db.setUserDeviceToken(
-                                token: token, uid: result.uid);
-                          }
-                        }
+                RaisedButton(
+                    color: Color(0XFF69A4FF),
+                    child: Text(
+                      isSignIn ? 'Sign In' : 'Register',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onPressed: () async {
+                      if (_formKey.currentState.validate()) {
                         setState(() {
-                          isLoading = false;
+                          isLoading = true;
                         });
-                        Navigator.pop(context);
-                      } else if (result is String) {
-                        Scaffold.of(context).showSnackBar(SnackBar(
-                          content: Text(
-                            result,
-                            style: TextStyle(
-                              color: Colors.red,
-                              fontSize: 15.0,
+                        dynamic result;
+                        if (isSignIn) {
+                          result = await _auth.signInWithEmailAndPassword(
+                              email, password);
+                        } else {
+                          result = await _auth.registerWithEmailAndPassword(
+                              email, password);
+                        }
+
+                        if (result is User) {
+                          final FirebaseMessaging _fcm = FirebaseMessaging();
+                          final _db = DatabaseService();
+                          String token = await _fcm.getToken();
+                          if (!isSignIn) {
+                            if (token != null) {
+                              await _db.setUserDeviceToken(
+                                  token: token, uid: result.uid);
+                            }
+                          } else {
+                            final isTokenExist =
+                                await _db.checkExistingDeviceToken(
+                                    token: token, uid: result.uid);
+                            if (!isTokenExist) {
+                              await _db.setUserDeviceToken(
+                                  token: token, uid: result.uid);
+                            }
+                          }
+                          setState(() {
+                            isLoading = false;
+                          });
+                          Navigator.pop(context);
+                        } else if (result is String) {
+                          Scaffold.of(context).showSnackBar(SnackBar(
+                            content: Text(
+                              result,
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 15.0,
+                              ),
                             ),
-                          ),
-                        ));
+                          ));
+                        }
                       }
-                    }
-                  }),
+                    }),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[

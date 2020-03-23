@@ -10,13 +10,20 @@ class NetworkHelper {
   Future getData() async {
     http.Response response = await http.get(url);
 
-    if (response.statusCode == 200) {
-      String data = response.body;
+    switch (response.statusCode) {
+      case 200:
+        String data = response.body;
 
-      return jsonDecode(data);
-    } else {
-      print(response.statusCode);
-      print(response.body);
+        return jsonDecode(data);
+      case 400:
+        throw ('Malformed network request.');
+      case 401:
+      case 403:
+      case 404:
+        throw ('Unauthorized network request.');
+      case 500:
+      default:
+        throw ('The service you are requesting is currently unavailable.');
     }
   }
 }

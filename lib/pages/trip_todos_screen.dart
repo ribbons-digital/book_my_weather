@@ -1,9 +1,19 @@
+import 'package:book_my_weather/models/networking_state.dart';
 import 'package:book_my_weather/models/trip.dart';
 import 'package:book_my_weather/models/trip_state.dart';
 import 'package:book_my_weather/models/trip_todo.dart';
 import 'package:book_my_weather/services/db.dart';
+import 'package:book_my_weather/utilities/index.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
+
+enum TodoAction {
+  Add,
+  Edit,
+  Delete,
+}
 
 class TripTodosScreen extends StatefulWidget {
   static const String id = 'tripTodosScreen';
@@ -15,8 +25,48 @@ class TripTodosScreen extends StatefulWidget {
 class _TripTodosScreenState extends State<TripTodosScreen> {
   TextEditingController _editingController;
   String toDoContent = '';
+  final _db = DatabaseService();
 
-  Column _buildBottomSheetMenu(BuildContext context, TripTodo tripTodo) {
+  void _onHandleAddTodo(Trip trip) async {
+    Provider.of<NetworkingState>(context, listen: false).setIsLoading(true);
+
+    TripTodo tripTodo = TripTodo(
+      content: toDoContent,
+    );
+
+    try {
+      await _db.addTodoToTrip(trip.id, tripTodo);
+
+      Navigator.pop(context);
+      displaySuccessSnackbar(context, 'Todo successfully added.');
+    } on PlatformException catch (e) {
+      Navigator.pop(context);
+      displayErrorSnackbar(context, e.details);
+    }
+
+    Provider.of<NetworkingState>(context, listen: false).setIsLoading(false);
+  }
+
+  void _onHandleEditTodo(
+      {TodoAction action, Trip trip, TripTodo tripTodo}) async {
+    Provider.of<NetworkingState>(context, listen: false).setIsLoading(true);
+    if (action == TodoAction.Edit) {
+      try {
+        await _db.updateTripTodoContent(trip.id, tripTodo.id, toDoContent);
+
+        Navigator.pop(context);
+        displaySuccessSnackbar(context, 'Todo successfully edited.');
+      } on PlatformException catch (e) {
+        Navigator.pop(context);
+        displayErrorSnackbar(context, e.details);
+      }
+
+      Provider.of<NetworkingState>(context, listen: false).setIsLoading(false);
+    }
+  }
+
+  Column _buildBottomSheetMenu(
+      BuildContext context, TripTodo tripTodo, Trip trip) {
     return Column(
       children: <Widget>[
         ListTile(
@@ -49,28 +99,28 @@ class _TripTodosScreenState extends State<TripTodosScreen> {
                       },
                     ),
                     actions: <Widget>[
-                      FlatButton(
-                        child: Text('Cancel'),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                      FlatButton(
-                        child: Text('Save'),
-                        onPressed: () async {
-                          final trips =
-                              Provider.of<List<Trip>>(context, listen: false);
-                          final tripIndex =
-                              Provider.of<TripState>(context, listen: false)
-                                  .selectedIndex;
-                          final db = DatabaseService();
-
-                          await db.updateTripTodoContent(
-                              trips[tripIndex].id, tripTodo.id, toDoContent);
-
-                          Navigator.pop(context);
-                        },
-                      )
+                      if (!Provider.of<NetworkingState>(context).isLoading)
+                        FlatButton(
+                          child: Text('Cancel'),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                      if (!Provider.of<NetworkingState>(context).isLoading)
+                        FlatButton(
+                          child: Text('Save'),
+                          onPressed: () {
+                            _onHandleEditTodo(
+                                action: TodoAction.Edit,
+                                trip: trip,
+                                tripTodo: tripTodo);
+                          },
+                        ),
+                      if (Provider.of<NetworkingState>(context).isLoading)
+                        SpinKitCircle(
+                          size: 20.0,
+                          color: Colors.black26,
+                        ),
                     ],
                   );
                 });
@@ -89,8 +139,7 @@ class _TripTodosScreenState extends State<TripTodosScreen> {
             final trips = Provider.of<List<Trip>>(context, listen: false);
             final tripIndex =
                 Provider.of<TripState>(context, listen: false).selectedIndex;
-            final db = DatabaseService();
-            await db.deleteTripTodo(trips[tripIndex].id, tripTodo.id);
+            await _db.deleteTripTodo(trips[tripIndex].id, tripTodo.id);
             Navigator.pop(context);
           },
         ),
@@ -112,78 +161,74 @@ class _TripTodosScreenState extends State<TripTodosScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final db = DatabaseService();
     final trips = Provider.of<List<Trip>>(context);
     final tripIndex = Provider.of<TripState>(context).selectedIndex;
-    return StreamProvider<List<TripTodo>>.value(
-      value: db.streamTripTodos(trips[tripIndex].id),
-      child: Consumer<List<TripTodo>>(
-        builder: (_, tripToDos, __) {
-          return SafeArea(
-              child: Scaffold(
-            appBar: AppBar(
-              leading: IconButton(
-                iconSize: 40,
-                icon: Icon(Icons.chevron_left),
-                color: Colors.white.withOpacity(0.9),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-              actions: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.add),
-                  iconSize: 40,
-                  color: Colors.white.withOpacity(0.9),
-                  onPressed: () {
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text('Add a ToDo'),
-                            content: TextField(
-                              keyboardType: TextInputType.multiline,
-                              autofocus: true,
-                              maxLength: null,
-                              maxLines: null,
-                              onChanged: (String newValue) {
-                                setState(() {
-                                  toDoContent = newValue;
-                                });
+    final _db = DatabaseService();
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            iconSize: 40,
+            icon: Icon(Icons.chevron_left),
+            color: Colors.white.withOpacity(0.9),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.add),
+              iconSize: 40,
+              color: Colors.white.withOpacity(0.9),
+              onPressed: () {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('Add a ToDo'),
+                        content: TextField(
+                          keyboardType: TextInputType.multiline,
+                          autofocus: true,
+                          maxLength: null,
+                          maxLines: null,
+                          onChanged: (String newValue) {
+                            setState(() {
+                              toDoContent = newValue;
+                            });
+                          },
+                        ),
+                        actions: <Widget>[
+                          if (!Provider.of<NetworkingState>(context).isLoading)
+                            FlatButton(
+                              child: Text('Cancel'),
+                              onPressed: () {
+                                Navigator.pop(context);
                               },
                             ),
-                            actions: <Widget>[
-                              FlatButton(
-                                child: Text('Cancel'),
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                              ),
-                              FlatButton(
-                                child: Text('Add'),
-                                onPressed: () async {
-                                  TripTodo tripTodo = TripTodo(
-                                    content: toDoContent,
-                                  );
-                                  Navigator.pop(context);
-                                  await db.addTodoToTrip(
-                                      trips[tripIndex].id, tripTodo);
-//                          Scaffold.of(context).showSnackBar(
-//                            SnackBar(
-//                              content: Text('ToDo Added.'),
-//                            ),
-//                          );
-                                },
-                              )
-                            ],
-                          );
-                        });
-                  },
-                )
-              ],
-              title: Text('To Dos'),
+                          if (!Provider.of<NetworkingState>(context).isLoading)
+                            FlatButton(
+                              child: Text('Save'),
+                              onPressed: () {
+                                _onHandleAddTodo(trips[tripIndex]);
+                              },
+                            ),
+                          if (Provider.of<NetworkingState>(context).isLoading)
+                            SpinKitCircle(
+                              size: 20.0,
+                              color: Colors.black26,
+                            )
+                        ],
+                      );
+                    });
+              },
             ),
-            body: Column(
+          ],
+          title: Text('To Dos'),
+        ),
+        body: StreamProvider<List<TripTodo>>.value(
+          value: _db.streamTripTodos(trips[tripIndex].id),
+          child: Consumer<List<TripTodo>>(builder: (_, tripToDos, __) {
+            return Column(
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
                 if (tripToDos == null || tripToDos.length == 0)
@@ -214,7 +259,7 @@ class _TripTodosScreenState extends State<TripTodosScreen> {
                                     ? Icons.check_box
                                     : Icons.check_box_outline_blank),
                                 onPressed: () async {
-                                  await db.toggleTripTodoStatus(
+                                  await _db.toggleTripTodoStatus(
                                       trips[tripIndex].id,
                                       tripToDos[index].id,
                                       tripToDos[index].isFinished);
@@ -242,7 +287,9 @@ class _TripTodosScreenState extends State<TripTodosScreen> {
                                         return Container(
                                           height: 150,
                                           child: _buildBottomSheetMenu(
-                                              context, tripToDos[index]),
+                                              context,
+                                              tripToDos[index],
+                                              trips[tripIndex]),
                                           decoration: BoxDecoration(
                                             color:
                                                 Theme.of(context).canvasColor,
@@ -258,9 +305,9 @@ class _TripTodosScreenState extends State<TripTodosScreen> {
                     ),
                   ),
               ],
-            ),
-          ));
-        },
+            );
+          }),
+        ),
       ),
     );
   }

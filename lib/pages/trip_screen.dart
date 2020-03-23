@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:book_my_weather/constants.dart';
+import 'package:book_my_weather/models/networking_state.dart';
 import 'package:book_my_weather/models/trip.dart';
 import 'package:book_my_weather/models/user.dart';
 import 'package:book_my_weather/models/weather.dart';
@@ -11,6 +12,7 @@ import 'package:book_my_weather/services/weather.dart';
 import 'package:book_my_weather/utilities/index.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -176,7 +178,31 @@ class _TripScreenState extends State<TripScreen> {
         searchIndex: indexList,
         endDateInMs: endDateInMs,
       );
-      await db.addTrip(trip);
+
+      try {
+        await db.addTrip(trip);
+        Navigator.pop(context);
+        Navigator.pop(context);
+      } on PlatformException catch (e) {
+        Navigator.pop(context);
+        Provider.of<NetworkingState>(context, listen: false)
+            .setMessage(e.details);
+        Scaffold.of(context).showSnackBar(SnackBar(
+          content: Text(
+            Provider.of<NetworkingState>(context, listen: false).message,
+            style: TextStyle(
+              color: Colors.red,
+              fontSize: 18.0,
+            ),
+          ),
+          action: SnackBarAction(
+            label: 'OK',
+            onPressed: () {
+              Provider.of<NetworkingState>(context, listen: false).reset();
+            },
+          ),
+        ));
+      }
     } else {
       trip = Trip(
         createdByUid: Provider.of<User>(context, listen: false).uid,
@@ -191,11 +217,31 @@ class _TripScreenState extends State<TripScreen> {
         searchIndex: indexList,
         endDateInMs: endDateInMs,
       );
-      await db.updateTrip(docId: widget.existingTrip.id, updatedTrip: trip);
+      try {
+        await db.updateTrip(docId: widget.existingTrip.id, updatedTrip: trip);
+        Navigator.pop(context);
+        Navigator.pop(context);
+      } on PlatformException catch (e) {
+        Navigator.pop(context);
+        Provider.of<NetworkingState>(context, listen: false)
+            .setMessage(e.details);
+        Scaffold.of(context).showSnackBar(SnackBar(
+          content: Text(
+            Provider.of<NetworkingState>(context, listen: false).message,
+            style: TextStyle(
+              color: Colors.red,
+              fontSize: 18.0,
+            ),
+          ),
+          action: SnackBarAction(
+            label: 'OK',
+            onPressed: () {
+              Provider.of<NetworkingState>(context, listen: false).reset();
+            },
+          ),
+        ));
+      }
     }
-
-    Navigator.pop(context);
-    Navigator.pop(context);
   }
 
   @override
@@ -203,271 +249,276 @@ class _TripScreenState extends State<TripScreen> {
     return SafeArea(
       child: Scaffold(
         body: Padding(
-            padding: const EdgeInsets.all(18.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      IconButton(
-                        iconSize: 40,
-                        padding: EdgeInsets.all(0.0),
-                        alignment: Alignment.centerLeft,
-                        icon: Icon(Icons.close),
-                        color: Colors.white.withOpacity(0.9),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                      IconButton(
-                        iconSize: 40.0,
-                        icon: Icon(Icons.save),
-                        color: Color(0XFF69A4FF),
-                        onPressed: () async {
-                          if (_formKey.currentState.validate()) {
-                            showDialog(
-                                context: context,
-                                barrierDismissible: false,
-                                builder: (BuildContext context) {
-                                  return SpinKitWave(
-                                    color: Colors.white,
-                                    size: 50.0,
-                                  );
-                                });
-                            if (widget.existingTrip == null) {
-                              addOrUpdateTrip(context, TripActionType.Add);
-                            } else {
-                              addOrUpdateTrip(context, TripActionType.Update);
-                            }
-                          }
-                        },
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 10.0,
-                  ),
-                  Text(
-                    widget.existingTrip != null ? 'Edit Trip' : 'New Trip',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w100,
-                      fontSize: 40.0,
-                      color: Color(0XFF69A4FF),
-                    ),
-                  ),
-                  Expanded(
-                    child: ListView(
+          padding: const EdgeInsets.all(18.0),
+          child: Builder(
+            builder: (BuildContext context) {
+              return Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 15.0),
-                          child: TextFormField(
-                            controller: _nameTextEditingController,
-                            style: kTextFieldStyle,
-                            validator: (val) =>
-                                val.isEmpty ? 'Enter a name' : null,
-                            onChanged: (String newValue) {
-                              setState(() {
-                                name = newValue;
-                              });
-                            },
-                            decoration: InputDecoration(
-                              hintText: 'Name',
-                              hintStyle: TextStyle(
-                                color: Color(0XFF436DA6),
-                                fontSize: 24.0,
-                                fontWeight: FontWeight.w100,
-                              ),
-                              enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Color(0XFF69A4FF),
-                                ),
-                              ),
-                            ),
-                          ),
+                        IconButton(
+                          iconSize: 40,
+                          padding: EdgeInsets.all(0.0),
+                          alignment: Alignment.centerLeft,
+                          icon: Icon(Icons.close),
+                          color: Colors.white.withOpacity(0.9),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 15.0),
-                          child: TextFormField(
-                            style: kTextFieldStyle,
-                            controller: _destinationTextEditingController,
-                            validator: (val) =>
-                                val.isEmpty ? 'Enter a destination' : null,
-                            onChanged: (String newValue) {
-                              setState(() {
-                                destination = newValue;
-                              });
-                            },
-                            decoration: InputDecoration(
-                              hintText: 'Destination',
-                              hintStyle: TextStyle(
-                                color: Color(0XFF436DA6),
-                                fontSize: 24.0,
-                                fontWeight: FontWeight.w100,
-                              ),
-                              enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Color(0XFF69A4FF),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 20.0),
-                          child: TextFormField(
-                            style: kTextFieldStyle,
-                            controller: _startDateTextEditingController,
-                            validator: (val) =>
-                                val.isEmpty ? 'Enter a start date' : null,
-                            onTap: () async {
-                              pickDate(context, DateType.startDate);
-                            },
-                            decoration: InputDecoration(
-                              hintText: 'Start Date',
-                              hintStyle: TextStyle(
-                                color: Color(0XFF436DA6),
-                                fontSize: 24.0,
-                                fontWeight: FontWeight.w100,
-                              ),
-                              enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Color(0XFF69A4FF),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 20.0),
-                          child: TextFormField(
-                            controller: _endDateTextEditingController,
-                            style: kTextFieldStyle,
-                            validator: (val) =>
-                                val.isEmpty ? 'Enter an end date' : null,
-                            onTap: () {
-                              pickDate(context, DateType.endDate);
-                            },
-                            decoration: InputDecoration(
-                              hintText: 'End Date',
-                              hintStyle: TextStyle(
-                                color: Color(0XFF436DA6),
-                                fontSize: 24.0,
-                                fontWeight: FontWeight.w100,
-                              ),
-                              enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Color(0XFF69A4FF),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 20.0),
-                          child: TextFormField(
-                            controller: _descriptionTextEditingController,
-                            style: kTextFieldStyle,
-                            onChanged: (String newValue) {
-                              setState(() {
-                                description = newValue;
-                              });
-                            },
-                            decoration: InputDecoration(
-                              hintText: 'Description',
-                              hintStyle: TextStyle(
-                                color: Color(0XFF436DA6),
-                                fontSize: 24.0,
-                                fontWeight: FontWeight.w100,
-                              ),
-                              enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Color(0XFF69A4FF),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 20.0),
-                          child: TextFormField(
-                            style: kTextFieldStyle,
-//                            controller: _textEditingController,
-                            onChanged: (String newValue) {
-                              setState(() {
-                                note = newValue;
-                              });
-                            },
-                            decoration: InputDecoration(
-                              hintText: 'Note',
-                              hintStyle: TextStyle(
-                                color: Color(0XFF436DA6),
-                                fontSize: 24.0,
-                                fontWeight: FontWeight.w100,
-                              ),
-                              enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Color(0XFF69A4FF),
-                                ),
-                              ),
-                            ),
-                          ),
+                        IconButton(
+                          iconSize: 40.0,
+                          icon: Icon(Icons.save),
+                          color: Color(0XFF69A4FF),
+                          onPressed: () async {
+                            if (_formKey.currentState.validate()) {
+                              showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (BuildContext context) {
+                                    return SpinKitWave(
+                                      color: Colors.white,
+                                      size: 50.0,
+                                    );
+                                  });
+                              if (widget.existingTrip == null) {
+                                addOrUpdateTrip(context, TripActionType.Add);
+                              } else {
+                                addOrUpdateTrip(context, TripActionType.Update);
+                              }
+                            }
+                          },
                         ),
                       ],
                     ),
-                  ),
-                  if (_placeList.length > 0 &&
-                      _placeList[0] != _destinationTextEditingController.text)
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                    Text(
+                      widget.existingTrip != null ? 'Edit Trip' : 'New Trip',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w100,
+                        fontSize: 40.0,
+                        color: Color(0XFF69A4FF),
+                      ),
+                    ),
                     Expanded(
-                      child: ListView.builder(
-                        itemCount: _placeList.length,
-                        itemBuilder:
-                            (BuildContext listViewBuilderContext, int index) {
-                          return GestureDetector(
-                            onTap: () async {
-                              setState(() {
-                                _destinationTextEditingController.text =
-                                    _placeList[index];
-                                destination = _placeList[index];
-                              });
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8.0,
-                              ),
-                              child: Container(
-                                alignment: Alignment.centerLeft,
-                                width: double.infinity,
-                                height: 65.0,
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(
-                                      width: 1.0,
-                                      color: Colors.white,
-                                    ),
-                                  ),
+                      child: ListView(
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 15.0),
+                            child: TextFormField(
+                              controller: _nameTextEditingController,
+                              style: kTextFieldStyle,
+                              validator: (val) =>
+                                  val.isEmpty ? 'Enter a name' : null,
+                              onChanged: (String newValue) {
+                                setState(() {
+                                  name = newValue;
+                                });
+                              },
+                              decoration: InputDecoration(
+                                hintText: 'Name',
+                                hintStyle: TextStyle(
+                                  color: Color(0XFF436DA6),
+                                  fontSize: 24.0,
+                                  fontWeight: FontWeight.w100,
                                 ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    '${_placeList[index]}',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 20.0,
-                                    ),
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Color(0XFF69A4FF),
                                   ),
                                 ),
                               ),
                             ),
-                          );
-                        },
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 15.0),
+                            child: TextFormField(
+                              style: kTextFieldStyle,
+                              controller: _destinationTextEditingController,
+                              validator: (val) =>
+                                  val.isEmpty ? 'Enter a destination' : null,
+                              onChanged: (String newValue) {
+                                setState(() {
+                                  destination = newValue;
+                                });
+                              },
+                              decoration: InputDecoration(
+                                hintText: 'Destination',
+                                hintStyle: TextStyle(
+                                  color: Color(0XFF436DA6),
+                                  fontSize: 24.0,
+                                  fontWeight: FontWeight.w100,
+                                ),
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Color(0XFF69A4FF),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 20.0),
+                            child: TextFormField(
+                              style: kTextFieldStyle,
+                              controller: _startDateTextEditingController,
+                              validator: (val) =>
+                                  val.isEmpty ? 'Enter a start date' : null,
+                              onTap: () async {
+                                pickDate(context, DateType.startDate);
+                              },
+                              decoration: InputDecoration(
+                                hintText: 'Start Date',
+                                hintStyle: TextStyle(
+                                  color: Color(0XFF436DA6),
+                                  fontSize: 24.0,
+                                  fontWeight: FontWeight.w100,
+                                ),
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Color(0XFF69A4FF),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 20.0),
+                            child: TextFormField(
+                              controller: _endDateTextEditingController,
+                              style: kTextFieldStyle,
+                              validator: (val) =>
+                                  val.isEmpty ? 'Enter an end date' : null,
+                              onTap: () {
+                                pickDate(context, DateType.endDate);
+                              },
+                              decoration: InputDecoration(
+                                hintText: 'End Date',
+                                hintStyle: TextStyle(
+                                  color: Color(0XFF436DA6),
+                                  fontSize: 24.0,
+                                  fontWeight: FontWeight.w100,
+                                ),
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Color(0XFF69A4FF),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 20.0),
+                            child: TextFormField(
+                              controller: _descriptionTextEditingController,
+                              style: kTextFieldStyle,
+                              onChanged: (String newValue) {
+                                setState(() {
+                                  description = newValue;
+                                });
+                              },
+                              decoration: InputDecoration(
+                                hintText: 'Description',
+                                hintStyle: TextStyle(
+                                  color: Color(0XFF436DA6),
+                                  fontSize: 24.0,
+                                  fontWeight: FontWeight.w100,
+                                ),
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Color(0XFF69A4FF),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 20.0),
+                            child: TextFormField(
+                              style: kTextFieldStyle,
+//                            controller: _textEditingController,
+                              onChanged: (String newValue) {
+                                setState(() {
+                                  note = newValue;
+                                });
+                              },
+                              decoration: InputDecoration(
+                                hintText: 'Note',
+                                hintStyle: TextStyle(
+                                  color: Color(0XFF436DA6),
+                                  fontSize: 24.0,
+                                  fontWeight: FontWeight.w100,
+                                ),
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Color(0XFF69A4FF),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                ],
-              ),
-            )),
+                    if (_placeList.length > 0 &&
+                        _placeList[0] != _destinationTextEditingController.text)
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: _placeList.length,
+                          itemBuilder:
+                              (BuildContext listViewBuilderContext, int index) {
+                            return GestureDetector(
+                              onTap: () async {
+                                setState(() {
+                                  _destinationTextEditingController.text =
+                                      _placeList[index];
+                                  destination = _placeList[index];
+                                });
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8.0,
+                                ),
+                                child: Container(
+                                  alignment: Alignment.centerLeft,
+                                  width: double.infinity,
+                                  height: 65.0,
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                      bottom: BorderSide(
+                                        width: 1.0,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      '${_placeList[index]}',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20.0,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
       ),
     );
   }

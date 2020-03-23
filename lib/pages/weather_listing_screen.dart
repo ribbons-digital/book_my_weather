@@ -295,7 +295,11 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
           child: FutureBuilder<Weather>(
             future: hourlyWeather,
             builder: (context, snapshot) {
-              if (snapshot.hasData) {
+              if (snapshot.hasData &&
+                  (snapshot.connectionState == ConnectionState.none ||
+                      snapshot.connectionState == ConnectionState.done) &&
+                  snapshot.data.daily.data.length > 0 &&
+                  snapshot.data.hourly.data.length > 0) {
                 String date = DateFormat('EEE, MMM d')
                     .format(DateTime.fromMillisecondsSinceEpoch(
                         snapshot.data.daily.data[0].time * 1000))

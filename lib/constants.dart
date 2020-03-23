@@ -19,6 +19,18 @@ const kTempRangeTextStyle = TextStyle(
   color: Colors.white,
 );
 
+const kSnackbarErrorTextStyle = TextStyle(
+  color: Colors.red,
+  fontSize: 18.0,
+  fontWeight: FontWeight.w300,
+);
+
+const kSnackbarSuccessTextStyle = TextStyle(
+  color: Colors.green,
+  fontSize: 18.0,
+  fontWeight: FontWeight.w300,
+);
+
 const kGPlaceAutoCompleteURL =
     'https://maps.googleapis.com/maps/api/place/autocomplete/json';
 

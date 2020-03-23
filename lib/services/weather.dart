@@ -21,7 +21,6 @@ class WeatherModel {
     String requestUrl;
     String aqiRequestUrl;
 
-    print('called');
     List<String> excludes = type == RequestedWeatherType.Hourly
         ? ["currently", "minutely", "daily", "alerts", "flags"]
         : type == RequestedWeatherType.Daily
