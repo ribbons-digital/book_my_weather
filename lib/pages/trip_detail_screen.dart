@@ -22,6 +22,7 @@ class TripDetail extends StatelessWidget {
     final startDateToDateString = timeStampToDateString(trip.startDate);
 
     WeatherModel weatherModel = WeatherModel();
+    final isTripEnded = Provider.of<TripState>(context).isTripEnded;
 
     return Scaffold(
       body: Column(
@@ -69,35 +70,36 @@ class TripDetail extends StatelessWidget {
                           },
                         ),
                       ),
-                      Container(
-                        width: 50,
-                        height: 50,
-                        margin: EdgeInsets.only(
-                          right: 8.0,
-                        ),
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(50.0),
-                          color: Color(0x42FFFFFF),
-                        ),
-                        child: IconButton(
-                          icon: Icon(
-                            Icons.edit,
-                            size: 30.0,
-                            color: Colors.white,
+                      if (!isTripEnded)
+                        Container(
+                          width: 50,
+                          height: 50,
+                          margin: EdgeInsets.only(
+                            right: 8.0,
                           ),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              PageRouteBuilder(
-                                pageBuilder: (context, _, __) => TripScreen(
-                                  existingTrip: trip,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(50.0),
+                            color: Color(0x42FFFFFF),
+                          ),
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.edit,
+                              size: 30.0,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                PageRouteBuilder(
+                                  pageBuilder: (context, _, __) => TripScreen(
+                                    existingTrip: trip,
+                                  ),
                                 ),
-                              ),
-                            );
-                          },
-                        ),
-                      )
+                              );
+                            },
+                          ),
+                        )
                     ],
                   ),
                 ),

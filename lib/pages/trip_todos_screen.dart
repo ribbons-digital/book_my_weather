@@ -90,6 +90,14 @@ class _TripTodosScreenState extends State<TripTodosScreen> {
                   return AlertDialog(
                     title: Text('Edit ToDo'),
                     content: TextField(
+                      autofocus: true,
+                      decoration: InputDecoration(
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color(0XFF69A4FF),
+                          ),
+                        ),
+                      ),
                       controller: _editingController,
                       keyboardType: TextInputType.multiline,
                       maxLength: null,
@@ -164,6 +172,8 @@ class _TripTodosScreenState extends State<TripTodosScreen> {
     final trips = Provider.of<List<Trip>>(context);
     final tripIndex = Provider.of<TripState>(context).selectedIndex;
     final _db = DatabaseService();
+    final isTripEnded = Provider.of<TripState>(context).isTripEnded;
+
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -176,52 +186,63 @@ class _TripTodosScreenState extends State<TripTodosScreen> {
             },
           ),
           actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.add),
-              iconSize: 40,
-              color: Colors.white.withOpacity(0.9),
-              onPressed: () {
-                showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text('Add a ToDo'),
-                        content: TextField(
-                          keyboardType: TextInputType.multiline,
-                          autofocus: true,
-                          maxLength: null,
-                          maxLines: null,
-                          onChanged: (String newValue) {
-                            setState(() {
-                              toDoContent = newValue;
-                            });
-                          },
-                        ),
-                        actions: <Widget>[
-                          if (!Provider.of<NetworkingState>(context).isLoading)
-                            FlatButton(
-                              child: Text('Cancel'),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
+            if (!isTripEnded)
+              IconButton(
+                icon: Icon(Icons.add),
+                iconSize: 40,
+                color: Colors.white.withOpacity(0.9),
+                onPressed: () {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('Add a ToDo'),
+                          content: TextField(
+                            autocorrect: true,
+                            decoration: InputDecoration(
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Color(0XFF69A4FF),
+                                ),
+                              ),
                             ),
-                          if (!Provider.of<NetworkingState>(context).isLoading)
-                            FlatButton(
-                              child: Text('Save'),
-                              onPressed: () {
-                                _onHandleAddTodo(trips[tripIndex]);
-                              },
-                            ),
-                          if (Provider.of<NetworkingState>(context).isLoading)
-                            SpinKitCircle(
-                              size: 20.0,
-                              color: Colors.black26,
-                            )
-                        ],
-                      );
-                    });
-              },
-            ),
+                            keyboardType: TextInputType.multiline,
+                            autofocus: true,
+                            maxLength: null,
+                            maxLines: null,
+                            onChanged: (String newValue) {
+                              setState(() {
+                                toDoContent = newValue;
+                              });
+                            },
+                          ),
+                          actions: <Widget>[
+                            if (!Provider.of<NetworkingState>(context)
+                                .isLoading)
+                              FlatButton(
+                                child: Text('Cancel'),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            if (!Provider.of<NetworkingState>(context)
+                                .isLoading)
+                              FlatButton(
+                                child: Text('Save'),
+                                onPressed: () {
+                                  _onHandleAddTodo(trips[tripIndex]);
+                                },
+                              ),
+                            if (Provider.of<NetworkingState>(context).isLoading)
+                              SpinKitCircle(
+                                size: 20.0,
+                                color: Colors.black26,
+                              )
+                          ],
+                        );
+                      });
+                },
+              ),
           ],
           title: Text('To Dos'),
         ),
@@ -253,51 +274,59 @@ class _TripTodosScreenState extends State<TripTodosScreen> {
                           color: Colors.white,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
-                              IconButton(
-                                icon: Icon(tripToDos[index].isFinished
-                                    ? Icons.check_box
-                                    : Icons.check_box_outline_blank),
-                                onPressed: () async {
-                                  await _db.toggleTripTodoStatus(
-                                      trips[tripIndex].id,
-                                      tripToDos[index].id,
-                                      tripToDos[index].isFinished);
-                                },
-                              ),
+                              if (!isTripEnded)
+                                IconButton(
+                                  icon: Icon(tripToDos[index].isFinished
+                                      ? Icons.check_box
+                                      : Icons.check_box_outline_blank),
+                                  onPressed: () async {
+                                    await _db.toggleTripTodoStatus(
+                                        trips[tripIndex].id,
+                                        tripToDos[index].id,
+                                        tripToDos[index].isFinished);
+                                  },
+                                ),
                               Container(
                                 width: MediaQuery.of(context).size.width / 1.65,
                                 margin: EdgeInsets.all(
                                   5.0,
                                 ),
-                                child: Text(
-                                  tripToDos[index].content,
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16.0,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 8.0,
+                                  ),
+                                  child: Text(
+                                    tripToDos[index].content,
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 18.0,
+                                    ),
                                   ),
                                 ),
                               ),
-                              IconButton(
-                                icon: Icon(Icons.more_vert),
-                                onPressed: () {
-                                  showModalBottomSheet(
-                                      context: context,
-                                      builder: (context) {
-                                        return Container(
-                                          height: 150,
-                                          child: _buildBottomSheetMenu(
-                                              context,
-                                              tripToDos[index],
-                                              trips[tripIndex]),
-                                          decoration: BoxDecoration(
-                                            color:
-                                                Theme.of(context).canvasColor,
-                                          ),
-                                        );
-                                      });
-                                },
-                              ),
+                              if (!isTripEnded)
+                                IconButton(
+                                  icon: Icon(Icons.more_vert),
+                                  onPressed: () {
+                                    showModalBottomSheet(
+                                        context: context,
+                                        builder: (context) {
+                                          return Container(
+                                            height: 150,
+                                            child: _buildBottomSheetMenu(
+                                                context,
+                                                tripToDos[index],
+                                                trips[tripIndex]),
+                                            decoration: BoxDecoration(
+                                              color:
+                                                  Theme.of(context).canvasColor,
+                                            ),
+                                          );
+                                        });
+                                  },
+                                ),
                             ],
                           ),
                         );

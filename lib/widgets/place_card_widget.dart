@@ -1,10 +1,14 @@
+import 'package:book_my_weather/models/networking_state.dart';
 import 'package:book_my_weather/models/trip.dart';
 import 'package:book_my_weather/models/trip_state.dart';
 import 'package:book_my_weather/models/trip_todo.dart';
 import 'package:book_my_weather/secure/keys.dart';
 import 'package:book_my_weather/services/db.dart';
 import 'package:book_my_weather/services/networking.dart';
+import 'package:book_my_weather/utilities/index.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:maps_launcher/maps_launcher.dart';
 import 'package:provider/provider.dart';
@@ -53,72 +57,100 @@ class _PlaceCardState extends State<PlaceCard> {
     });
   }
 
+  void _onHandleAddTodo(Trip trip) async {
+    final _db = DatabaseService();
+    Provider.of<NetworkingState>(context, listen: false).setIsLoading(true);
+
+    TripTodo tripTodo = TripTodo(
+      content: toDoContent,
+    );
+
+    try {
+      await _db.addTodoToTrip(trip.id, tripTodo);
+
+      Navigator.pop(context);
+      displaySuccessSnackbar(context, 'Todo successfully added.');
+    } on PlatformException catch (e) {
+      Navigator.pop(context);
+      displayErrorSnackbar(context, e.details);
+    }
+
+    Provider.of<NetworkingState>(context, listen: false).setIsLoading(false);
+  }
+
   Column _buildBottomSheetMenu(BuildContext context) {
+    final trips = Provider.of<List<Trip>>(context, listen: false);
+    final tripIndex =
+        Provider.of<TripState>(context, listen: false).selectedIndex;
+
+    final isTripEnded =
+        trips[tripIndex].endDateInMs < DateTime.now().millisecondsSinceEpoch;
+
     return Column(
       children: <Widget>[
-        ListTile(
-          leading: SvgPicture.asset(
-            'assets/images/note_solid.svg',
-            width: 14.0,
-            height: 16.0,
-            color: Color(0XFF69A4FF),
-          ),
-          title: Text(
-            'Add a ToDo',
-            style: TextStyle(
-              fontSize: 18.0,
+        if (!isTripEnded)
+          ListTile(
+            leading: SvgPicture.asset(
+              'assets/images/note_solid.svg',
+              width: 14.0,
+              height: 16.0,
               color: Color(0XFF69A4FF),
             ),
-          ),
-          onTap: () {
-            Navigator.pop(context);
-            showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: Text('Add a ToDo'),
-                    content: TextField(
-                      keyboardType: TextInputType.multiline,
-                      maxLength: null,
-                      maxLines: null,
-                      onChanged: (String newValue) {
-                        setToDoContent(newValue);
-                      },
-                    ),
-                    actions: <Widget>[
-                      FlatButton(
-                        child: Text('Cancel'),
-                        onPressed: () {
-                          Navigator.pop(context);
+            title: Text(
+              'Add a ToDo',
+              style: TextStyle(
+                fontSize: 18.0,
+                color: Color(0XFF69A4FF),
+              ),
+            ),
+            onTap: () {
+              Navigator.pop(context);
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('Add a ToDo'),
+                      content: TextField(
+                        autofocus: true,
+                        decoration: InputDecoration(
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.black26,
+                            ),
+                          ),
+                        ),
+                        keyboardType: TextInputType.multiline,
+                        maxLength: null,
+                        maxLines: null,
+                        onChanged: (String newValue) {
+                          setToDoContent(newValue);
                         },
                       ),
-                      FlatButton(
-                        child: Text('Add'),
-                        onPressed: () async {
-                          final trips =
-                              Provider.of<List<Trip>>(context, listen: false);
-                          final tripIndex =
-                              Provider.of<TripState>(context, listen: false)
-                                  .selectedIndex;
-                          final db = DatabaseService();
-
-                          TripTodo tripTodo = TripTodo(
-                            content: toDoContent,
-                          );
-                          await db.addTodoToTrip(trips[tripIndex].id, tripTodo);
-//                          Scaffold.of(context).showSnackBar(
-//                            SnackBar(
-//                              content: Text('ToDo Added.'),
-//                            ),
-//                          );
-                          Navigator.pop(context);
-                        },
-                      )
-                    ],
-                  );
-                });
-          },
-        ),
+                      actions: <Widget>[
+                        if (!Provider.of<NetworkingState>(context).isLoading)
+                          FlatButton(
+                            child: Text('Cancel'),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                          ),
+                        if (!Provider.of<NetworkingState>(context).isLoading)
+                          FlatButton(
+                            child: Text('Add'),
+                            onPressed: () async {
+                              _onHandleAddTodo(trips[tripIndex]);
+                            },
+                          ),
+                        if (Provider.of<NetworkingState>(context).isLoading)
+                          SpinKitCircle(
+                            size: 20.0,
+                            color: Colors.black26,
+                          ),
+                      ],
+                    );
+                  });
+            },
+          ),
         ListTile(
           leading: SvgPicture.asset(
             'assets/images/share_solid.svg',
@@ -143,7 +175,9 @@ class _PlaceCardState extends State<PlaceCard> {
               Share.share(result['result']['url']);
               Navigator.pop(context);
             } catch (e) {
-              print(e.toString());
+              Navigator.pop(context);
+              displayErrorSnackbar(
+                  context, 'Something wrong, please try again later.');
             }
           },
         ),
@@ -164,7 +198,6 @@ class _PlaceCardState extends State<PlaceCard> {
           onTap: () async {
             final url =
                 'https://maps.googleapis.com/maps/api/place/details/json?key=$kGooglePlacesAPIKey&fields=formatted_address&place_id=${widget.placeId}';
-//                            http.Response response = await http.get(url);
             NetworkHelper networkHelper = NetworkHelper(url);
 
             try {
@@ -173,7 +206,9 @@ class _PlaceCardState extends State<PlaceCard> {
               MapsLauncher.launchQuery(address);
               Navigator.pop(context);
             } catch (e) {
-              print(e.toString());
+              Navigator.pop(context);
+              displayErrorSnackbar(
+                  context, 'Something wrong, please try again later.');
             }
           },
         )
@@ -183,6 +218,12 @@ class _PlaceCardState extends State<PlaceCard> {
 
   @override
   Widget build(BuildContext context) {
+    final trips = Provider.of<List<Trip>>(context, listen: false);
+    final tripIndex =
+        Provider.of<TripState>(context, listen: false).selectedIndex;
+
+    final isTripEnded =
+        trips[tripIndex].endDateInMs < DateTime.now().millisecondsSinceEpoch;
     return Container(
       height: 250,
       decoration: BoxDecoration(
@@ -231,7 +272,7 @@ class _PlaceCardState extends State<PlaceCard> {
                             context: context,
                             builder: (context) {
                               return Container(
-                                height: 200,
+                                height: isTripEnded ? 150 : 200,
                                 child: _buildBottomSheetMenu(context),
                                 decoration: BoxDecoration(
                                   color: Theme.of(context).canvasColor,

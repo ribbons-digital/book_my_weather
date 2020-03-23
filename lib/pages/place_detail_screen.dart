@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:book_my_weather/models/google_place_detail.dart';
+import 'package:book_my_weather/models/networking_state.dart';
 import 'package:book_my_weather/models/trip_state.dart';
 import 'package:book_my_weather/models/trip_visiting.dart';
 import 'package:book_my_weather/pages/image_full_screen.dart';
@@ -13,6 +14,7 @@ import 'package:book_my_weather/widgets/place_detail_widget.dart';
 import 'package:book_my_weather/widgets/place_weather_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -156,7 +158,10 @@ class _PlaceDetailState extends State<PlaceDetail>
       initialTime: TimeOfDay.now(),
     );
     if (pickedTime != null) {
-      final time = '${pickedTime.hour} : ${pickedTime.minute}';
+      final minute = pickedTime.minute < 10
+          ? '0${pickedTime.minute}'
+          : '${pickedTime.minute}';
+      final time = '${pickedTime.hour} : $minute';
       _timeEditingController.text = time;
       setState(() {
         visitingTime = pickedTime;
@@ -170,6 +175,7 @@ class _PlaceDetailState extends State<PlaceDetail>
     final width = MediaQuery.of(context).size.width;
     final db = DatabaseService();
     final tripId = Provider.of<TripState>(context).tripId;
+    final isTripEnded = Provider.of<TripState>(context).isTripEnded;
 
     return FutureBuilder(
       future: placeDetails,
@@ -398,176 +404,249 @@ class _PlaceDetailState extends State<PlaceDetail>
                                   SizedBox(
                                     width: 20.0,
                                   ),
-                                  FlatButton(
-                                    child: Row(
-                                      children: <Widget>[
-                                        Icon(
-                                          checkIsPlaceSaved(
-                                                  tripVisitings, widget.placeId)
-                                              ? Icons.bookmark
-                                              : Icons.bookmark_border,
-                                          color: Color(0XFF69A4FF),
-                                        ),
-                                        SizedBox(
-                                          width: 5.0,
-                                        ),
-                                        Text(
-                                          'Save',
-                                          style: TextStyle(
+                                  if (!isTripEnded)
+                                    FlatButton(
+                                      child: Row(
+                                        children: <Widget>[
+                                          Icon(
+                                            checkIsPlaceSaved(tripVisitings,
+                                                    widget.placeId)
+                                                ? Icons.bookmark
+                                                : Icons.bookmark_border,
                                             color: Color(0XFF69A4FF),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          new BorderRadius.circular(18.0),
-                                      side: BorderSide(
-                                        color: Color(0XFF69A4FF),
+                                          SizedBox(
+                                            width: 5.0,
+                                          ),
+                                          Text(
+                                            'Save',
+                                            style: TextStyle(
+                                              color: Color(0XFF69A4FF),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    ),
-                                    onPressed: () async {
-                                      if (!checkIsPlaceSaved(
-                                          tripVisitings, widget.placeId)) {
-                                        showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return AlertDialog(
-                                                title: Text(
-                                                    'When are you visiting?'),
-                                                content: Column(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: <Widget>[
-                                                    TextField(
-                                                      style: TextStyle(
-                                                          color: Color(
-                                                              0XFF436DA6)),
-                                                      controller:
-                                                          _dateEditingController,
-                                                      onTap: () async {
-                                                        pickDate(context);
-                                                      },
-                                                      decoration:
-                                                          InputDecoration(
-                                                        hintText: 'Select Date',
-                                                        hintStyle: TextStyle(
-                                                          color:
-                                                              Color(0XFF436DA6),
-                                                          fontSize: 24.0,
-                                                          fontWeight:
-                                                              FontWeight.w100,
-                                                        ),
-                                                        enabledBorder:
-                                                            UnderlineInputBorder(
-                                                          borderSide:
-                                                              BorderSide(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            new BorderRadius.circular(18.0),
+                                        side: BorderSide(
+                                          color: Color(0XFF69A4FF),
+                                        ),
+                                      ),
+                                      onPressed: () async {
+                                        if (!checkIsPlaceSaved(
+                                            tripVisitings, widget.placeId)) {
+                                          showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return AlertDialog(
+                                                  title: Text(
+                                                      'When are you visiting?'),
+                                                  content: Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: <Widget>[
+                                                      TextField(
+                                                        autofocus: true,
+                                                        style: TextStyle(
                                                             color: Color(
-                                                                0XFF69A4FF),
+                                                                0XFF436DA6)),
+                                                        controller:
+                                                            _dateEditingController,
+                                                        onTap: () async {
+                                                          pickDate(context);
+                                                        },
+                                                        decoration:
+                                                            InputDecoration(
+                                                          hintText:
+                                                              'Select Date',
+                                                          hintStyle: TextStyle(
+                                                            color: Color(
+                                                                0XFF436DA6),
+                                                            fontSize: 24.0,
+                                                            fontWeight:
+                                                                FontWeight.w100,
+                                                          ),
+                                                          enabledBorder:
+                                                              UnderlineInputBorder(
+                                                            borderSide:
+                                                                BorderSide(
+                                                              color: Color(
+                                                                  0XFF69A4FF),
+                                                            ),
+                                                          ),
+                                                          focusedBorder:
+                                                              UnderlineInputBorder(
+                                                            borderSide:
+                                                                BorderSide(
+                                                              color: Color(
+                                                                  0XFF69A4FF),
+                                                            ),
                                                           ),
                                                         ),
                                                       ),
-                                                    ),
-                                                    SizedBox(
-                                                      height: 10.0,
-                                                    ),
-                                                    TextField(
-                                                      style: TextStyle(
-                                                          color: Color(
-                                                              0XFF436DA6)),
-                                                      controller:
-                                                          _timeEditingController,
-                                                      onTap: () async {
-                                                        pickTime(context);
-                                                      },
-                                                      decoration:
-                                                          InputDecoration(
-                                                        hintText: 'Select Time',
-                                                        hintStyle: TextStyle(
-                                                          color:
-                                                              Color(0XFF436DA6),
-                                                          fontSize: 24.0,
-                                                          fontWeight:
-                                                              FontWeight.w100,
-                                                        ),
-                                                        enabledBorder:
-                                                            UnderlineInputBorder(
-                                                          borderSide:
-                                                              BorderSide(
+                                                      SizedBox(
+                                                        height: 10.0,
+                                                      ),
+                                                      TextField(
+                                                        style: TextStyle(
                                                             color: Color(
-                                                                0XFF69A4FF),
+                                                                0XFF436DA6)),
+                                                        controller:
+                                                            _timeEditingController,
+                                                        onTap: () async {
+                                                          pickTime(context);
+                                                        },
+                                                        decoration:
+                                                            InputDecoration(
+                                                          hintText:
+                                                              'Select Time',
+                                                          hintStyle: TextStyle(
+                                                            color: Color(
+                                                                0XFF436DA6),
+                                                            fontSize: 24.0,
+                                                            fontWeight:
+                                                                FontWeight.w100,
+                                                          ),
+                                                          enabledBorder:
+                                                              UnderlineInputBorder(
+                                                            borderSide:
+                                                                BorderSide(
+                                                              color: Color(
+                                                                  0XFF69A4FF),
+                                                            ),
+                                                          ),
+                                                          focusedBorder:
+                                                              UnderlineInputBorder(
+                                                            borderSide:
+                                                                BorderSide(
+                                                              color: Color(
+                                                                  0XFF69A4FF),
+                                                            ),
                                                           ),
                                                         ),
                                                       ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                actions: <Widget>[
-                                                  FlatButton(
-                                                    child: Text('Cancel'),
-                                                    onPressed: () {
-                                                      Navigator.pop(context);
-                                                    },
+                                                    ],
                                                   ),
-                                                  FlatButton(
-                                                    child: Text('Save'),
-                                                    onPressed: () async {
-                                                      if (visitingDate ==
-                                                              null ||
-                                                          visitingTime == null)
-                                                        return;
-                                                      final visitingDateTime =
-                                                          DateTime(
-                                                              visitingDate.year,
-                                                              visitingDate
-                                                                  .month,
-                                                              visitingDate.day,
-                                                              visitingTime.hour,
-                                                              visitingTime
-                                                                  .minute);
-                                                      TripVisiting
-                                                          newTripVisiting =
-                                                          TripVisiting(
-                                                        photo: placeDetail
-                                                                    .photos
-                                                                    .length >
-                                                                0
-                                                            ? placeDetail
-                                                                .photos[0]
-                                                            : '',
-                                                        placeId: widget.placeId,
-                                                        placeName:
-                                                            widget.placeName,
-                                                        placeType:
-                                                            widget.placeType,
-                                                        visitingDate: Timestamp
-                                                            .fromMicrosecondsSinceEpoch(
-                                                                visitingDateTime
-                                                                        .millisecondsSinceEpoch *
-                                                                    1000),
-                                                      );
+                                                  actions: <Widget>[
+                                                    if (!Provider.of<
+                                                                NetworkingState>(
+                                                            context)
+                                                        .isLoading)
+                                                      FlatButton(
+                                                        child: Text('Cancel'),
+                                                        onPressed: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                      ),
+                                                    if (!Provider.of<
+                                                                NetworkingState>(
+                                                            context)
+                                                        .isLoading)
+                                                      FlatButton(
+                                                        child: Text('Save'),
+                                                        onPressed: () async {
+                                                          if (visitingDate ==
+                                                                  null ||
+                                                              visitingTime ==
+                                                                  null) return;
+                                                          final visitingDateTime =
+                                                              DateTime(
+                                                                  visitingDate
+                                                                      .year,
+                                                                  visitingDate
+                                                                      .month,
+                                                                  visitingDate
+                                                                      .day,
+                                                                  visitingTime
+                                                                      .hour,
+                                                                  visitingTime
+                                                                      .minute);
+                                                          TripVisiting
+                                                              newTripVisiting =
+                                                              TripVisiting(
+                                                            photo: placeDetail
+                                                                        .photos
+                                                                        .length >
+                                                                    0
+                                                                ? placeDetail
+                                                                    .photos[0]
+                                                                : '',
+                                                            placeId:
+                                                                widget.placeId,
+                                                            placeName: widget
+                                                                .placeName,
+                                                            placeType: widget
+                                                                .placeType,
+                                                            visitingDate: Timestamp
+                                                                .fromMicrosecondsSinceEpoch(
+                                                                    visitingDateTime
+                                                                            .millisecondsSinceEpoch *
+                                                                        1000),
+                                                          );
 
-                                                      await db.addTripVisiting(
-                                                          tripId,
-                                                          newTripVisiting);
-                                                      Navigator.pop(context);
-                                                    },
-                                                  )
-                                                ],
-                                              );
-                                            });
-                                      } else {
-                                        final tripVisitingId = tripVisitings
-                                            .where((visiting) =>
-                                                visiting.placeId ==
-                                                widget.placeId)
-                                            .toList()[0]
-                                            .id;
-                                        await db.deleteTripVisiting(
-                                            tripId, tripVisitingId);
-                                      }
-                                    },
-                                  ),
+                                                          try {
+                                                            await db.addTripVisiting(
+                                                                tripId,
+                                                                newTripVisiting);
+                                                            Provider.of<NetworkingState>(
+                                                                    context,
+                                                                    listen:
+                                                                        false)
+                                                                .setIsLoading(
+                                                                    false);
+                                                            Navigator.pop(
+                                                                context);
+                                                            displaySuccessSnackbar(
+                                                                context,
+                                                                'Bookmark successfully added.');
+                                                          } on PlatformException catch (e) {
+                                                            Provider.of<NetworkingState>(
+                                                                    context,
+                                                                    listen:
+                                                                        false)
+                                                                .setIsLoading(
+                                                                    false);
+                                                            Navigator.pop(
+                                                                context);
+                                                            displayErrorSnackbar(
+                                                                context,
+                                                                e.details);
+                                                          }
+                                                        },
+                                                      ),
+                                                    if (Provider.of<
+                                                                NetworkingState>(
+                                                            context)
+                                                        .isLoading)
+                                                      SpinKitCircle(
+                                                        size: 20.0,
+                                                        color: Colors.black26,
+                                                      )
+                                                  ],
+                                                );
+                                              });
+                                        } else {
+                                          final tripVisitingId = tripVisitings
+                                              .where((visiting) =>
+                                                  visiting.placeId ==
+                                                  widget.placeId)
+                                              .toList()[0]
+                                              .id;
+
+                                          try {
+                                            await db.deleteTripVisiting(
+                                                tripId, tripVisitingId);
+                                            displaySuccessSnackbar(context,
+                                                'Bookmark successfully removed');
+                                          } on PlatformException catch (e) {
+                                            displayErrorSnackbar(
+                                                context, e.details);
+                                          }
+                                        }
+                                      },
+                                    ),
                                 ],
                               ),
                             ),

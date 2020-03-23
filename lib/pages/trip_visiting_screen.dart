@@ -1,12 +1,15 @@
 import 'dart:math' as math;
 
+import 'package:book_my_weather/models/networking_state.dart';
 import 'package:book_my_weather/models/trip_state.dart';
 import 'package:book_my_weather/models/trip_visiting.dart';
 import 'package:book_my_weather/services/db.dart';
 import 'package:book_my_weather/utilities/index.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -85,6 +88,8 @@ class _TripVisitingScreenState extends State<TripVisitingScreen> {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
 
+    final isTripEnded = Provider.of<TripState>(context).isTripEnded;
+
     List timeStamps = Set.from(tripVisitings.map((v) {
       final dateTime = DateTime.fromMillisecondsSinceEpoch(
           v.visitingDate.millisecondsSinceEpoch);
@@ -137,6 +142,7 @@ class _TripVisitingScreenState extends State<TripVisitingScreen> {
                           ? '0${sortByDateList[index][i].visitingDate.toDate().minute}'
                           : '${sortByDateList[index][i].visitingDate.toDate().minute}';
                       return Slidable(
+                        enabled: !isTripEnded,
                         actionPane: SlidableDrawerActionPane(),
                         actionExtentRatio: 0.25,
                         secondaryActions: <Widget>[
@@ -174,6 +180,7 @@ class _TripVisitingScreenState extends State<TripVisitingScreen> {
                                           mainAxisSize: MainAxisSize.min,
                                           children: <Widget>[
                                             TextField(
+                                              autofocus: true,
                                               style: TextStyle(
                                                   color: Color(0XFF436DA6)),
                                               controller:
@@ -187,6 +194,12 @@ class _TripVisitingScreenState extends State<TripVisitingScreen> {
                                                   color: Color(0XFF436DA6),
                                                   fontSize: 24.0,
                                                   fontWeight: FontWeight.w100,
+                                                ),
+                                                focusedBorder:
+                                                    UnderlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                    color: Color(0XFF69A4FF),
+                                                  ),
                                                 ),
                                                 enabledBorder:
                                                     UnderlineInputBorder(
@@ -214,6 +227,12 @@ class _TripVisitingScreenState extends State<TripVisitingScreen> {
                                                   fontSize: 24.0,
                                                   fontWeight: FontWeight.w100,
                                                 ),
+                                                focusedBorder:
+                                                    UnderlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                    color: Color(0XFF69A4FF),
+                                                  ),
+                                                ),
                                                 enabledBorder:
                                                     UnderlineInputBorder(
                                                   borderSide: BorderSide(
@@ -225,54 +244,89 @@ class _TripVisitingScreenState extends State<TripVisitingScreen> {
                                           ],
                                         ),
                                         actions: <Widget>[
-                                          FlatButton(
-                                            child: Text('Cancel'),
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                            },
-                                          ),
-                                          FlatButton(
-                                            child: Text('Save'),
-                                            onPressed: () async {
-                                              if (visitingDate == null ||
-                                                  visitingTime == null) return;
-                                              final visitingDateTime = DateTime(
-                                                  visitingDate.year,
-                                                  visitingDate.month,
-                                                  visitingDate.day,
-                                                  visitingTime.hour,
-                                                  visitingTime.minute);
-                                              TripVisiting updatedTripVisiting =
-                                                  TripVisiting(
-                                                id: sortByDateList[index][i].id,
-                                                photo: sortByDateList[index][i]
-                                                    .photo,
-                                                placeId: sortByDateList[index]
-                                                        [i]
-                                                    .placeId,
-                                                placeName: sortByDateList[index]
-                                                        [i]
-                                                    .placeName,
-                                                placeType: sortByDateList[index]
-                                                        [i]
-                                                    .placeType,
-                                                visitingDate: Timestamp
-                                                    .fromMicrosecondsSinceEpoch(
-                                                        visitingDateTime
-                                                                .millisecondsSinceEpoch *
-                                                            1000),
-                                              );
-
-                                              try {
-                                                await db.updateTripVisiting(
-                                                    tripId,
-                                                    updatedTripVisiting);
+                                          if (!Provider.of<NetworkingState>(
+                                                  context)
+                                              .isLoading)
+                                            FlatButton(
+                                              child: Text('Cancel'),
+                                              onPressed: () {
                                                 Navigator.pop(context);
-                                              } catch (e) {
-                                                print(e.toString());
-                                              }
-                                            },
-                                          )
+                                              },
+                                            ),
+                                          if (!Provider.of<NetworkingState>(
+                                                  context)
+                                              .isLoading)
+                                            FlatButton(
+                                              child: Text('Save'),
+                                              onPressed: () async {
+                                                if (visitingDate == null ||
+                                                    visitingTime == null)
+                                                  return;
+                                                Provider.of<NetworkingState>(
+                                                        context,
+                                                        listen: false)
+                                                    .setIsLoading(true);
+                                                final visitingDateTime =
+                                                    DateTime(
+                                                        visitingDate.year,
+                                                        visitingDate.month,
+                                                        visitingDate.day,
+                                                        visitingTime.hour,
+                                                        visitingTime.minute);
+                                                TripVisiting
+                                                    updatedTripVisiting =
+                                                    TripVisiting(
+                                                  id: sortByDateList[index][i]
+                                                      .id,
+                                                  photo: sortByDateList[index]
+                                                          [i]
+                                                      .photo,
+                                                  placeId: sortByDateList[index]
+                                                          [i]
+                                                      .placeId,
+                                                  placeName:
+                                                      sortByDateList[index][i]
+                                                          .placeName,
+                                                  placeType:
+                                                      sortByDateList[index][i]
+                                                          .placeType,
+                                                  visitingDate: Timestamp
+                                                      .fromMicrosecondsSinceEpoch(
+                                                          visitingDateTime
+                                                                  .millisecondsSinceEpoch *
+                                                              1000),
+                                                );
+
+                                                try {
+                                                  await db.updateTripVisiting(
+                                                      tripId,
+                                                      updatedTripVisiting);
+                                                  Provider.of<NetworkingState>(
+                                                          context,
+                                                          listen: false)
+                                                      .setIsLoading(false);
+                                                  Navigator.pop(context);
+                                                  displaySuccessSnackbar(
+                                                      context,
+                                                      'Trip successfully updated.');
+                                                } on PlatformException catch (e) {
+                                                  Provider.of<NetworkingState>(
+                                                          context,
+                                                          listen: false)
+                                                      .setIsLoading(false);
+                                                  Navigator.pop(context);
+                                                  displayErrorSnackbar(
+                                                      context, e.details);
+                                                }
+                                              },
+                                            ),
+                                          if (Provider.of<NetworkingState>(
+                                                  context)
+                                              .isLoading)
+                                            SpinKitCircle(
+                                              size: 20.0,
+                                              color: Colors.black26,
+                                            )
                                         ],
                                       );
                                     });

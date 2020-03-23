@@ -190,7 +190,7 @@ class _TripsScreenState extends State<TripsScreen> {
                       onTap: () {
 //                    Navigator.pushNamed(context, TripDetail.id);
                         Provider.of<TripState>(context, listen: false)
-                            .updateSelectedTrip(index, trips[index].id);
+                            .updateSelectedTrip(index, trips[index]);
                         Navigator.push(
                           context,
                           PageRouteBuilder(

@@ -438,31 +438,6 @@ class _TripScreenState extends State<TripScreen> {
                               ),
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 20.0),
-                            child: TextFormField(
-                              style: kTextFieldStyle,
-//                            controller: _textEditingController,
-                              onChanged: (String newValue) {
-                                setState(() {
-                                  note = newValue;
-                                });
-                              },
-                              decoration: InputDecoration(
-                                hintText: 'Note',
-                                hintStyle: TextStyle(
-                                  color: Color(0XFF436DA6),
-                                  fontSize: 24.0,
-                                  fontWeight: FontWeight.w100,
-                                ),
-                                enabledBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Color(0XFF69A4FF),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
                         ],
                       ),
                     ),

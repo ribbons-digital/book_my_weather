@@ -48,6 +48,7 @@ class _PlaceOverviewState extends State<PlaceOverview> {
   Future<Weather> getWeatherForecast() async {
     WeatherModel weatherModel = WeatherModel();
     Location location = Location();
+
     await location.getPlaceMarkFromAddress(address: widget.address);
     return await weatherModel.getLocationWeather(
       type: RequestedWeatherType.Daily,
@@ -97,84 +98,132 @@ class _PlaceOverviewState extends State<PlaceOverview> {
 
   @override
   Widget build(BuildContext context) {
-    return ConstrainedBox(
-      constraints: BoxConstraints(
-        minHeight: 500,
-        maxHeight: 1000,
-      ),
-      child: DecoratedBox(
-        decoration: BoxDecoration(color: Colors.white),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(
-                left: 12.0,
-                top: 16.0,
-                bottom: 16.0,
-              ),
-              child: Text(
-                'Information',
-                style: TextStyle(
-                  fontSize: 32.0,
-                  fontWeight: FontWeight.w100,
+    return SafeArea(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          minHeight: 500,
+          maxHeight: 1000,
+        ),
+        child: DecoratedBox(
+          decoration: BoxDecoration(color: Colors.white),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(
+                  left: 12.0,
+                  top: 16.0,
+                  bottom: 16.0,
                 ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(
-                left: 18.0,
-                bottom: 10.0,
-              ),
-              child: Text(
-                widget.address ?? 'Address not available',
-                style: TextStyle(
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.w100,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(
-                left: 18.0,
-                bottom: 10.0,
-              ),
-              child: Text(
-                widget.phoneNumber ?? 'Phone number not available',
-                style: TextStyle(
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.w100,
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(
-                left: 18.0,
-                bottom: 10.0,
-              ),
-              child: InkWell(
                 child: Text(
-                  widget.website ?? 'Website not available',
+                  'Information',
+                  style: TextStyle(
+                    fontSize: 32.0,
+                    fontWeight: FontWeight.w100,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                  left: 18.0,
+                  bottom: 10.0,
+                ),
+                child: Text(
+                  widget.address ?? 'Address not available',
                   style: TextStyle(
                     fontSize: 20.0,
                     fontWeight: FontWeight.w100,
-                    color: Color(0XFF69A4FF),
                   ),
                   maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                onTap: () async {
-                  if (await canLaunch(widget.website)) {
-                    launch(widget.website);
-                  }
-                },
               ),
-            ),
-            SizedBox(
-              height: 20.0,
-              child: Padding(
+              Padding(
+                padding: const EdgeInsets.only(
+                  left: 18.0,
+                  bottom: 10.0,
+                ),
+                child: Text(
+                  widget.phoneNumber ?? 'Phone number not available',
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.w100,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                  left: 18.0,
+                  bottom: 10.0,
+                ),
+                child: InkWell(
+                  child: Text(
+                    widget.website ?? 'Website not available',
+                    style: TextStyle(
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.w100,
+                      color: Color(0XFF69A4FF),
+                    ),
+                    maxLines: 2,
+                  ),
+                  onTap: () async {
+                    if (await canLaunch(widget.website)) {
+                      launch(widget.website);
+                    }
+                  },
+                ),
+              ),
+              SizedBox(
+                height: 20.0,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10.0,
+                  ),
+                  child: Divider(
+                    color: Colors.black26,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                  left: 12.0,
+                  top: 16.0,
+//                bottom: 16.0,
+                ),
+                child: Text(
+                  'Business hours',
+                  style: TextStyle(
+                    fontSize: 32.0,
+                    fontWeight: FontWeight.w100,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                  left: 12.0,
+                ),
+                child: widget.openingHours is List &&
+                        widget.openingHours.length > 0
+                    ? Container(
+                        height: 200,
+                        child: ListView(
+                          padding: EdgeInsets.only(
+                            top: 5.0,
+                            left: 12.0,
+                          ),
+//                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: displayBusinessHours(widget.openingHours),
+                        ),
+                      )
+                    : Text(
+                        'Not Available',
+                        style: TextStyle(
+                          fontSize: 20.0,
+                        ),
+                      ),
+              ),
+              Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 10.0,
                 ),
@@ -182,170 +231,126 @@ class _PlaceOverviewState extends State<PlaceOverview> {
                   color: Colors.black26,
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(
-                left: 12.0,
-                top: 16.0,
-//                bottom: 16.0,
-              ),
-              child: Text(
-                'Business hours',
-                style: TextStyle(
-                  fontSize: 32.0,
-                  fontWeight: FontWeight.w100,
+              Padding(
+                padding: const EdgeInsets.only(
+                  left: 12.0,
+                  top: 16.0,
+                  bottom: 16.0,
+                ),
+                child: Text(
+                  'Weather forecast',
+                  style: TextStyle(
+                    fontSize: 32.0,
+                    fontWeight: FontWeight.w100,
+                  ),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(
-                left: 12.0,
-              ),
-              child:
-                  widget.openingHours is List && widget.openingHours.length > 0
-                      ? Container(
-                          height: 200,
-                          child: ListView(
-                            padding: EdgeInsets.only(
-                              top: 5.0,
-                              left: 12.0,
-                            ),
-//                          crossAxisAlignment: CrossAxisAlignment.end,
-                            children: displayBusinessHours(widget.openingHours),
-                          ),
-                        )
-                      : Text(
-                          'Not Available',
+              GestureDetector(
+                onTap: widget.goToWeatherTab,
+                child: FutureBuilder(
+                  future: weatherForecast,
+                  builder:
+                      (BuildContext context, AsyncSnapshot<Weather> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return SpinKitWave(
+                        size: 30.0,
+                        color: Colors.black,
+                      );
+                    }
+
+                    if (snapshot.connectionState == ConnectionState.done &&
+                        snapshot.hasData) {
+                      final dailyWeather = snapshot.data.daily.data;
+
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: List<Widget>.generate(7, (index) {
+                          return Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                '${DateFormat('Md').format(DateTime.fromMillisecondsSinceEpoch(dailyWeather[index].time * 1000))}',
+                                style: TextStyle(color: Colors.black),
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(top: 5, bottom: 10),
+//                          child: _SpinningSun(),
+                                child: getDailyWeatherForecastIcon(
+                                    icon: dailyWeather[index].icon),
+                              ),
+                              Text(
+                                '${dailyWeather[index].temperatureHigh.toStringAsFixed(0)}º',
+                                style: TextStyle(color: Colors.black),
+                              ),
+                            ],
+                          );
+                        }),
+                      );
+                    }
+
+                    if (snapshot.hasError) {
+                      return Center(
+                        child: Text(
+                          'Error getting weather forecast for this place.',
                           style: TextStyle(
-                            fontSize: 20.0,
+                            color: Colors.black,
                           ),
                         ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 10.0,
-              ),
-              child: Divider(
-                color: Colors.black26,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(
-                left: 12.0,
-                top: 16.0,
-                bottom: 16.0,
-              ),
-              child: Text(
-                'Weather forecast',
-                style: TextStyle(
-                  fontSize: 32.0,
-                  fontWeight: FontWeight.w100,
+                      );
+                    }
+
+                    return Container();
+                  },
                 ),
               ),
-            ),
-            GestureDetector(
-              onTap: widget.goToWeatherTab,
-              child: FutureBuilder(
-                future: weatherForecast,
-                builder:
-                    (BuildContext context, AsyncSnapshot<Weather> snapshot) {
+              SizedBox(
+                height: 20.0,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10.0,
+                  ),
+                  child: Divider(
+                    color: Colors.black26,
+                  ),
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 12.0,
+                      top: 16.0,
+                      bottom: 16.0,
+                    ),
+                    child: Text(
+                      'Hotels nearby',
+                      style: TextStyle(
+                        fontSize: 32.0,
+                        fontWeight: FontWeight.w100,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              FutureBuilder(
+                future: nearbyHotels,
+                builder: (BuildContext context,
+                    AsyncSnapshot<List<GoogleNearByPlace>> snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return SpinKitWave(
-                      size: 30.0,
                       color: Colors.black,
+                      size: 30.0,
                     );
                   }
 
                   if (snapshot.connectionState == ConnectionState.done &&
                       snapshot.hasData) {
-                    final dailyWeather = snapshot.data.daily.data;
+                    final nearbyHotels = snapshot.data;
 
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: List<Widget>.generate(7, (index) {
-                        return Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Text(
-                              '${DateFormat('Md').format(DateTime.fromMillisecondsSinceEpoch(dailyWeather[index].time * 1000))}',
-                              style: TextStyle(color: Colors.black),
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(top: 5, bottom: 10),
-//                          child: _SpinningSun(),
-                              child: getDailyWeatherForecastIcon(
-                                  icon: dailyWeather[index].icon),
-                            ),
-                            Text(
-                              '${dailyWeather[index].temperatureHigh.toStringAsFixed(0)}º',
-                              style: TextStyle(color: Colors.black),
-                            ),
-                          ],
-                        );
-                      }),
-                    );
-                  }
-
-                  if (snapshot.hasError) {
-                    return Text(
-                      snapshot.error.toString(),
-                      style: TextStyle(
-                        color: Colors.black,
-                      ),
-                    );
-                  }
-
-                  return Container();
-                },
-              ),
-            ),
-            FutureBuilder(
-              future: nearbyHotels,
-              builder: (BuildContext context,
-                  AsyncSnapshot<List<GoogleNearByPlace>> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        SizedBox(
-                          height: 20.0,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10.0,
-                            ),
-                            child: Divider(
-                              color: Colors.black26,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            left: 12.0,
-                            top: 16.0,
-                            bottom: 16.0,
-                          ),
-                          child: Text(
-                            'Hotels nearby',
-                            style: TextStyle(
-                              fontSize: 32.0,
-                              fontWeight: FontWeight.w100,
-                            ),
-                          ),
-                        ),
-                        SpinKitWave(
-                          color: Colors.black,
-                          size: 30.0,
-                        )
-                      ]);
-                }
-
-                if (snapshot.connectionState == ConnectionState.done &&
-                    snapshot.hasData) {
-                  final nearbyHotels = snapshot.data;
-
-                  if (nearbyHotels != null && snapshot.data.length > 0)
-                    return Column(
+                    if (nearbyHotels != null && snapshot.data.length > 0)
+                      return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
@@ -417,22 +422,26 @@ class _PlaceOverviewState extends State<PlaceOverview> {
                               ),
                             ),
                           )
-                        ]);
-                }
+                        ],
+                      );
+                  }
 
-                if (snapshot.hasError) {
-                  return Text(
-                    snapshot.error.toString(),
-                    style: TextStyle(
-                      color: Colors.black,
-                    ),
-                  );
-                }
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text(
+                        'Error getting nearby hotels for this place.',
+                        style: TextStyle(
+                          color: Colors.black,
+                        ),
+                      ),
+                    );
+                  }
 
-                return Container();
-              },
-            ),
-          ],
+                  return Container();
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
