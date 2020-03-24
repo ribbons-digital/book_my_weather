@@ -2,6 +2,7 @@ import 'package:book_my_weather/models/networking_state.dart';
 import 'package:book_my_weather/models/trip.dart';
 import 'package:book_my_weather/models/trip_state.dart';
 import 'package:book_my_weather/models/trip_todo.dart';
+import 'package:book_my_weather/pages/trip_todos_screen.dart';
 import 'package:book_my_weather/secure/keys.dart';
 import 'package:book_my_weather/services/db.dart';
 import 'package:book_my_weather/services/networking.dart';
@@ -69,7 +70,13 @@ class _PlaceCardState extends State<PlaceCard> {
       await _db.addTodoToTrip(trip.id, tripTodo);
 
       Navigator.pop(context);
-      displaySuccessSnackbar(context, 'Todo successfully added.');
+      displaySuccessSnackbarWithAction(
+          context: context,
+          msg: 'Todo successfully added.',
+          buttonText: 'View To Dos',
+          actionFn: () {
+            Navigator.pushNamed(context, TripTodosScreen.id);
+          });
     } on PlatformException catch (e) {
       Navigator.pop(context);
       displayErrorSnackbar(context, e.details);

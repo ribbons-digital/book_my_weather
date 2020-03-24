@@ -5,6 +5,7 @@ import 'package:book_my_weather/models/networking_state.dart';
 import 'package:book_my_weather/models/trip_state.dart';
 import 'package:book_my_weather/models/trip_visiting.dart';
 import 'package:book_my_weather/pages/image_full_screen.dart';
+import 'package:book_my_weather/pages/trip_visiting_screen.dart';
 import 'package:book_my_weather/secure/keys.dart';
 import 'package:book_my_weather/services/db.dart';
 import 'package:book_my_weather/services/google_places.dart';
@@ -56,6 +57,8 @@ class _PlaceDetailState extends State<PlaceDetail>
   DateTime visitingDate;
   TimeOfDay visitingTime;
   double tabViewHeight = 1000.0;
+
+  GlobalKey _scaffold = GlobalKey();
 
   SliverPersistentHeader makeHeader(Widget child) {
     return SliverPersistentHeader(
@@ -193,6 +196,7 @@ class _PlaceDetailState extends State<PlaceDetail>
           final placeDetail = snapshot.data;
 
           return Scaffold(
+            key: _scaffold,
             backgroundColor: Colors.white,
             body: StreamProvider<List<TripVisiting>>.value(
               value: db.streamTripVisitings(tripId),
@@ -598,9 +602,23 @@ class _PlaceDetailState extends State<PlaceDetail>
                                                                     false);
                                                             Navigator.pop(
                                                                 context);
-                                                            displaySuccessSnackbar(
-                                                                context,
-                                                                'Bookmark successfully added.');
+                                                            displaySuccessSnackbarWithAction(
+                                                                context:
+                                                                    context,
+                                                                msg:
+                                                                    'Saved successfully.',
+                                                                buttonText:
+                                                                    'View saved places',
+                                                                actionFn: () {
+                                                                  Route route =
+                                                                      MaterialPageRoute(
+                                                                          builder: (context) =>
+                                                                              TripVisitingScreen());
+                                                                  Navigator.pushReplacement(
+                                                                      _scaffold
+                                                                          .currentContext,
+                                                                      route);
+                                                                });
                                                           } on PlatformException catch (e) {
                                                             Provider.of<NetworkingState>(
                                                                     context,

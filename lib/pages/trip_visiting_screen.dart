@@ -119,9 +119,9 @@ class _TripVisitingScreenState extends State<TripVisitingScreen> {
           itemCount: timeStamps.length,
           itemBuilder: (BuildContext context, int index) {
             return Container(
-              height: height / 7 * sortByDateList[index].length +
-                  50 +
-                  (sortByDateList[index].length * 8),
+//              height: height / 7 * sortByDateList[index].length +
+//                  50 +
+//                  (sortByDateList[index].length * 8),
               child: Column(
                 children: <Widget>[
                   Text(
@@ -345,7 +345,7 @@ class _TripVisitingScreenState extends State<TripVisitingScreen> {
                         ],
                         child: Container(
                           width: width,
-                          height: height / 7,
+//                          height: height / 7,
                           color: Colors.white,
                           margin: EdgeInsets.all(
                             8.0,
@@ -358,6 +358,7 @@ class _TripVisitingScreenState extends State<TripVisitingScreen> {
                             children: <Widget>[
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
                                 children: <Widget>[
                                   Container(
                                     width: width / 1.8,

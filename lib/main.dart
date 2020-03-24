@@ -2,9 +2,15 @@ import 'package:book_my_weather/models/user.dart';
 import 'package:book_my_weather/services/auth.dart';
 import 'package:book_my_weather/widgets/wrapper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-void main() => runApp(MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+  runApp(MyApp());
+}
 
 class MyApp extends StatefulWidget {
   @override

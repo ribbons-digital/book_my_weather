@@ -165,3 +165,28 @@ void displaySuccessSnackbar(BuildContext context, String msg) {
     ),
   )..show(context);
 }
+
+void displaySuccessSnackbarWithAction(
+    {BuildContext context, String msg, Function actionFn, String buttonText}) {
+  Flushbar(
+    messageText: Text(
+      msg,
+      style: kSnackbarSuccessTextStyle,
+    ),
+    duration: Duration(seconds: 3),
+    icon: Icon(
+      Icons.check_box,
+      size: 20.0,
+      color: Colors.green,
+    ),
+    mainButton: FlatButton(
+      onPressed: actionFn,
+      child: Text(
+        buttonText,
+        style: TextStyle(
+          color: Colors.white,
+        ),
+      ),
+    ),
+  )..show(context);
+}
