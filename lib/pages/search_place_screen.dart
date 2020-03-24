@@ -139,38 +139,46 @@ class _SearchPlaceScreenState extends State<SearchPlaceScreen> {
                                       longitude: location.longitude,
                                     );
 
-                                    places.add(Place(
-                                      name: location.placeMark[0].name,
-                                      address: location.placeMark[0].name == ''
-                                          ? location.placeMark[0].locality
-                                          : location.placeMark[0].name,
-                                      latitude: location.latitude,
-                                      longitude: location.longitude,
-                                      weather: currentPlaceWeather,
-                                    ));
+                                    final isAlreadyExist = places
+                                            .where((e) =>
+                                                e.address ==
+                                                    location.placeMark[0]
+                                                        .locality ||
+                                                e.address ==
+                                                    location.placeMark[0].name)
+                                            .length >
+                                        0;
 
-                                    setting = Setting(
-                                      useCelsius: setting.useCelsius,
-                                      places: places,
-                                    );
+                                    if (isAlreadyExist) {
+                                      setState(() {
+                                        isLoading = false;
+                                      });
+                                      displayErrorSnackbar(context,
+                                          'You have previously added this place.');
+                                    } else {
+                                      places.add(Place(
+                                        name: location.placeMark[0].name,
+                                        address:
+                                            location.placeMark[0].name == ''
+                                                ? location.placeMark[0].locality
+                                                : location.placeMark[0].name,
+                                        latitude: location.latitude,
+                                        longitude: location.longitude,
+                                        weather: currentPlaceWeather,
+                                      ));
 
-                                    settingsBox.putAt(0, setting);
-//                                    Provider.of<PlaceData>(context,
-//                                            listen: false)
-//                                        .addPlace(Place(
-//                                      name: location.placeMark[0].name,
-//                                      address: location.placeMark[0].name == ''
-//                                          ? location.placeMark[0].locality
-//                                          : location.placeMark[0].name,
-//                                      latitude: location.latitude,
-//                                      longitude: location.longitude,
-//                                      weather: currentPlaceWeather,
-//                                    ));
+                                      setting = Setting(
+                                        useCelsius: setting.useCelsius,
+                                        places: places,
+                                      );
 
-                                    setState(() {
-                                      isLoading = false;
-                                    });
-                                    Navigator.pop(context);
+                                      settingsBox.putAt(0, setting);
+
+                                      setState(() {
+                                        isLoading = false;
+                                      });
+                                      Navigator.pop(context);
+                                    }
                                   } catch (e) {
                                     Scaffold.of(context).showSnackBar(SnackBar(
                                       content: Text(

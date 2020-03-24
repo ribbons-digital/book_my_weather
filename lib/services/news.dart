@@ -9,7 +9,6 @@ class NewsModal {
     final fromDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
     final url = '$kGuardianNewsAPIBaseURL$tagsString&from-date=$fromDate';
     NetworkHelper networkHelper = NetworkHelper(url);
-    print(url);
 
     Map<String, dynamic> result = await networkHelper.getData();
 

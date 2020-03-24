@@ -11,6 +11,7 @@ import 'package:book_my_weather/services/location.dart';
 import 'package:book_my_weather/services/weather.dart';
 import 'package:book_my_weather/utilities/index.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -38,6 +39,7 @@ class _TripScreenState extends State<TripScreen> {
   TextEditingController _destinationTextEditingController;
   TextEditingController _descriptionTextEditingController;
   final _formKey = GlobalKey<FormState>();
+  final _scaffold = GlobalKey();
   String name = '';
   String destination = '';
   DateTime startDate = DateTime.now();
@@ -95,7 +97,8 @@ class _TripScreenState extends State<TripScreen> {
         lastDate: DateTime(2100));
 
     if (pickedDate != null &&
-        pickedDate != DateTime.now() &&
+        pickedDate.millisecondsSinceEpoch >
+            DateTime.now().millisecondsSinceEpoch &&
         dateType == DateType.startDate) {
       setState(() {
         _startDateTextEditingController.text =
@@ -105,7 +108,8 @@ class _TripScreenState extends State<TripScreen> {
     }
 
     if (pickedDate != null &&
-        pickedDate != DateTime.now() &&
+        pickedDate.millisecondsSinceEpoch >
+            DateTime.now().millisecondsSinceEpoch &&
         dateType == DateType.endDate) {
       setState(() {
         _endDateTextEditingController.text =
@@ -136,110 +140,174 @@ class _TripScreenState extends State<TripScreen> {
     String heroImageUrl = '';
     Trip trip;
     final endDateInMs = endDate.millisecondsSinceEpoch;
+    final trips = Provider.of<List<Trip>>(context, listen: false);
 
-    List<String> splitList = destination.split(' ');
-    List<String> indexList = [];
+    final isDateOverlapping = trips.where((trip) {
+          return (startDate.millisecondsSinceEpoch >=
+                      trip.startDate.millisecondsSinceEpoch &&
+                  startDate.millisecondsSinceEpoch <= trip.endDateInMs) ||
+              (endDate.millisecondsSinceEpoch >=
+                      trip.startDate.millisecondsSinceEpoch &&
+                  endDate.millisecondsSinceEpoch <= trip.endDateInMs);
+        }).length >
+        0;
+    final isDateRangeInvalid =
+        startDate.millisecondsSinceEpoch > endDate.millisecondsSinceEpoch ||
+            endDate.millisecondsSinceEpoch < startDate.millisecondsSinceEpoch;
 
-    for (int i = 0; i < splitList.length; i++) {
-      for (int y = 1; y < splitList[i].length + 1; y++) {
-        indexList.add(splitList[i].substring(0, y).toLowerCase());
-      }
-    }
-
-    Location location = Location();
-    await location.getPlaceMarkFromAddress(address: destination);
-    WeatherModel weather = WeatherModel();
-    Weather currentWeather = await weather.getLocationWeather(
-      type: RequestedWeatherType.Currently,
-      useCelsius: true,
-      latitude: location.latitude,
-      longitude: location.longitude,
-    );
-
-    if (actionType == TripActionType.Add) {
-      http.Response response =
-          await http.get('$kUnsplashAPIURL&query=$destination');
-
-      if (response.statusCode == 200) {
-        heroImageUrl = jsonDecode(response.body)[0]['urls']['regular'];
-      }
-
-      trip = Trip(
-        createdByUid: Provider.of<User>(context, listen: false).uid,
-        name: name,
-        destination: destination,
-        description: description,
-        startDate: Timestamp.fromDate(startDate),
-        endDate: Timestamp.fromDate(endDate),
-        location: GeoPoint(location.latitude, location.longitude),
-        heroImages: [heroImageUrl],
-        temperature: currentWeather.currently.temperature.toStringAsFixed(0),
-        weatherIcon: currentWeather.currently.icon,
-        searchIndex: indexList,
-        endDateInMs: endDateInMs,
-      );
-
-      try {
-        await db.addTrip(trip);
-        Navigator.pop(context);
-        Navigator.pop(context);
-      } on PlatformException catch (e) {
-        Navigator.pop(context);
-        Provider.of<NetworkingState>(context, listen: false)
-            .setMessage(e.details);
-        Scaffold.of(context).showSnackBar(SnackBar(
-          content: Text(
-            Provider.of<NetworkingState>(context, listen: false).message,
+    if (isDateOverlapping) {
+      Flushbar(
+        messageText: Text(
+          'Dates overlapping with another trip already planned. Please pick different dates.',
+          style: kSnackbarErrorTextStyle,
+        ),
+        duration: Duration(seconds: 3),
+        icon: Icon(
+          Icons.warning,
+          size: 20.0,
+          color: Colors.red,
+        ),
+        mainButton: FlatButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Text(
+            'OK',
             style: TextStyle(
-              color: Colors.red,
-              fontSize: 18.0,
+              color: Colors.white,
             ),
           ),
-          action: SnackBarAction(
-            label: 'OK',
-            onPressed: () {
-              Provider.of<NetworkingState>(context, listen: false).reset();
-            },
+        ),
+      )..show(context).then((v) => Navigator.pop(context));
+    } else if (isDateRangeInvalid) {
+      Flushbar(
+        messageText: Text(
+          'Invalid date range.',
+          style: kSnackbarErrorTextStyle,
+        ),
+        duration: Duration(seconds: 3),
+        icon: Icon(
+          Icons.warning,
+          size: 20.0,
+          color: Colors.red,
+        ),
+        mainButton: FlatButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Text(
+            'OK',
+            style: TextStyle(
+              color: Colors.white,
+            ),
           ),
-        ));
-      }
+        ),
+      )..show(context).then((v) => Navigator.pop(context));
     } else {
-      trip = Trip(
-        createdByUid: Provider.of<User>(context, listen: false).uid,
-        name: name,
-        destination: destination,
-        description: description,
-        startDate: Timestamp.fromDate(startDate),
-        endDate: Timestamp.fromDate(endDate),
-        location: GeoPoint(location.latitude, location.longitude),
-        temperature: currentWeather.currently.temperature.toStringAsFixed(0),
-        weatherIcon: currentWeather.currently.icon,
-        searchIndex: indexList,
-        endDateInMs: endDateInMs,
+      List<String> splitList = destination.split(' ');
+      List<String> indexList = [];
+
+      for (int i = 0; i < splitList.length; i++) {
+        for (int y = 1; y < splitList[i].length + 1; y++) {
+          indexList.add(splitList[i].substring(0, y).toLowerCase());
+        }
+      }
+
+      Location location = Location();
+      await location.getPlaceMarkFromAddress(address: destination);
+      WeatherModel weather = WeatherModel();
+      Weather currentWeather = await weather.getLocationWeather(
+        type: RequestedWeatherType.Currently,
+        useCelsius: true,
+        latitude: location.latitude,
+        longitude: location.longitude,
       );
-      try {
-        await db.updateTrip(docId: widget.existingTrip.id, updatedTrip: trip);
-        Navigator.pop(context);
-        Navigator.pop(context);
-      } on PlatformException catch (e) {
-        Navigator.pop(context);
-        Provider.of<NetworkingState>(context, listen: false)
-            .setMessage(e.details);
-        Scaffold.of(context).showSnackBar(SnackBar(
-          content: Text(
-            Provider.of<NetworkingState>(context, listen: false).message,
-            style: TextStyle(
-              color: Colors.red,
-              fontSize: 18.0,
+
+      if (actionType == TripActionType.Add) {
+        http.Response response =
+            await http.get('$kUnsplashAPIURL&query=$destination');
+
+        if (response.statusCode == 200) {
+          heroImageUrl = jsonDecode(response.body)[0]['urls']['regular'];
+        }
+
+        trip = Trip(
+          createdByUid: Provider.of<User>(context, listen: false).uid,
+          name: name,
+          destination: destination,
+          description: description,
+          startDate: Timestamp.fromDate(startDate),
+          endDate: Timestamp.fromDate(endDate),
+          location: GeoPoint(location.latitude, location.longitude),
+          heroImages: [heroImageUrl],
+          temperature: currentWeather.currently.temperature.toStringAsFixed(0),
+          weatherIcon: currentWeather.currently.icon,
+          searchIndex: indexList,
+          endDateInMs: endDateInMs,
+        );
+
+        try {
+          await db.addTrip(trip);
+          Navigator.pop(context);
+          Navigator.pop(context);
+        } on PlatformException catch (e) {
+          Navigator.pop(context);
+          Provider.of<NetworkingState>(context, listen: false)
+              .setMessage(e.details);
+          Scaffold.of(context).showSnackBar(SnackBar(
+            content: Text(
+              Provider.of<NetworkingState>(context, listen: false).message,
+              style: TextStyle(
+                color: Colors.red,
+                fontSize: 18.0,
+              ),
             ),
-          ),
-          action: SnackBarAction(
-            label: 'OK',
-            onPressed: () {
-              Provider.of<NetworkingState>(context, listen: false).reset();
-            },
-          ),
-        ));
+            action: SnackBarAction(
+              label: 'OK',
+              onPressed: () {
+                Provider.of<NetworkingState>(context, listen: false).reset();
+              },
+            ),
+          ));
+        }
+      } else {
+        trip = Trip(
+          createdByUid: Provider.of<User>(context, listen: false).uid,
+          name: name,
+          destination: destination,
+          description: description,
+          startDate: Timestamp.fromDate(startDate),
+          endDate: Timestamp.fromDate(endDate),
+          location: GeoPoint(location.latitude, location.longitude),
+          temperature: currentWeather.currently.temperature.toStringAsFixed(0),
+          weatherIcon: currentWeather.currently.icon,
+          searchIndex: indexList,
+          endDateInMs: endDateInMs,
+        );
+        try {
+          await db.updateTrip(docId: widget.existingTrip.id, updatedTrip: trip);
+          Navigator.pop(context);
+          Navigator.pop(context);
+        } on PlatformException catch (e) {
+          Navigator.pop(context);
+          Provider.of<NetworkingState>(context, listen: false)
+              .setMessage(e.details);
+          Scaffold.of(context).showSnackBar(SnackBar(
+            content: Text(
+              Provider.of<NetworkingState>(context, listen: false).message,
+              style: TextStyle(
+                color: Colors.red,
+                fontSize: 18.0,
+              ),
+            ),
+            action: SnackBarAction(
+              label: 'OK',
+              onPressed: () {
+                Provider.of<NetworkingState>(context, listen: false).reset();
+              },
+            ),
+          ));
+        }
       }
     }
   }
@@ -248,6 +316,7 @@ class _TripScreenState extends State<TripScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        key: _scaffold,
         body: Padding(
           padding: const EdgeInsets.all(18.0),
           child: Builder(

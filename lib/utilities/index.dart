@@ -151,6 +151,35 @@ void displayErrorSnackbar(BuildContext context, String errorMsg) {
   )..show(context);
 }
 
+void displayErrorSnackbarWithAction({
+  BuildContext context,
+  String msg,
+  Function actionFn,
+  String buttonText,
+}) {
+  Flushbar(
+    messageText: Text(
+      msg,
+      style: kSnackbarErrorTextStyle,
+    ),
+    duration: Duration(seconds: 3),
+    icon: Icon(
+      Icons.warning,
+      size: 20.0,
+      color: Colors.red,
+    ),
+    mainButton: FlatButton(
+      onPressed: actionFn,
+      child: Text(
+        buttonText,
+        style: TextStyle(
+          color: Colors.white,
+        ),
+      ),
+    ),
+  )..show(context);
+}
+
 void displaySuccessSnackbar(BuildContext context, String msg) {
   Flushbar(
     messageText: Text(
