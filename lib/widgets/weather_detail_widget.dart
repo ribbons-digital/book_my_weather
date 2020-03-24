@@ -1,6 +1,8 @@
 import 'package:book_my_weather/models/place_data.dart';
+import 'package:book_my_weather/models/setting.dart';
 import 'package:book_my_weather/widgets/weather_condition_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -15,14 +17,15 @@ class WeatherDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final settingsBox = Hive.box('settings');
     final placeData = Provider.of<PlaceData>(context);
-    final place = placeData.places[placeData.currentPlaceIndex];
-    final hourlyWeather = placeData
-        .places[placeData.currentPlaceIndex].weather.hourly.data[rowIndex];
+    final places = (settingsBox.get(0) as Setting).places;
+    final place = places[placeData.currentPlaceIndex];
+    final hourlyWeather =
+        places[placeData.currentPlaceIndex].weather.hourly.data[rowIndex];
     final dailyWeather = isHourly
         ? null
-        : placeData
-            .places[placeData.currentPlaceIndex].weather.daily.data[rowIndex];
+        : places[placeData.currentPlaceIndex].weather.daily.data[rowIndex];
     final date = isHourly
         ? null
         : DateFormat('EEE, MMM d')

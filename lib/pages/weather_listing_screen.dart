@@ -1,11 +1,9 @@
 import 'dart:async';
 
 import 'package:book_my_weather/models/place.dart';
-import 'package:book_my_weather/models/place_data.dart';
 import 'package:book_my_weather/models/setting.dart';
 import 'package:book_my_weather/models/weather.dart';
 import 'package:book_my_weather/pages/search_place_screen.dart';
-import 'package:book_my_weather/services/db.dart';
 import 'package:book_my_weather/services/location.dart';
 import 'package:book_my_weather/services/weather.dart';
 import 'package:book_my_weather/widgets/message_handler.dart';
@@ -13,17 +11,15 @@ import 'package:book_my_weather/widgets/weather_widget.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 
 class WeatherListingScreen extends StatefulWidget {
   static const String id = 'home';
-  final List<Place> places;
-  final Setting setting;
-  final String deviceId;
+//  final List<Place> places;
+//  final String deviceId;
 
-  WeatherListingScreen(
-      {@required this.places, this.setting, @required this.deviceId});
+//  WeatherListingScreen({@required this.places, @required this.deviceId});
 
   @override
   _WeatherListingScreenState createState() => _WeatherListingScreenState();
@@ -39,6 +35,7 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
   Timer _throttle;
 
   Future<Weather> hourlyWeather;
+  final settingsBox = Hive.box('settings');
 
 //  @override
 //  void didChangeAppLifecycleState(AppLifecycleState state) async {
@@ -76,6 +73,7 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
     setState(() {
       placeName = location.placeMark[0].locality;
     });
+
     Weather currentPlaceWeather = await weather.getLocationWeather(
       type: RequestedWeatherType.All,
       useCelsius: true,
@@ -84,15 +82,36 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
     );
 
     List<Place> places = [];
-    places.add(Place(
-      name: location.placeMark[0].name,
-      address: location.placeMark[0].locality,
-      latitude: location.latitude,
-      longitude: location.longitude,
-      weather: currentPlaceWeather,
-    ));
+    if (settingsBox.length == 0) {
+      places.add(Place(
+        name: location.placeMark[0].name,
+        address: location.placeMark[0].locality,
+        latitude: location.latitude,
+        longitude: location.longitude,
+        weather: currentPlaceWeather,
+      ));
+      Setting setting = Setting(
+        useCelsius: true,
+        places: places,
+      );
+      settingsBox.add(setting);
+    } else {
+      places = (settingsBox.get(0) as Setting).places;
+      places[0] = Place(
+        name: location.placeMark[0].name,
+        address: location.placeMark[0].locality,
+        latitude: location.latitude,
+        longitude: location.longitude,
+        weather: currentPlaceWeather,
+      );
 
-    Provider.of<PlaceData>(context, listen: false).updatePlaces(places);
+      Setting updatedSetting = Setting(
+          useCelsius: (settingsBox.get(0) as Setting).useCelsius,
+          places: places);
+      settingsBox.putAt(0, updatedSetting);
+    }
+
+//    Provider.of<PlaceData>(context, listen: false).updatePlaces(places);
 
     return currentPlaceWeather;
   }
@@ -105,12 +124,14 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
   }
 
   void _updatePlaceWeather(int index, Weather updatedWeather) {
-    Provider.of<PlaceData>(context, listen: false)
-        .updatePlaceWeather(index, updatedWeather);
+    Setting setting = (settingsBox.getAt(0) as Setting);
+    setting.places[index].weather = updatedWeather;
+    settingsBox.putAt(0, setting);
   }
 
   Color getAqiColor() {
-    final aqi = widget.places[currentPage].weather.aqi;
+    final places = (settingsBox.get(0) as Setting).places;
+    final aqi = places[currentPage].weather.aqi;
 
     if (aqi >= 0 && aqi <= 50) {
       return Colors.green;
@@ -140,7 +161,8 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
   }
 
   String getAqiEmoji() {
-    final aqi = widget.places[currentPage].weather.aqi;
+    final places = (settingsBox.get(0) as Setting).places;
+    final aqi = places[currentPage].weather.aqi;
 
     if (aqi >= 0 && aqi <= 50) {
       return '🙂';
@@ -169,89 +191,90 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
     return '🤪';
   }
 
-  @override
-  void didChangeDependencies() async {
-    super.didChangeDependencies();
-//    if (_notification != null && _notification.index == 0) {
-//      print(_notification.index);
-//      await getWeather();
+//  @override
+//  void didChangeDependencies() async {
+//    super.didChangeDependencies();
+////    if (_notification != null && _notification.index == 0) {
+////      print(_notification.index);
+////      await getWeather();
+////    }
+//
+//    if (Provider.of<Setting>(context, listen: false) != null &&
+//        widget.places.length >
+//            Provider.of<Setting>(context, listen: false).places.length &&
+//        widget.places.length > 1) {
+//      final db = DatabaseService();
+//
+//      final tempPlaces = widget.places;
+//      setState(() {
+//        placeName = tempPlaces[0].address;
+//      });
+//
+//      final docId = Provider.of<Setting>(context, listen: false).id;
+//
+//      db.updatePlaces(
+//          docId,
+//          Place(
+//            name: tempPlaces[tempPlaces.length - 1].name,
+//            address: tempPlaces[tempPlaces.length - 1].name == ''
+//                ? tempPlaces[tempPlaces.length - 1].address
+//                : tempPlaces[tempPlaces.length - 1].name,
+//            latitude: tempPlaces[tempPlaces.length - 1].latitude,
+//            longitude: tempPlaces[tempPlaces.length - 1].longitude,
+//          ));
 //    }
-
-    if (Provider.of<Setting>(context, listen: false) != null &&
-        widget.places.length >
-            Provider.of<Setting>(context, listen: false).places.length &&
-        widget.places.length > 1) {
-      final db = DatabaseService();
-
-      final tempPlaces = widget.places;
-      setState(() {
-        placeName = tempPlaces[0].address;
-      });
-
-      final docId = Provider.of<Setting>(context, listen: false).id;
-
-      db.updatePlaces(
-          docId,
-          Place(
-            name: tempPlaces[tempPlaces.length - 1].name,
-            address: tempPlaces[tempPlaces.length - 1].name == ''
-                ? tempPlaces[tempPlaces.length - 1].address
-                : tempPlaces[tempPlaces.length - 1].name,
-            latitude: tempPlaces[tempPlaces.length - 1].latitude,
-            longitude: tempPlaces[tempPlaces.length - 1].longitude,
-          ));
-    }
-
-    if (Provider.of<Setting>(context, listen: false) != null &&
-        widget.places.length <
-            Provider.of<Setting>(context, listen: false).places.length) {
-      WeatherModel weather = WeatherModel();
-      final tempPlaces = Provider.of<Setting>(context, listen: false).places;
-      Weather placeWeather = await weather.getLocationWeather(
-        type: RequestedWeatherType.All,
-        useCelsius: true,
-        latitude: tempPlaces[0].latitude,
-        longitude: tempPlaces[0].longitude,
-      );
-
-      List<Place> places = [];
-
-      if (widget.places.length > 0) {
-        places = widget.places[0].name == tempPlaces[0].name
-            ? []
-            : List.from(widget.places);
-      }
-      for (var i = 0; i <= tempPlaces.length - 1; i++) {
-        places.add(Place(
-          name: tempPlaces[i].name,
-          address: tempPlaces[i].address,
-          latitude: tempPlaces[i].latitude,
-          longitude: tempPlaces[i].longitude,
-          weather: placeWeather,
-        ));
-      }
-
-      Provider.of<PlaceData>(context, listen: false).updatePlaces(places);
-    }
-
-    if (Provider.of<Setting>(context, listen: false) != null &&
-        Provider.of<Setting>(context, listen: false).places.length == 0) {
-      if (widget.places.length > 0) {
-        final place = Place(
-          name: widget.places[0].name,
-          address: widget.places[0].address,
-          latitude: widget.places[0].latitude,
-          longitude: widget.places[0].longitude,
-        );
-        final db = DatabaseService();
-        db.addNewSetting(widget.deviceId, place);
-      }
-    }
-  }
+//
+//    if (Provider.of<Setting>(context, listen: false) != null &&
+//        widget.places.length <
+//            Provider.of<Setting>(context, listen: false).places.length) {
+//      WeatherModel weather = WeatherModel();
+//      final tempPlaces = Provider.of<Setting>(context, listen: false).places;
+//      Weather placeWeather = await weather.getLocationWeather(
+//        type: RequestedWeatherType.All,
+//        useCelsius: true,
+//        latitude: tempPlaces[0].latitude,
+//        longitude: tempPlaces[0].longitude,
+//      );
+//
+//      List<Place> places = [];
+//
+//      if (widget.places.length > 0) {
+//        places = widget.places[0].name == tempPlaces[0].name
+//            ? []
+//            : List.from(widget.places);
+//      }
+//      for (var i = 0; i <= tempPlaces.length - 1; i++) {
+//        places.add(Place(
+//          name: tempPlaces[i].name,
+//          address: tempPlaces[i].address,
+//          latitude: tempPlaces[i].latitude,
+//          longitude: tempPlaces[i].longitude,
+//          weather: placeWeather,
+//        ));
+//      }
+//
+//      Provider.of<PlaceData>(context, listen: false).updatePlaces(places);
+//    }
+//
+//    if (Provider.of<Setting>(context, listen: false) != null &&
+//        Provider.of<Setting>(context, listen: false).places.length == 0) {
+//      if (widget.places.length > 0) {
+//        final place = Place(
+//          name: widget.places[0].name,
+//          address: widget.places[0].address,
+//          latitude: widget.places[0].latitude,
+//          longitude: widget.places[0].longitude,
+//        );
+//        final db = DatabaseService();
+//        db.addNewSetting(widget.deviceId, place);
+//      }
+//    }
+//  }
 
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
+
     return Scaffold(
       appBar: AppBar(
         //leading: Icon(Icons.arrow_back_ios),
@@ -304,6 +327,7 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
                     .format(DateTime.fromMillisecondsSinceEpoch(
                         snapshot.data.daily.data[0].time * 1000))
                     .toString();
+                final places = (settingsBox.get(0) as Setting).places;
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
@@ -319,7 +343,7 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
                           FittedBox(
                             fit: BoxFit.contain,
                             child: Text(
-                              widget.places[currentPage].address,
+                              places[currentPage].address,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w100,
@@ -345,7 +369,9 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
                               child: Column(
                                 children: <Widget>[
                                   Text(
-                                    widget.places[currentPage].weather.aqi
+                                    places[currentPage]
+                                            .weather
+                                            .aqi
                                             .toStringAsFixed(0) +
                                         ' ' +
                                         getAqiEmoji(),
@@ -385,7 +411,9 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
                                 Column(
                                   children: <Widget>[
                                     Text(
-                                      widget.places[currentPage].weather.aqi
+                                      places[currentPage]
+                                              .weather
+                                              .aqi
                                               .toStringAsFixed(0) +
                                           ' ' +
                                           getAqiEmoji(),
@@ -413,7 +441,7 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
                     Expanded(
                       child: PageView.builder(
                           controller: _pageController,
-                          itemCount: widget.places.length,
+                          itemCount: places.length,
                           onPageChanged: (int index) async {
                             setState(() {
                               currentPage = index;
@@ -423,9 +451,7 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
                               _throttle.cancel();
                             _throttle = Timer(const Duration(milliseconds: 800),
                                 () async {
-                              final place =
-                                  Provider.of<PlaceData>(context, listen: false)
-                                      .places[index];
+                              final place = places[index];
 
                               WeatherModel weather = WeatherModel();
                               Weather updatedWeather =

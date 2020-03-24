@@ -36,7 +36,6 @@ class _NewsScreenState extends State<NewsScreen> with WidgetsBindingObserver {
       final destinations = trips.map((trip) => trip.destination).toList();
       final str = destinations.join(',').replaceAll(' ', '');
 
-      print(str);
       setState(() {
         tagsString = str;
       });

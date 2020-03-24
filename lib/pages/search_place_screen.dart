@@ -1,14 +1,14 @@
 import 'dart:async';
 
 import 'package:book_my_weather/models/place.dart';
-import 'package:book_my_weather/models/place_data.dart';
+import 'package:book_my_weather/models/setting.dart';
 import 'package:book_my_weather/models/weather.dart';
 import 'package:book_my_weather/services/location.dart';
 import 'package:book_my_weather/services/weather.dart';
 import 'package:book_my_weather/utilities/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:provider/provider.dart';
+import 'package:hive/hive.dart';
 
 class SearchPlaceScreen extends StatefulWidget {
   static const String id = 'searchPlace';
@@ -64,6 +64,10 @@ class _SearchPlaceScreenState extends State<SearchPlaceScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final settingsBox = Hive.box('settings');
+    Setting setting = settingsBox.getAt(0) as Setting;
+    List<Place> places = (settingsBox.get(0) as Setting).places;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Search'),
@@ -135,9 +139,7 @@ class _SearchPlaceScreenState extends State<SearchPlaceScreen> {
                                       longitude: location.longitude,
                                     );
 
-                                    Provider.of<PlaceData>(context,
-                                            listen: false)
-                                        .addPlace(Place(
+                                    places.add(Place(
                                       name: location.placeMark[0].name,
                                       address: location.placeMark[0].name == ''
                                           ? location.placeMark[0].locality
@@ -146,6 +148,25 @@ class _SearchPlaceScreenState extends State<SearchPlaceScreen> {
                                       longitude: location.longitude,
                                       weather: currentPlaceWeather,
                                     ));
+
+                                    setting = Setting(
+                                      useCelsius: setting.useCelsius,
+                                      places: places,
+                                    );
+
+                                    settingsBox.putAt(0, setting);
+//                                    Provider.of<PlaceData>(context,
+//                                            listen: false)
+//                                        .addPlace(Place(
+//                                      name: location.placeMark[0].name,
+//                                      address: location.placeMark[0].name == ''
+//                                          ? location.placeMark[0].locality
+//                                          : location.placeMark[0].name,
+//                                      latitude: location.latitude,
+//                                      longitude: location.longitude,
+//                                      weather: currentPlaceWeather,
+//                                    ));
+
                                     setState(() {
                                       isLoading = false;
                                     });

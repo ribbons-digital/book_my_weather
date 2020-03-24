@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:book_my_weather/models/place.dart';
-import 'package:book_my_weather/models/setting.dart';
 import 'package:book_my_weather/models/trip.dart';
 import 'package:book_my_weather/models/trip_place.dart';
 import 'package:book_my_weather/models/trip_todo.dart';
@@ -12,19 +11,19 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class DatabaseService {
   final Firestore _db = Firestore.instance;
 
-  Stream<Setting> streamSetting(String id) {
-    return _db.collection('settings').document(id).snapshots().map((snapshot) {
-      if (snapshot.exists) {
-        return Setting.fromFirestore(snapshot);
-      } else {
-        return Setting(
-          id: '',
-          useCelsius: true,
-          places: [],
-        );
-      }
-    });
-  }
+//  Stream<Setting> streamSetting(String id) {
+//    return _db.collection('settings').document(id).snapshots().map((snapshot) {
+//      if (snapshot.exists) {
+//        return Setting.fromFirestore(snapshot);
+//      } else {
+//        return Setting(
+//          id: '',
+//          useCelsius: true,
+//          places: [],
+//        );
+//      }
+//    });
+//  }
 
   Stream<List<Trip>> streamTrips(
       {String uid, String filterString, bool isPast}) {

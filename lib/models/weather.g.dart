@@ -3,6 +3,52 @@
 part of 'weather.dart';
 
 // **************************************************************************
+// TypeAdapterGenerator
+// **************************************************************************
+
+class WeatherAdapter extends TypeAdapter<Weather> {
+  @override
+  final typeId = 2;
+
+  @override
+  Weather read(BinaryReader reader) {
+    var numOfFields = reader.readByte();
+    var fields = <int, dynamic>{
+      for (var i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return Weather(
+      latitude: fields[0] as double,
+      longitude: fields[1] as double,
+      timeZone: fields[2] as String,
+      hourly: fields[3] as HourlyWeather,
+      daily: fields[4] as DailyWeather,
+      currently: fields[5] as CurrentlyWeather,
+      aqi: fields[6] as double,
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, Weather obj) {
+    writer
+      ..writeByte(7)
+      ..writeByte(0)
+      ..write(obj.latitude)
+      ..writeByte(1)
+      ..write(obj.longitude)
+      ..writeByte(2)
+      ..write(obj.timeZone)
+      ..writeByte(3)
+      ..write(obj.hourly)
+      ..writeByte(4)
+      ..write(obj.daily)
+      ..writeByte(5)
+      ..write(obj.currently)
+      ..writeByte(6)
+      ..write(obj.aqi);
+  }
+}
+
+// **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 

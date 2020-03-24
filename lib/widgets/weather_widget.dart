@@ -1,11 +1,12 @@
-import 'package:book_my_weather/models/place_data.dart';
+//import 'package:book_my_weather/models/place_data.dart';
+import 'package:book_my_weather/models/setting.dart';
 import 'package:book_my_weather/pages/weather_detail_screen.dart';
 import 'package:book_my_weather/services/weather.dart';
 import 'package:book_my_weather/styleguide.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 
 import '../styleguide.dart';
 
@@ -17,15 +18,18 @@ class WeatherWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
-    final placeData = Provider.of<PlaceData>(context);
-    final places = placeData.places;
+    final settingsBox = Hive.box('settings');
+//    final placeData = Provider.of<PlaceData>(context);
+
+    final places = (settingsBox.get(0) as Setting).places;
     WeatherModel weatherModel = WeatherModel();
     final currentHourlyWeather = places[placeIndex].weather.hourly.data[0];
     final currentDailyWeather = places[placeIndex].weather.daily.data[0];
 
     return InkWell(
       onTap: () {
-        placeData.updateCurrentPlaceIndex(placeIndex);
+//        placeData.updateCurrentPlaceIndex(placeIndex);
+
         Navigator.push(
             context,
             PageRouteBuilder(
@@ -88,8 +92,9 @@ class WeatherWidget extends StatelessWidget {
             ),
           ),
           Positioned(
-            bottom:
-                screenHeight > 600 && screenHeight < 768 ? screenHeight / 30 : screenHeight > 768 ? screenHeight / 30 : screenHeight / 20,
+            bottom: screenHeight > 600 && screenHeight < 768
+                ? screenHeight / 30
+                : screenHeight > 768 ? screenHeight / 30 : screenHeight / 20,
             left: 15,
             right: 15,
             child: Container(

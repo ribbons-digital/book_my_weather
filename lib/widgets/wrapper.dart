@@ -1,6 +1,5 @@
 import 'package:book_my_weather/models/networking_state.dart';
 import 'package:book_my_weather/models/place_data.dart';
-import 'package:book_my_weather/models/setting.dart';
 import 'package:book_my_weather/models/trip.dart';
 import 'package:book_my_weather/models/trip_state.dart';
 import 'package:book_my_weather/models/user.dart';
@@ -18,8 +17,8 @@ import 'package:book_my_weather/pages/trip_weather_screen.dart';
 import 'package:book_my_weather/pages/trips_screen.dart';
 import 'package:book_my_weather/pages/weather_listing_screen.dart';
 import 'package:book_my_weather/services/db.dart';
-import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 
 class Wrapper extends StatefulWidget {
@@ -31,7 +30,7 @@ class Wrapper extends StatefulWidget {
 
 class _WrapperState extends State<Wrapper> {
   int _selectedIndex = 0;
-  Future<String> deviceId;
+//  Future<String> deviceId;
   String filterString;
   bool isPast = false;
 
@@ -47,20 +46,20 @@ class _WrapperState extends State<Wrapper> {
   @override
   void initState() {
     super.initState();
-    deviceId = getDeviceId();
+//    deviceId = getDeviceId();
   }
 
-  Future<String> getDeviceId() async {
-    DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
-
-    if (widget.isIos) {
-      IosDeviceInfo iosDeviceInfo = await deviceInfoPlugin.iosInfo;
-      return iosDeviceInfo.identifierForVendor;
-    } else {
-      AndroidDeviceInfo androidDeviceInfo = await deviceInfoPlugin.androidInfo;
-      return androidDeviceInfo.androidId;
-    }
-  }
+//  Future<String> getDeviceId() async {
+//    DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
+//
+//    if (widget.isIos) {
+//      IosDeviceInfo iosDeviceInfo = await deviceInfoPlugin.iosInfo;
+//      return iosDeviceInfo.identifierForVendor;
+//    } else {
+//      AndroidDeviceInfo androidDeviceInfo = await deviceInfoPlugin.androidInfo;
+//      return androidDeviceInfo.androidId;
+//    }
+//  }
 
   void setFilterStringForTrips(String newString) {
     setState(() {
@@ -78,68 +77,73 @@ class _WrapperState extends State<Wrapper> {
   Widget build(BuildContext context) {
     final db = DatabaseService();
 
-    return FutureBuilder(
-      future: deviceId,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return MultiProvider(
-            providers: [
-              ChangeNotifierProvider<PlaceData>(
-                create: (_) => PlaceData(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<PlaceData>(
+          create: (_) => PlaceData(),
+        ),
+        ChangeNotifierProvider<TripState>(
+          create: (_) => TripState(),
+        ),
+        ChangeNotifierProvider<NetworkingState>(
+          create: (_) => NetworkingState(),
+        ),
+        StreamProvider<List<Trip>>.value(
+          value: db.streamTrips(
+            uid: Provider.of<User>(context) != null
+                ? Provider.of<User>(context).uid
+                : '',
+            filterString: filterString,
+            isPast: isPast,
+          ),
+        ),
+      ],
+      child: Consumer<PlaceData>(
+        builder: (_, placeData, __) => MaterialApp(
+          title: 'Book My Weather',
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+            primaryColor: Colors.white,
+            canvasColor: Colors.black,
+            appBarTheme: AppBarTheme(
+              elevation: 0,
+              color: Colors.black,
+              iconTheme: IconThemeData(
+                color: Colors.white,
+                size: 30.0,
               ),
-              ChangeNotifierProvider<TripState>(
-                create: (_) => TripState(),
-              ),
-              ChangeNotifierProvider<NetworkingState>(
-                create: (_) => NetworkingState(),
-              ),
-              StreamProvider<Setting>.value(
-                value: db.streamSetting(snapshot.data),
-              ),
-              StreamProvider<List<Trip>>.value(
-                value: db.streamTrips(
-                  uid: Provider.of<User>(context) != null
-                      ? Provider.of<User>(context).uid
-                      : '',
-                  filterString: filterString,
-                  isPast: isPast,
+              textTheme: TextTheme(
+                title: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24.0,
+                  fontWeight: FontWeight.w100,
                 ),
               ),
-            ],
-            child: Consumer<PlaceData>(
-              builder: (_, placeData, __) => MaterialApp(
-                title: 'Book My Weather',
-                debugShowCheckedModeBanner: false,
-                theme: ThemeData(
-                  primarySwatch: Colors.blue,
-                  primaryColor: Colors.white,
-                  canvasColor: Colors.black,
-                  appBarTheme: AppBarTheme(
-                    elevation: 0,
-                    color: Colors.black,
-                    iconTheme: IconThemeData(
-                      color: Colors.white,
-                      size: 30.0,
-                    ),
-                    textTheme: TextTheme(
-                      title: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24.0,
-                        fontWeight: FontWeight.w100,
-                      ),
-                    ),
-                  ),
-                ),
+            ),
+          ),
 //                navigatorObservers: [MyRouteObserver()],
-                home: Scaffold(
+          home: FutureBuilder(
+            future: Hive.openBox('settings'),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) if (snapshot
+                  .hasError)
+                return Text(
+                  snapshot.error.toString(),
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                );
+              else
+                return Scaffold(
                   body: IndexedStack(
                     index: _selectedIndex,
                     children: <Widget>[
                       WeatherListingScreen(
-                        places: placeData.places,
-                        deviceId: snapshot.data,
-                        // setting: setting,
-                      ),
+//                        places: placeData.places,
+//                        deviceId: 'A4A7FC77-8C86-417F-99A4-B73A267298E8',
+// setting: setting,
+                          ),
                       TripsScreen(
                         setFilterString: setFilterStringForTrips,
                         setIsPast: setIsPast,
@@ -174,62 +178,25 @@ class _WrapperState extends State<Wrapper> {
                     selectedItemColor: Colors.amber[800],
                     onTap: _onItemTapped,
                   ),
-                ),
-                routes: {
-                  TripScreen.id: (context) => TripScreen(),
-                  TripDetail.id: (context) => TripDetail(),
-                  PlacesScreen.id: (context) => PlacesScreen(),
-                  PlaceDetail.id: (context) => PlaceDetail(),
-                  SearchPlaceScreen.id: (context) => SearchPlaceScreen(),
-                  TripsScreen.id: (context) => TripsScreen(),
-                  SignInRegisterScreen.id: (context) => SignInRegisterScreen(),
-                  TripWeatherScreen.id: (context) => TripWeatherScreen(),
-                  TripTodosScreen.id: (context) => TripTodosScreen(),
-                  TripVisitingScreen.id: (context) => TripVisitingScreen(),
-                },
-              ),
-            ),
-          );
-        }
-
-        if (snapshot.hasError) {
-          return Text('${snapshot.error.toString()}');
-        }
-
-        return Container();
-      },
+                );
+              else
+                return Scaffold();
+            },
+          ),
+          routes: {
+            TripScreen.id: (context) => TripScreen(),
+            TripDetail.id: (context) => TripDetail(),
+            PlacesScreen.id: (context) => PlacesScreen(),
+            PlaceDetail.id: (context) => PlaceDetail(),
+            SearchPlaceScreen.id: (context) => SearchPlaceScreen(),
+            TripsScreen.id: (context) => TripsScreen(),
+            SignInRegisterScreen.id: (context) => SignInRegisterScreen(),
+            TripWeatherScreen.id: (context) => TripWeatherScreen(),
+            TripTodosScreen.id: (context) => TripTodosScreen(),
+            TripVisitingScreen.id: (context) => TripVisitingScreen(),
+          },
+        ),
+      ),
     );
   }
 }
-
-//class MyRouteObserver extends RouteObserver<PageRoute<dynamic>> {
-//  void _sendScreenView(PageRoute<dynamic> route) {
-//    var screenName = route.settings.name;
-//    print('screenName $screenName');
-//    // do something with it, ie. send it to your analytics service collector
-//  }
-//
-//  @override
-//  void didPush(Route<dynamic> route, Route<dynamic> previousRoute) {
-//    super.didPush(route, previousRoute);
-//    if (route is PageRoute) {
-//      _sendScreenView(route);
-//    }
-//  }
-//
-//  @override
-//  void didReplace({Route<dynamic> newRoute, Route<dynamic> oldRoute}) {
-//    super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
-//    if (newRoute is PageRoute) {
-//      _sendScreenView(newRoute);
-//    }
-//  }
-//
-//  @override
-//  void didPop(Route<dynamic> route, Route<dynamic> previousRoute) {
-//    super.didPop(route, previousRoute);
-//    if (previousRoute is PageRoute && route is PageRoute) {
-//      _sendScreenView(previousRoute);
-//    }
-//  }
-//}

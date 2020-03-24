@@ -1,11 +1,13 @@
 import 'package:book_my_weather/models/place.dart';
 import 'package:book_my_weather/models/place_data.dart';
+import 'package:book_my_weather/models/setting.dart';
 import 'package:book_my_weather/styleguide.dart';
 import 'package:book_my_weather/widgets/daily_weather_heading.dart';
 import 'package:book_my_weather/widgets/daily_weather_widget.dart';
 import 'package:book_my_weather/widgets/hourly_weather_widget.dart';
 import 'package:book_my_weather/widgets/weather_detail_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -23,6 +25,7 @@ class WeatherDetailScreen extends StatefulWidget {
 class _WeatherDetailScreenState extends State<WeatherDetailScreen>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
+  final settingsBox = Hive.box('settings');
 
   @override
   void initState() {
@@ -36,10 +39,11 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen>
 //    final screenWidth = MediaQuery.of(context).size.width;
 
     final placeData = Provider.of<PlaceData>(context);
+    final places = (settingsBox.get(0) as Setting).places;
     final hourlyWeatherList =
-        placeData.places[placeData.currentPlaceIndex].weather.hourly.data;
+        places[placeData.currentPlaceIndex].weather.hourly.data;
     final dailyWeatherList =
-        placeData.places[placeData.currentPlaceIndex].weather.daily.data;
+        places[placeData.currentPlaceIndex].weather.daily.data;
 
     final today = DateFormat('EEE, MMM d')
         .format(DateTime.fromMillisecondsSinceEpoch(
