@@ -237,7 +237,7 @@ class TripDetail extends StatelessWidget {
                                   ),
                                 ),
                                 Hero(
-                                  tag: 'daysLeft-1',
+                                  tag: 'daysLeft-$index',
                                   child: Material(
                                     color: Color(0X00FFFFFF),
                                     child: Text(
@@ -252,7 +252,7 @@ class TripDetail extends StatelessWidget {
                               ],
                             ),
                             Hero(
-                              tag: 'startDate-1',
+                              tag: 'startDate-$index',
                               child: Material(
                                 color: Color(0X00FFFFFF),
                                 child: Text(

@@ -206,8 +206,26 @@ class _TripsScreenState extends State<TripsScreen> {
                             context,
                             PageRouteBuilder(
                               transitionDuration:
-                                  const Duration(milliseconds: 2550),
+                                  const Duration(milliseconds: 550),
                               pageBuilder: (context, _, __) => TripDetail(),
+                              transitionsBuilder: (
+                                BuildContext context,
+                                Animation<double> animation,
+                                Animation<double> secondaryAnimation,
+                                Widget child,
+                              ) =>
+                                  ScaleTransition(
+                                scale: Tween<double>(
+                                  begin: 0.0,
+                                  end: 1.0,
+                                ).animate(
+                                  CurvedAnimation(
+                                    parent: animation,
+                                    curve: Curves.fastOutSlowIn,
+                                  ),
+                                ),
+                                child: child,
+                              ),
                             ),
                           );
                         },
