@@ -1,6 +1,7 @@
 import 'package:book_my_weather/models/trip.dart';
 import 'package:book_my_weather/models/weather.dart';
 import 'package:book_my_weather/services/location.dart';
+import 'package:book_my_weather/services/setting.dart';
 import 'package:book_my_weather/services/weather.dart';
 import 'package:book_my_weather/styleguide.dart';
 import 'package:book_my_weather/utilities/index.dart';
@@ -32,6 +33,8 @@ class _TripWeatherScreenState extends State<TripWeatherScreen>
   Future<Weather> getWeatherForecast() async {
     WeatherModel weather = WeatherModel();
 
+    SettingModel settingModel = SettingModel();
+    final currentSetting = settingModel.getCurrentSetting();
     Location location = Location();
     final lat = widget.trip.location.latitude;
     final lng = widget.trip.location.longitude;
@@ -42,7 +45,7 @@ class _TripWeatherScreenState extends State<TripWeatherScreen>
 
     Weather weatherForecast = await weather.getLocationWeather(
       type: RequestedWeatherType.All,
-      useCelsius: true,
+      useCelsius: currentSetting.useCelsius,
       latitude: location.latitude,
       longitude: location.longitude,
     );

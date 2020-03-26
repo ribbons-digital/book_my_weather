@@ -10,8 +10,10 @@ class Setting {
   bool useCelsius;
   @HiveField(1)
   List<Place> places;
+  @HiveField(2)
+  String baseSymbol;
 
-  Setting({this.useCelsius, this.places});
+  Setting({this.useCelsius, this.places, this.baseSymbol});
 
 //  factory Setting.fromFirestore(DocumentSnapshot doc) {
 //    Map data = doc.data;

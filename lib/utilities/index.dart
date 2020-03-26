@@ -1,10 +1,13 @@
 import 'dart:convert';
 
+import 'package:book_my_weather/models/place.dart';
+import 'package:book_my_weather/models/setting.dart';
 import 'package:book_my_weather/models/trip.dart';
 import 'package:book_my_weather/secure/keys.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -151,6 +154,22 @@ void displayErrorSnackbar(BuildContext context, String errorMsg) {
   )..show(context);
 }
 
+void displayErrorSnackbarWithSilentAction(
+    BuildContext context, String errorMsg, Function fn) {
+  Flushbar(
+    messageText: Text(
+      errorMsg,
+      style: kSnackbarErrorTextStyle,
+    ),
+    duration: Duration(seconds: 3),
+    icon: Icon(
+      Icons.warning,
+      size: 20.0,
+      color: Colors.red,
+    ),
+  )..show(context).then(fn);
+}
+
 void displayErrorSnackbarWithAction({
   BuildContext context,
   String msg,
@@ -218,4 +237,72 @@ void displaySuccessSnackbarWithAction(
       ),
     ),
   )..show(context);
+}
+
+void initializeSetting(Setting newSetting) {
+  final settingsBox = Hive.box('settings');
+  settingsBox.add(newSetting);
+}
+
+void addPlaceToSetting(Place newPlace) {
+  final settingsBox = Hive.box('settings');
+  Setting setting = settingsBox.getAt(0) as Setting;
+  List<Place> places = (settingsBox.get(0) as Setting).places;
+  places.add(newPlace);
+  setting = Setting(
+    useCelsius: setting.useCelsius,
+    places: places,
+    baseSymbol: setting.baseSymbol,
+  );
+
+  settingsBox.putAt(0, setting);
+}
+
+void updatePlaceInSetting(int index, Place updatedPlace) {
+  final settingsBox = Hive.box('settings');
+  Setting setting = settingsBox.getAt(0) as Setting;
+  List<Place> places = (settingsBox.get(0) as Setting).places;
+  places[index] = updatedPlace;
+  setting = Setting(
+    useCelsius: setting.useCelsius,
+    places: places,
+    baseSymbol: setting.baseSymbol,
+  );
+
+  settingsBox.putAt(0, setting);
+}
+
+void updateTempUnitInSetting(bool useCelsius) {
+  final settingsBox = Hive.box('settings');
+  Setting setting = settingsBox.getAt(0) as Setting;
+  setting = Setting(
+    useCelsius: useCelsius,
+    places: setting.places,
+    baseSymbol: setting.baseSymbol,
+  );
+
+  settingsBox.putAt(0, setting);
+}
+
+void updateBaseCurrencyInSetting(String base) {
+  final settingsBox = Hive.box('settings');
+  Setting setting = settingsBox.getAt(0) as Setting;
+
+  setting = Setting(
+    useCelsius: setting.useCelsius,
+    places: setting.places,
+    baseSymbol: base,
+  );
+
+  settingsBox.putAt(0, setting);
+}
+
+String getCurrencySymbol(BuildContext context) {
+  Locale locale = Localizations.localeOf(context);
+  final format = NumberFormat.simpleCurrency(locale: locale.toString());
+  return format.currencyName; // USD
+}
+
+String getCurrencyRateAPIURL(String base, String symbol) {
+  return 'https://api.ratesapi.io/api/latest?base=$base&symbols=$symbol';
 }

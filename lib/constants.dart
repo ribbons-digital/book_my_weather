@@ -57,6 +57,11 @@ const kGPlaceDetailBaseURL =
 const kGuardianNewsAPIBaseURL =
     'https://content.guardianapis.com/search?api-key=$kGuardianNewsAPIKey&page-size=20&q=';
 
+const kCurrencyListURL = 'https://api.appnexus.com/currency';
+
+const kOpenCaseAPIBaseURL =
+    'https://api.opencagedata.com/geocode/v1/json?key=$kOpenCaseAPIKey&q=';
+
 const kClearDay = 'clear-day';
 const kClearNight = 'clear-night';
 const kRain = 'rain';

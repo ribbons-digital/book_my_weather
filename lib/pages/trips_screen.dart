@@ -1,12 +1,19 @@
+import 'package:book_my_weather/models/currency_rate.dart';
 import 'package:book_my_weather/models/trip.dart';
 import 'package:book_my_weather/models/trip_state.dart';
 import 'package:book_my_weather/models/user.dart';
+import 'package:book_my_weather/models/weather.dart';
 import 'package:book_my_weather/pages/signin_register_screen.dart';
 import 'package:book_my_weather/pages/trip_detail_screen.dart';
 import 'package:book_my_weather/pages/trip_screen.dart';
+import 'package:book_my_weather/services/currency.dart';
+import 'package:book_my_weather/services/db.dart';
+import 'package:book_my_weather/services/setting.dart';
+import 'package:book_my_weather/services/weather.dart';
 import 'package:book_my_weather/widgets/trip_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 
 class TripsScreen extends StatefulWidget {
@@ -42,6 +49,8 @@ class _TripsScreenState extends State<TripsScreen> {
     final double h = MediaQuery.of(context).size.width < 600 ? 20.0 : 50.0;
     final User user = Provider.of<User>(context);
     final trips = Provider.of<List<Trip>>(context);
+    final db = DatabaseService();
+
     return Scaffold(
       appBar: AppBar(
         //leading: Icon(Icons.arrow_back_ios),
@@ -186,23 +195,69 @@ class _TripsScreenState extends State<TripsScreen> {
               child: ListView.builder(
                   itemCount: trips.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return GestureDetector(
-                      onTap: () {
+                    return Slidable(
+                      actionPane: SlidableDrawerActionPane(),
+                      child: GestureDetector(
+                        onTap: () {
 //                    Navigator.pushNamed(context, TripDetail.id);
-                        Provider.of<TripState>(context, listen: false)
-                            .updateSelectedTrip(index, trips[index]);
-                        Navigator.push(
-                          context,
-                          PageRouteBuilder(
-                            transitionDuration:
-                                const Duration(milliseconds: 550),
-                            pageBuilder: (context, _, __) => TripDetail(),
-                          ),
-                        );
-                      },
-                      child: TripWidget(
-                        index: index,
+                          Provider.of<TripState>(context, listen: false)
+                              .updateSelectedTrip(index, trips[index]);
+                          Navigator.push(
+                            context,
+                            PageRouteBuilder(
+                              transitionDuration:
+                                  const Duration(milliseconds: 2550),
+                              pageBuilder: (context, _, __) => TripDetail(),
+                            ),
+                          );
+                        },
+                        child: TripWidget(
+                          index: index,
+                        ),
                       ),
+                      secondaryActions: <Widget>[
+                        IconSlideAction(
+                          caption: 'Refresh',
+                          color: Colors.blue,
+                          icon: Icons.refresh,
+                          onTap: () async {
+                            WeatherModel weather = WeatherModel();
+                            SettingModel settingModel = SettingModel();
+                            final currentSetting =
+                                settingModel.getCurrentSetting();
+                            Weather updatedWeather =
+                                await weather.getLocationWeather(
+                              type: RequestedWeatherType.Currently,
+                              useCelsius: currentSetting.useCelsius,
+                              latitude: trips[index].location.latitude,
+                              longitude: trips[index].location.longitude,
+                            );
+                            await db.updateTripCurrentWeather(
+                              docId: trips[index].id,
+                              newTemp: updatedWeather.currently.temperature
+                                  .toStringAsFixed(0),
+                              newIcon: updatedWeather.currently.icon,
+                            );
+
+                            CurrencyModel currencyModel = CurrencyModel();
+                            CurrencyRate currency = await currencyModel
+                                .getCurrencyRate(trips[index].currencyCode);
+                            await db.updateTripCurrency(
+                              docId: trips[index].id,
+                              currencyCode: trips[index].currencyCode,
+                              currencyRate: currency.rate,
+                            );
+                          },
+                        ),
+                        IconSlideAction(
+                          caption: 'Delete',
+                          color: Colors.red,
+                          icon: Icons.delete,
+                          onTap: () async {
+                            await db.deleteTrip(docId: trips[index].id);
+                          },
+                        ),
+                      ],
                     );
                   }),
             ),

@@ -6,7 +6,9 @@ import 'package:intl/intl.dart';
 
 class NewsModal {
   Future<News> getNews({@required tagsString}) async {
-    final fromDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    final fromDate = DateFormat('yyyy-MM-dd').format(
+        DateTime.fromMillisecondsSinceEpoch(
+            DateTime.now().millisecondsSinceEpoch - (86400000 * 3)));
     final url = '$kGuardianNewsAPIBaseURL$tagsString&from-date=$fromDate';
     NetworkHelper networkHelper = NetworkHelper(url);
 

@@ -5,7 +5,9 @@ import 'package:book_my_weather/models/setting.dart';
 import 'package:book_my_weather/models/weather.dart';
 import 'package:book_my_weather/pages/search_place_screen.dart';
 import 'package:book_my_weather/services/location.dart';
+import 'package:book_my_weather/services/setting.dart';
 import 'package:book_my_weather/services/weather.dart';
+import 'package:book_my_weather/utilities/index.dart';
 import 'package:book_my_weather/widgets/message_handler.dart';
 import 'package:book_my_weather/widgets/weather_widget.dart';
 import 'package:cloud_functions/cloud_functions.dart';
@@ -61,6 +63,7 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
 
   Future<Weather> getWeather() async {
     WeatherModel weather = WeatherModel();
+    Weather currentPlaceWeather;
 
     Location location = Location();
     await location.getLocation();
@@ -74,30 +77,15 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
       placeName = location.placeMark[0].locality;
     });
 
-    Weather currentPlaceWeather = await weather.getLocationWeather(
-      type: RequestedWeatherType.All,
-      useCelsius: true,
-      latitude: location.latitude,
-      longitude: location.longitude,
-    );
-
-    List<Place> places = [];
     if (settingsBox.length == 0) {
-      places.add(Place(
-        name: location.placeMark[0].name,
-        address: location.placeMark[0].locality,
-        latitude: location.latitude,
-        longitude: location.longitude,
-        weather: currentPlaceWeather,
-      ));
-      Setting setting = Setting(
+      currentPlaceWeather = await weather.getLocationWeather(
+        type: RequestedWeatherType.All,
         useCelsius: true,
-        places: places,
+        latitude: location.latitude,
+        longitude: location.longitude,
       );
-      settingsBox.add(setting);
-    } else {
-      places = (settingsBox.get(0) as Setting).places;
-      places[0] = Place(
+
+      final newPlace = Place(
         name: location.placeMark[0].name,
         address: location.placeMark[0].locality,
         latitude: location.latitude,
@@ -105,13 +93,32 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
         weather: currentPlaceWeather,
       );
 
-      Setting updatedSetting = Setting(
-          useCelsius: (settingsBox.get(0) as Setting).useCelsius,
-          places: places);
-      settingsBox.putAt(0, updatedSetting);
-    }
+      Setting newSetting = Setting(
+        useCelsius: true,
+        places: [newPlace],
+        baseSymbol: getCurrencySymbol(context),
+      );
 
-//    Provider.of<PlaceData>(context, listen: false).updatePlaces(places);
+      initializeSetting(newSetting);
+    } else {
+      SettingModel settingModel = SettingModel();
+      final currentSetting = settingModel.getCurrentSetting();
+      currentPlaceWeather = await weather.getLocationWeather(
+        type: RequestedWeatherType.All,
+        useCelsius: currentSetting.useCelsius,
+        latitude: location.latitude,
+        longitude: location.longitude,
+      );
+      final updatedPlace = Place(
+        name: location.placeMark[0].name,
+        address: location.placeMark[0].locality,
+        latitude: location.latitude,
+        longitude: location.longitude,
+        weather: currentPlaceWeather,
+      );
+
+      updatePlaceInSetting(0, updatedPlace);
+    }
 
     return currentPlaceWeather;
   }
@@ -454,10 +461,13 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
                               final place = places[index];
 
                               WeatherModel weather = WeatherModel();
+                              SettingModel settingModel = SettingModel();
+                              final currentSetting =
+                                  settingModel.getCurrentSetting();
                               Weather updatedWeather =
                                   await weather.getLocationWeather(
                                 type: RequestedWeatherType.All,
-                                useCelsius: true,
+                                useCelsius: currentSetting.useCelsius,
                                 latitude: place.latitude,
                                 longitude: place.longitude,
                               );

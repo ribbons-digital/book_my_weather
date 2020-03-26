@@ -4,6 +4,7 @@ import 'package:book_my_weather/models/place.dart';
 import 'package:book_my_weather/models/setting.dart';
 import 'package:book_my_weather/models/weather.dart';
 import 'package:book_my_weather/services/location.dart';
+import 'package:book_my_weather/services/setting.dart';
 import 'package:book_my_weather/services/weather.dart';
 import 'package:book_my_weather/utilities/index.dart';
 import 'package:flutter/material.dart';
@@ -65,7 +66,6 @@ class _SearchPlaceScreenState extends State<SearchPlaceScreen> {
   @override
   Widget build(BuildContext context) {
     final settingsBox = Hive.box('settings');
-    Setting setting = settingsBox.getAt(0) as Setting;
     List<Place> places = (settingsBox.get(0) as Setting).places;
 
     return Scaffold(
@@ -124,6 +124,9 @@ class _SearchPlaceScreenState extends State<SearchPlaceScreen> {
                                 onTap: () async {
                                   Location location = Location();
                                   WeatherModel weather = WeatherModel();
+                                  SettingModel settingModel = SettingModel();
+                                  final currentSetting =
+                                      settingModel.getCurrentSetting();
                                   try {
                                     setState(() {
                                       isLoading = true;
@@ -134,7 +137,7 @@ class _SearchPlaceScreenState extends State<SearchPlaceScreen> {
                                     Weather currentPlaceWeather =
                                         await weather.getLocationWeather(
                                       type: RequestedWeatherType.All,
-                                      useCelsius: true,
+                                      useCelsius: currentSetting.useCelsius,
                                       latitude: location.latitude,
                                       longitude: location.longitude,
                                     );
@@ -156,7 +159,7 @@ class _SearchPlaceScreenState extends State<SearchPlaceScreen> {
                                       displayErrorSnackbar(context,
                                           'You have previously added this place.');
                                     } else {
-                                      places.add(Place(
+                                      final newPlace = Place(
                                         name: location.placeMark[0].name,
                                         address:
                                             location.placeMark[0].name == ''
@@ -165,14 +168,9 @@ class _SearchPlaceScreenState extends State<SearchPlaceScreen> {
                                         latitude: location.latitude,
                                         longitude: location.longitude,
                                         weather: currentPlaceWeather,
-                                      ));
-
-                                      setting = Setting(
-                                        useCelsius: setting.useCelsius,
-                                        places: places,
                                       );
 
-                                      settingsBox.putAt(0, setting);
+                                      addPlaceToSetting(newPlace);
 
                                       setState(() {
                                         isLoading = false;

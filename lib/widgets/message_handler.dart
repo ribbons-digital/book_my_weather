@@ -81,16 +81,16 @@ class _MessageHandlerState extends State<MessageHandler> {
 
   _saveDeviceToken() async {
     // Get the current user
-    final userUid = Provider.of<User>(context, listen: false).uid;
+    final user = Provider.of<User>(context, listen: false);
 
     // Get the token for this device
     String fcmToken = await _fcm.getToken();
 
     // Save it to Firestore
-    if (fcmToken != null) {
+    if (fcmToken != null && user != null) {
       final tokens = _db
           .collection('users')
-          .document(userUid)
+          .document(user.uid)
           .collection('tokens')
           .document(fcmToken);
 

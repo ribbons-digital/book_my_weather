@@ -19,16 +19,19 @@ class SettingAdapter extends TypeAdapter<Setting> {
     return Setting(
       useCelsius: fields[0] as bool,
       places: (fields[1] as List)?.cast<Place>(),
+      baseSymbol: fields[2] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, Setting obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(3)
       ..writeByte(0)
       ..write(obj.useCelsius)
       ..writeByte(1)
-      ..write(obj.places);
+      ..write(obj.places)
+      ..writeByte(2)
+      ..write(obj.baseSymbol);
   }
 }

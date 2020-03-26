@@ -4,6 +4,7 @@ import 'package:book_my_weather/secure/keys.dart';
 import 'package:book_my_weather/services/google_places.dart';
 import 'package:book_my_weather/services/location.dart';
 import 'package:book_my_weather/services/networking.dart';
+import 'package:book_my_weather/services/setting.dart';
 import 'package:book_my_weather/services/weather.dart';
 import 'package:book_my_weather/utilities/index.dart';
 import 'package:book_my_weather/widgets/explore_place_card_widget.dart';
@@ -48,11 +49,13 @@ class _PlaceOverviewState extends State<PlaceOverview> {
   Future<Weather> getWeatherForecast() async {
     WeatherModel weatherModel = WeatherModel();
     Location location = Location();
+    SettingModel settingModel = SettingModel();
+    final currentSetting = settingModel.getCurrentSetting();
 
     await location.getPlaceMarkFromAddress(address: widget.address);
     return await weatherModel.getLocationWeather(
       type: RequestedWeatherType.Daily,
-      useCelsius: true,
+      useCelsius: currentSetting.useCelsius,
       latitude: location.latitude,
       longitude: location.longitude,
     );

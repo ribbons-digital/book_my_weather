@@ -143,6 +143,8 @@ class DatabaseService {
       'weatherIcon': newTrip.weatherIcon,
       'searchIndex': newTrip.searchIndex,
       'endDateInMs': newTrip.endDateInMs,
+      'currencyRate': newTrip.currencyRate,
+      'currencyCode': newTrip.currencyCode,
     });
   }
 
@@ -159,6 +161,8 @@ class DatabaseService {
       'weatherIcon': updatedTrip.weatherIcon,
       'searchIndex': updatedTrip.searchIndex,
       'endDateInMs': updatedTrip.endDateInMs,
+      'currencyRate': updatedTrip.currencyRate,
+      'currencyCode': updatedTrip.currencyCode,
     });
   }
 
@@ -168,6 +172,18 @@ class DatabaseService {
       'temperature': newTemp,
       'weatherIcon': newIcon,
     });
+  }
+
+  Future<void> updateTripCurrency(
+      {String docId, double currencyRate, String currencyCode}) {
+    return _db.collection('trips').document(docId).updateData({
+      'currencyRate': currencyRate,
+      'currencyCode': currencyCode,
+    });
+  }
+
+  Future<void> deleteTrip({String docId}) {
+    return _db.collection('trips').document(docId).delete();
   }
 
   Stream<List<TripTodo>> streamTripTodos(String tripId) {

@@ -2,12 +2,16 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:book_my_weather/constants.dart';
+import 'package:book_my_weather/models/currency.dart';
+import 'package:book_my_weather/models/currency_rate.dart';
 import 'package:book_my_weather/models/networking_state.dart';
 import 'package:book_my_weather/models/trip.dart';
 import 'package:book_my_weather/models/user.dart';
 import 'package:book_my_weather/models/weather.dart';
+import 'package:book_my_weather/services/currency.dart';
 import 'package:book_my_weather/services/db.dart';
 import 'package:book_my_weather/services/location.dart';
+import 'package:book_my_weather/services/setting.dart';
 import 'package:book_my_weather/services/weather.dart';
 import 'package:book_my_weather/utilities/index.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -97,7 +101,7 @@ class _TripScreenState extends State<TripScreen> {
         lastDate: DateTime(2100));
 
     if (pickedDate != null &&
-        pickedDate.millisecondsSinceEpoch >
+        pickedDate.millisecondsSinceEpoch >=
             DateTime.now().millisecondsSinceEpoch &&
         dateType == DateType.startDate) {
       setState(() {
@@ -108,7 +112,7 @@ class _TripScreenState extends State<TripScreen> {
     }
 
     if (pickedDate != null &&
-        pickedDate.millisecondsSinceEpoch >
+        pickedDate.millisecondsSinceEpoch >=
             DateTime.now().millisecondsSinceEpoch &&
         dateType == DateType.endDate) {
       setState(() {
@@ -142,7 +146,11 @@ class _TripScreenState extends State<TripScreen> {
     final endDateInMs = endDate.millisecondsSinceEpoch;
     final trips = Provider.of<List<Trip>>(context, listen: false);
 
-    final isDateOverlapping = trips.where((trip) {
+    final isDateOverlapping = trips
+            .where((trip) =>
+                widget.existingTrip != null &&
+                trip.id != widget.existingTrip.id)
+            .where((trip) {
           return (startDate.millisecondsSinceEpoch >=
                       trip.startDate.millisecondsSinceEpoch &&
                   startDate.millisecondsSinceEpoch <= trip.endDateInMs) ||
@@ -204,6 +212,16 @@ class _TripScreenState extends State<TripScreen> {
         ),
       )..show(context).then((v) => Navigator.pop(context));
     } else {
+      Currency currency;
+      Weather currentWeather;
+      Location location;
+      WeatherModel weather;
+      CurrencyModel currencyModel;
+      double currencyRate;
+      String currencyCode;
+      SettingModel settingModel = SettingModel();
+      final currentSetting = settingModel.getCurrentSetting();
+
       List<String> splitList = destination.split(' ');
       List<String> indexList = [];
 
@@ -213,15 +231,49 @@ class _TripScreenState extends State<TripScreen> {
         }
       }
 
-      Location location = Location();
-      await location.getPlaceMarkFromAddress(address: destination);
-      WeatherModel weather = WeatherModel();
-      Weather currentWeather = await weather.getLocationWeather(
-        type: RequestedWeatherType.Currently,
-        useCelsius: true,
-        latitude: location.latitude,
-        longitude: location.longitude,
-      );
+      try {
+        location = Location();
+        await location.getPlaceMarkFromAddress(address: destination);
+      } catch (e) {
+        displayErrorSnackbarWithSilentAction(
+          context,
+          'Error getting destination address.',
+          (v) => Navigator.pop(context),
+        );
+        return;
+      }
+
+      try {
+        weather = WeatherModel();
+        currentWeather = await weather.getLocationWeather(
+          type: RequestedWeatherType.Currently,
+          useCelsius: currentSetting.useCelsius,
+          latitude: location.latitude,
+          longitude: location.longitude,
+        );
+      } catch (e) {
+        displayErrorSnackbarWithSilentAction(
+          context,
+          'Error getting destination weather.',
+          (v) => Navigator.pop(context),
+        );
+        return;
+      }
+
+      try {
+        currencyModel = CurrencyModel();
+        currency = await currencyModel.getSingleCurrencyCode(
+            location.latitude, location.longitude);
+        CurrencyRate result =
+            await currencyModel.getCurrencyRate(currency.code);
+        currencyRate = result.rate;
+      } catch (e) {
+        displayErrorSnackbarWithSilentAction(
+            context,
+            'Error getting destination currency rate.',
+            (v) => Navigator.pop(context));
+        return;
+      }
 
       if (actionType == TripActionType.Add) {
         http.Response response =
@@ -244,6 +296,8 @@ class _TripScreenState extends State<TripScreen> {
           weatherIcon: currentWeather.currently.icon,
           searchIndex: indexList,
           endDateInMs: endDateInMs,
+          currencyRate: currencyRate,
+          currencyCode: currency.code,
         );
 
         try {
@@ -283,6 +337,8 @@ class _TripScreenState extends State<TripScreen> {
           weatherIcon: currentWeather.currently.icon,
           searchIndex: indexList,
           endDateInMs: endDateInMs,
+          currencyRate: currencyRate,
+          currencyCode: currency.code,
         );
         try {
           await db.updateTrip(docId: widget.existingTrip.id, updatedTrip: trip);

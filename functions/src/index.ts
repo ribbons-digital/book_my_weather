@@ -7,6 +7,7 @@ admin.initializeApp();
 const db = admin.firestore();
 const fcm = admin.messaging();
 
+
 interface Trip {
   createdByUid: string
   temperature: string
@@ -20,6 +21,8 @@ interface Trip {
   destination: string
   location: admin.firestore.GeoPoint
   endDateInMs: number
+  currencyRate: number
+  currencyCode: string
 }
 
 export const sendNotification = functions.https.onCall(async (data, context) => {

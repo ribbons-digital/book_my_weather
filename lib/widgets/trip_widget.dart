@@ -1,6 +1,5 @@
 import 'package:book_my_weather/models/trip.dart';
-import 'package:book_my_weather/models/weather.dart';
-import 'package:book_my_weather/services/db.dart';
+import 'package:book_my_weather/services/setting.dart';
 import 'package:book_my_weather/services/weather.dart';
 import 'package:book_my_weather/utilities/index.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +24,8 @@ class _TripWidgetState extends State<TripWidget> {
         timeStampToDateString(trips[widget.index].startDate);
 
     WeatherModel weatherModel = WeatherModel();
+    SettingModel settingModel = SettingModel();
+    final currentSetting = settingModel.getCurrentSetting();
 
     return Padding(
       padding: const EdgeInsets.only(
@@ -33,19 +34,18 @@ class _TripWidgetState extends State<TripWidget> {
         width: MediaQuery.of(context).size.width < 600
             ? MediaQuery.of(context).size.width - 40
             : MediaQuery.of(context).size.width - 100,
-        height: 161,
+        height: 160,
         child: Stack(
           fit: StackFit.expand,
           children: <Widget>[
             Hero(
-              tag: 'card-background-${widget.index}',
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12.0),
-                  color: Colors.black,
-                ),
-              ),
-            ),
+                tag: 'tripItem-${widget.index}',
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12.0),
+                    color: Colors.black,
+                  ),
+                )),
             ClipRRect(
               borderRadius: BorderRadius.circular(12.0),
               child: Hero(
@@ -93,28 +93,32 @@ class _TripWidgetState extends State<TripWidget> {
                           ),
                         ],
                       ),
-                      IconButton(
-                        icon: Icon(Icons.refresh),
-                        onPressed: () async {
-                          final db = DatabaseService();
-                          WeatherModel weather = WeatherModel();
-                          Weather updatedWeather =
-                              await weather.getLocationWeather(
-                            type: RequestedWeatherType.Currently,
-                            useCelsius: true,
-                            latitude: trips[widget.index].location.latitude,
-                            longitude: trips[widget.index].location.longitude,
-                          );
-                          db.updateTripCurrentWeather(
-                            docId: trips[widget.index].id,
-                            newTemp: updatedWeather.currently.temperature
-                                .toStringAsFixed(0),
-                            newIcon: updatedWeather.currently.icon,
-                          );
-                        },
-                        iconSize: 24.0,
-                        color: Colors.white,
-                      )
+                      Row(
+                        children: <Widget>[
+                          Hero(
+                            tag: 'currencyIcon-${widget.index}',
+                            child: Icon(
+                              Icons.monetization_on,
+                              color: Colors.white,
+                            ),
+                          ),
+                          Hero(
+                            tag: 'currency-${widget.index}',
+                            child: Material(
+                              color: Color(0X00FFFFFF),
+                              child: Text(
+                                trips[widget.index] != null
+                                    ? '1 ${currentSetting.baseSymbol} = ${trips[widget.index].currencyRate.toStringAsFixed(2)} ${trips[widget.index].currencyCode}'
+                                    : '---',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w200,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                   Column(
