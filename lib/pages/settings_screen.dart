@@ -61,7 +61,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       height: 15.0,
                     ),
                     FlatButton(
-                      color: Colors.blueGrey,
+                      color: Color(
+                        0XFF69A4FF,
+                      ),
                       child: Text(
                         'Sign in',
                         style: textStyle,
@@ -190,12 +192,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 ),
                                 ToggleButtons(
                                   children: <Widget>[
-                                    Text('ºC'),
-                                    Text('ºF'),
+                                    Text(
+                                      'ºC',
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    Text(
+                                      'ºF',
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
                                   ],
                                   isSelected: _selections,
                                   color: Colors.white,
                                   selectedColor: Color(0xFFFFA500),
+                                  fillColor: Color(
+                                    0XFF69A4FF,
+                                  ),
                                   onPressed: (int index) {
                                     SettingModel settingModal = SettingModel();
                                     setState(() {
@@ -220,7 +237,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             color: Colors.blueGrey,
                           ),
                           FlatButton(
-                            color: Colors.blueGrey,
+                            color: Color(
+                              0XFF69A4FF,
+                            ),
                             child: Text(
                               'Sign Out',
                               style: textStyle,

@@ -206,7 +206,7 @@ class _TripsScreenState extends State<TripsScreen> {
                             context,
                             PageRouteBuilder(
                               transitionDuration:
-                                  const Duration(milliseconds: 550),
+                                  const Duration(milliseconds: 450),
                               pageBuilder: (context, _, __) => TripDetail(),
                               transitionsBuilder: (
                                 BuildContext context,
@@ -221,7 +221,7 @@ class _TripsScreenState extends State<TripsScreen> {
                                 ).animate(
                                   CurvedAnimation(
                                     parent: animation,
-                                    curve: Curves.fastOutSlowIn,
+                                    curve: Curves.easeInOutCirc,
                                   ),
                                 ),
                                 child: child,

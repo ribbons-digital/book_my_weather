@@ -80,9 +80,12 @@ class _NewsListState extends State<NewsList> {
                         child: Text(
                           results[index].webTitle,
                           style: TextStyle(
-                              fontSize: 15.0,
-                              fontWeight: FontWeight.w800,
-                              color: Colors.blueGrey),
+                            fontSize: 15.0,
+                            fontWeight: FontWeight.w800,
+                            color: Color(
+                              0XFF69A4FF,
+                            ),
+                          ),
                         ),
                       ),
                       subtitle: Padding(
