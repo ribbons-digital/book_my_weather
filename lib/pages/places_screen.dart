@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:book_my_weather/constants.dart';
 import 'package:book_my_weather/models/google_nearby_place.dart';
 import 'package:book_my_weather/models/trip.dart';
@@ -7,6 +9,8 @@ import 'package:book_my_weather/services/google_places.dart';
 import 'package:book_my_weather/utilities/index.dart';
 import 'package:book_my_weather/widgets/place_card_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_admob/flutter_native_admob.dart';
+import 'package:flutter_native_admob/native_admob_controller.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 enum PlaceType { General, Food, Hotel }
@@ -27,6 +31,11 @@ class _PlacesScreenState extends State<PlacesScreen>
   // TabController _tabController;
   Future<List<GoogleNearByPlace>> getNearbyPlaces;
   NearbySearchType selectedSearchType;
+
+  static const _iOSAdUnitID = kAdMobIosAdUnit;
+  static const _androidAdUnitId = kAdMobAndroidAdUnit;
+
+  final _controller = NativeAdmobController();
 
   Future<List<GoogleNearByPlace>> getPlaces(
       {NearbySearchType searchType}) async {
@@ -188,17 +197,45 @@ class _PlacesScreenState extends State<PlacesScreen>
   }
 
   @override
+  void dispose() {
+    super.dispose();
+//    _subscription.cancel();
+    _controller.dispose();
+  }
+
+//  void _onStateChanged(AdLoadState state) {
+//    switch (state) {
+//      case AdLoadState.loading:
+//        setState(() {
+//          _height = 0;
+//        });
+//        break;
+//
+//      case AdLoadState.loadCompleted:
+//        setState(() {
+//          _height = 250;
+//        });
+//        break;
+//
+//      default:
+//        break;
+//    }
+//  }
+
+  @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: widget.placeType == PlaceType.General
-              ? Text('Nearby Places')
-              : widget.placeType == PlaceType.Food
-                  ? Text('Nearby Foods')
-                  : Text('Nearby Hotels'),
-        ),
-        body: Builder(
+    final isIos = Theme.of(context).platform == TargetPlatform.iOS;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: widget.placeType == PlaceType.General
+            ? Text('Nearby Places')
+            : widget.placeType == PlaceType.Food
+                ? Text('Nearby Foods')
+                : Text('Nearby Hotels'),
+      ),
+      body: SafeArea(
+        child: Builder(
           builder: (BuildContext context) {
             return Column(
               children: <Widget>[
@@ -231,6 +268,24 @@ class _PlacesScreenState extends State<PlacesScreen>
                             itemCount: snapshot.data.length,
                             itemBuilder: (BuildContext context, int index) {
                               final place = snapshot.data[index];
+
+                              if (index > 0 && index % 7 == 0) {
+                                return Container(
+                                  height: 250,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(12.0),
+                                  ),
+                                  margin: EdgeInsets.all(16.0),
+                                  child: NativeAdmob(
+                                    adUnitID: kTestAdUnit,
+                                    // TODO: use below in production
+//                                    adUnitID:
+//                                        isIos ? _iOSAdUnitID : _androidAdUnitId,
+                                    controller: _controller,
+                                  ),
+                                );
+                              }
 
                               return GestureDetector(
                                 onTap: () {

@@ -19,7 +19,8 @@ class WeatherWidget extends StatelessWidget {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
     final settingsBox = Hive.box('settings');
-//    final placeData = Provider.of<PlaceData>(context);
+
+    print(screenHeight);
 
     final places = (settingsBox.get(0) as Setting).places;
     WeatherModel weatherModel = WeatherModel();
@@ -91,6 +92,38 @@ class WeatherWidget extends StatelessWidget {
               ),
             ),
           ),
+          if (screenHeight > 812)
+            Positioned(
+                bottom: screenHeight / 5.2,
+                left: 40,
+                right: 40,
+                child: Column(
+                  children: <Widget>[
+                    FittedBox(
+                      fit: BoxFit.fitWidth,
+                      child: Text(
+                        places[placeIndex].weather.hourly.summary,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20.0,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    FittedBox(
+                      fit: BoxFit.fitWidth,
+                      child: Text(
+                        places[placeIndex].weather.daily.summary,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18.0,
+                        ),
+                      ),
+                    ),
+                  ],
+                )),
           Positioned(
             bottom: screenHeight > 600 && screenHeight < 768
                 ? screenHeight / 30

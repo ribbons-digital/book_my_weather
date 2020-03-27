@@ -34,7 +34,7 @@ class AppTheme {
   );
 
   static final TextStyle small = TextStyle(
-    fontWeight: FontWeight.w100,
+    fontWeight: FontWeight.w300,
     color: Colors.white,
   );
 }

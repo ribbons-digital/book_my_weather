@@ -165,6 +165,9 @@ class __SignInRegisterFormState extends State<_SignInRegisterForm> {
                           });
                           Navigator.pop(context);
                         } else if (result is String) {
+                          setState(() {
+                            isLoading = false;
+                          });
                           Scaffold.of(context).showSnackBar(SnackBar(
                             content: Text(
                               result,

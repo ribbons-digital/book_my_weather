@@ -107,6 +107,7 @@ class _WrapperState extends State<Wrapper> {
             primaryColor: Colors.white,
             canvasColor: Colors.black,
             appBarTheme: AppBarTheme(
+              brightness: Brightness.dark,
               elevation: 0,
               color: Colors.black,
               iconTheme: IconThemeData(
@@ -139,11 +140,7 @@ class _WrapperState extends State<Wrapper> {
                   body: IndexedStack(
                     index: _selectedIndex,
                     children: <Widget>[
-                      WeatherListingScreen(
-//                        places: placeData.places,
-//                        deviceId: 'A4A7FC77-8C86-417F-99A4-B73A267298E8',
-// setting: setting,
-                          ),
+                      WeatherListingScreen(),
                       TripsScreen(
                         setFilterString: setFilterStringForTrips,
                         setIsPast: setIsPast,

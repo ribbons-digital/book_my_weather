@@ -8,6 +8,7 @@ import 'package:book_my_weather/pages/trip_weather_screen.dart';
 import 'package:book_my_weather/services/setting.dart';
 import 'package:book_my_weather/services/weather.dart';
 import 'package:book_my_weather/utilities/index.dart';
+import 'package:book_my_weather/widgets/enter_exit_route.dart';
 import 'package:book_my_weather/widgets/trip_detail_grid_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -29,7 +30,9 @@ class TripDetail extends StatelessWidget {
     final currentSetting = settingModel.getCurrentSetting();
 
     return Scaffold(
-      body: Stack(
+        body: SafeArea(
+      top: false,
+      child: Stack(
         fit: StackFit.expand,
         children: <Widget>[
           Hero(
@@ -283,10 +286,9 @@ class TripDetail extends StatelessWidget {
                       onTap: () {
                         Navigator.push(
                           context,
-                          PageRouteBuilder(
-                            transitionDuration:
-                                const Duration(milliseconds: 550),
-                            pageBuilder: (context, _, __) => PlacesScreen(
+                          EnterExitRoute(
+                            exitPage: this,
+                            enterPage: PlacesScreen(
                               trip: trip,
                               placeType: PlaceType.General,
                             ),
@@ -303,10 +305,9 @@ class TripDetail extends StatelessWidget {
                       onTap: () {
                         Navigator.push(
                           context,
-                          PageRouteBuilder(
-                            transitionDuration:
-                                const Duration(milliseconds: 550),
-                            pageBuilder: (context, _, __) => PlacesScreen(
+                          EnterExitRoute(
+                            exitPage: this,
+                            enterPage: PlacesScreen(
                               trip: trip,
                               placeType: PlaceType.Food,
                             ),
@@ -323,10 +324,9 @@ class TripDetail extends StatelessWidget {
                       onTap: () {
                         Navigator.push(
                           context,
-                          PageRouteBuilder(
-                            transitionDuration:
-                                const Duration(milliseconds: 550),
-                            pageBuilder: (context, _, __) => PlacesScreen(
+                          EnterExitRoute(
+                            exitPage: this,
+                            enterPage: PlacesScreen(
                               trip: trip,
                               placeType: PlaceType.Hotel,
                             ),
@@ -343,10 +343,9 @@ class TripDetail extends StatelessWidget {
                       onTap: () {
                         Navigator.push(
                           context,
-                          PageRouteBuilder(
-                            transitionDuration:
-                                const Duration(milliseconds: 550),
-                            pageBuilder: (context, _, __) => TripWeatherScreen(
+                          EnterExitRoute(
+                            exitPage: this,
+                            enterPage: TripWeatherScreen(
                               trip: trip,
                             ),
                           ),
@@ -385,6 +384,6 @@ class TripDetail extends StatelessWidget {
           ),
         ],
       ),
-    );
+    ));
   }
 }
