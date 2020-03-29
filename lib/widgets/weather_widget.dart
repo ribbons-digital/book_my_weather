@@ -20,8 +20,6 @@ class WeatherWidget extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     final settingsBox = Hive.box('settings');
 
-    print(screenHeight);
-
     final places = (settingsBox.get(0) as Setting).places;
     WeatherModel weatherModel = WeatherModel();
     final currentHourlyWeather = places[placeIndex].weather.hourly.data[0];

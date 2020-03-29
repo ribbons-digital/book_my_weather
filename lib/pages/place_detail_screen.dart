@@ -444,6 +444,12 @@ class _PlaceDetailState extends State<PlaceDetail>
                                               context: context,
                                               builder: (BuildContext context) {
                                                 return AlertDialog(
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                      Radius.circular(20.0),
+                                                    ),
+                                                  ),
                                                   title: Text(
                                                       'When are you visiting?'),
                                                   content: Column(
@@ -747,10 +753,19 @@ class _PlaceDetailState extends State<PlaceDetail>
         }
 
         if (snapshot.hasError) {
-          return Text(
-            snapshot.error.toString(),
-            style: TextStyle(
-              color: Colors.white,
+          return Scaffold(
+            appBar: AppBar(),
+            body: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  'There is an error retrieving information about this place. Please try again later.',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20.0,
+                  ),
+                ),
+              ),
             ),
           );
         }

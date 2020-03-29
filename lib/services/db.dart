@@ -6,6 +6,7 @@ import 'package:book_my_weather/models/trip.dart';
 import 'package:book_my_weather/models/trip_place.dart';
 import 'package:book_my_weather/models/trip_todo.dart';
 import 'package:book_my_weather/models/trip_visiting.dart';
+import 'package:book_my_weather/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DatabaseService {
@@ -25,61 +26,94 @@ class DatabaseService {
 //    });
 //  }
 
-  Stream<List<Trip>> streamTrips(
-      {String uid, String filterString, bool isPast}) {
+  Stream<List<Trip>> streamUpcomingTrips({String uid, String filterString}) {
     final today = DateTime.now().millisecondsSinceEpoch;
-
     if (filterString == null || filterString.trim() == '') {
-      if (isPast) {
-        return _db
-            .collection('trips')
-            .where('createdByUid', isEqualTo: uid)
-            .where('endDateInMs', isLessThan: today)
-            .snapshots()
-            .map((snapshot) {
-          return snapshot.documents.map((document) {
-            return Trip.fromFirestore(document);
-          }).toList();
-        });
-      } else {
-        return _db
-            .collection('trips')
-            .where('createdByUid', isEqualTo: uid)
-            .where('endDateInMs', isGreaterThanOrEqualTo: today)
-            .snapshots()
-            .map((snapshot) {
-          return snapshot.documents.map((document) {
-            return Trip.fromFirestore(document);
-          }).toList();
-        });
-      }
+      return _db
+          .collection('trips')
+          .where('createdByUid', isEqualTo: uid)
+          .where('endDateInMs', isGreaterThanOrEqualTo: today)
+          .snapshots()
+          .map((snapshot) {
+        return snapshot.documents.map((document) {
+          return Trip.fromFirestore(document);
+        }).toList();
+      });
+//      if (isPast) {
+//        return _db
+//            .collection('trips')
+//            .where('createdByUid', isEqualTo: uid)
+//            .where('endDateInMs', isLessThan: today)
+//            .snapshots()
+//            .map((snapshot) {
+//          return snapshot.documents.map((document) {
+//            return Trip.fromFirestore(document);
+//          }).toList();
+//        });
+//      } else {
+//        return _db
+//            .collection('trips')
+//            .where('createdByUid', isEqualTo: uid)
+//            .where('endDateInMs', isGreaterThanOrEqualTo: today)
+//            .snapshots()
+//            .map((snapshot) {
+//          return snapshot.documents.map((document) {
+//            return Trip.fromFirestore(document);
+//          }).toList();
+//        });
+//      }
     } else {
-      if (isPast) {
-        return _db
-            .collection('trips')
-            .where('createdByUid', isEqualTo: uid)
-            .where('searchIndex', arrayContains: filterString)
-            .where('endDateInMs', isLessThan: today)
-            .snapshots()
-            .map((snapshot) {
-          return snapshot.documents.map((document) {
-            return Trip.fromFirestore(document);
-          }).toList();
-        });
-      } else {
-        return _db
-            .collection('trips')
-            .where('createdByUid', isEqualTo: uid)
-            .where('searchIndex', arrayContains: filterString)
-            .where('endDateInMs', isGreaterThanOrEqualTo: today)
-            .snapshots()
-            .map((snapshot) {
-          return snapshot.documents.map((document) {
-            return Trip.fromFirestore(document);
-          }).toList();
-        });
-      }
+      return _db
+          .collection('trips')
+          .where('createdByUid', isEqualTo: uid)
+          .where('searchIndex', arrayContains: filterString)
+          .where('endDateInMs', isGreaterThanOrEqualTo: today)
+          .snapshots()
+          .map((snapshot) {
+        return snapshot.documents.map((document) {
+          return Trip.fromFirestore(document);
+        }).toList();
+      });
+//      if (isPast) {
+//        return _db
+//            .collection('trips')
+//            .where('createdByUid', isEqualTo: uid)
+//            .where('searchIndex', arrayContains: filterString)
+//            .where('endDateInMs', isLessThan: today)
+//            .snapshots()
+//            .map((snapshot) {
+//          return snapshot.documents.map((document) {
+//            return Trip.fromFirestore(document);
+//          }).toList();
+//        });
+//      } else {
+//        return _db
+//            .collection('trips')
+//            .where('createdByUid', isEqualTo: uid)
+//            .where('searchIndex', arrayContains: filterString)
+//            .where('endDateInMs', isGreaterThanOrEqualTo: today)
+//            .snapshots()
+//            .map((snapshot) {
+//          return snapshot.documents.map((document) {
+//            return Trip.fromFirestore(document);
+//          }).toList();
+//        });
+//      }
     }
+  }
+
+  Stream<List<Trip>> streamPastTrips(String uid) {
+    final today = DateTime.now().millisecondsSinceEpoch;
+    return _db
+        .collection('trips')
+        .where('createdByUid', isEqualTo: uid)
+        .where('endDateInMs', isLessThan: today)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.documents.map((document) {
+        return Trip.fromFirestore(document);
+      }).toList();
+    });
   }
 
   Stream<List<TripPlace>> streamTripPlaces(String tripId) {
@@ -325,6 +359,14 @@ class DatabaseService {
         .updateData({
       'token': token,
       'platform': Platform.operatingSystem // optional
+    });
+  }
+
+  Future<void> addNewUser(User newUser) {
+    return _db.collection('users').document().setData({
+      'displayName': newUser.displayName,
+      'email': newUser.email,
+      'uid': newUser.uid,
     });
   }
 }

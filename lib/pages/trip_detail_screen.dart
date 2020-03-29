@@ -1,4 +1,3 @@
-import 'package:book_my_weather/models/trip.dart';
 import 'package:book_my_weather/models/trip_state.dart';
 import 'package:book_my_weather/pages/places_screen.dart';
 import 'package:book_my_weather/pages/trip_screen.dart';
@@ -19,7 +18,7 @@ class TripDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final index = Provider.of<TripState>(context).selectedIndex;
-    final trip = Provider.of<List<Trip>>(context)[index];
+    final trip = Provider.of<TripState>(context).trip;
 
     final startDateToDateString = timeStampToDateString(trip.startDate);
 

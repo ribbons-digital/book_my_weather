@@ -116,6 +116,11 @@ class _PlaceCardState extends State<PlaceCard> {
                   context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(20.0),
+                        ),
+                      ),
                       title: Text('Add a ToDo'),
                       content: TextField(
                         autofocus: true,

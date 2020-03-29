@@ -1,5 +1,6 @@
 import 'package:book_my_weather/models/place_data.dart';
 import 'package:book_my_weather/models/setting.dart';
+import 'package:book_my_weather/services/weather.dart';
 import 'package:book_my_weather/widgets/weather_condition_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
@@ -21,6 +22,7 @@ class WeatherDetail extends StatelessWidget {
     final placeData = Provider.of<PlaceData>(context);
     final places = (settingsBox.get(0) as Setting).places;
     final place = places[placeData.currentPlaceIndex];
+    WeatherModel weatherModel = WeatherModel();
     final hourlyWeather =
         places[placeData.currentPlaceIndex].weather.hourly.data[rowIndex];
     final dailyWeather = isHourly
@@ -46,10 +48,20 @@ class WeatherDetail extends StatelessWidget {
               // ),
               Row(
                 children: <Widget>[
-                  Image.asset(
-                    'assets/images/sunny.png',
-                    scale: 1.5,
-                  ),
+                  if (isHourly)
+                    weatherModel.getWeatherIcon(
+                      condition: hourlyWeather.icon,
+                      iconColor: Color(0xFFFFA500),
+                      width: 80.0,
+                      height: 80.0,
+                    ),
+                  if (!isHourly)
+                    weatherModel.getWeatherIcon(
+                      condition: dailyWeather.icon,
+                      iconColor: Color(0xFFFFA500),
+                      width: 80.0,
+                      height: 80.0,
+                    ),
                   SizedBox(
                     width: 15.0,
                   ),

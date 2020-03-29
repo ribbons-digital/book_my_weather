@@ -7,6 +7,7 @@ class TripState extends ChangeNotifier {
 
   int get selectedIndex => _selectedIndex;
   String get tripId => _trip.id;
+  Trip get trip => _trip;
   bool get isTripEnded =>
       _trip.endDateInMs < DateTime.now().millisecondsSinceEpoch;
 

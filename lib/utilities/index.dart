@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 
 import '../constants.dart';
 
@@ -106,10 +105,9 @@ String getSearchTypeString(NearbySearchType searchType) {
 
 String getTripTimeMessage(BuildContext context, Trip trip) {
   String timeMessage = '';
-  final trips = Provider.of<List<Trip>>(context);
 
   final startDateISOString = timeStampToISOString(trip.startDate);
-
+//
   final endDateISOString = timeStampToISOString(trip.endDate);
   final isPast = trip.endDateInMs < DateTime.now().millisecondsSinceEpoch;
   int daysLeft =
@@ -122,14 +120,20 @@ String getTripTimeMessage(BuildContext context, Trip trip) {
     timeMessage =
         ' Started ${daysLeft.toString().substring(1, daysLeft.toString().length)} days ago';
   }
-
+//
   if (daysLeft.isNegative && isPast) {
-    timeMessage =
-        ' Ended ${endedDaysAgo.toString().substring(1, daysLeft.toString().length)} days ago';
+    if (endedDaysAgo < 0)
+      timeMessage =
+          ' Ended ${endedDaysAgo.toString().substring(1, endedDaysAgo.toString().length)} days ago';
+    else
+      timeMessage = ' Trip ends today';
   }
-
+//
   if (!daysLeft.isNegative && !isPast) {
-    timeMessage = ' $daysLeft days, from today';
+    if (daysLeft > 1)
+      timeMessage = ' $daysLeft days, from today';
+    else
+      timeMessage = ' $daysLeft day, from today';
   }
 
   if (daysLeft == 0) {

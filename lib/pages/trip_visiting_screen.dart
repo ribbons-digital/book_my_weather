@@ -119,9 +119,10 @@ class _TripVisitingScreenState extends State<TripVisitingScreen> {
           itemCount: timeStamps.length,
           itemBuilder: (BuildContext context, int index) {
             return Container(
-//              height: height / 7 * sortByDateList[index].length +
-//                  50 +
-//                  (sortByDateList[index].length * 8),
+//              decoration: BoxDecoration(
+//                color: Colors.white,
+//                borderRadius: BorderRadius.circular(12.0),
+//              ),
               child: Column(
                 children: <Widget>[
                   Text(
@@ -344,9 +345,14 @@ class _TripVisitingScreenState extends State<TripVisitingScreen> {
                           ),
                         ],
                         child: Container(
+                          decoration: BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(
+                                color: Color(0X42FFFFFF),
+                              ),
+                            ),
+                          ),
                           width: width,
-//                          height: height / 7,
-                          color: Colors.white,
                           margin: EdgeInsets.all(
                             8.0,
                           ),
@@ -366,11 +372,17 @@ class _TripVisitingScreenState extends State<TripVisitingScreen> {
                                       title: Text(
                                         sortByDateList[index][i].placeName,
                                         style: TextStyle(
-                                          fontSize: 16.0,
+                                          fontSize: 18.0,
+                                          color: Colors.white,
                                         ),
                                       ),
                                       subtitle: Text(
-                                          sortByDateList[index][i].placeType),
+                                        sortByDateList[index][i].placeType,
+                                        style: TextStyle(
+                                          color: Colors.white70,
+                                          fontSize: 16.0,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                   Padding(
@@ -381,15 +393,19 @@ class _TripVisitingScreenState extends State<TripVisitingScreen> {
                                       'Visiting at ${sortByDateList[index][i].visitingDate.toDate().hour}:$minute',
                                       style: TextStyle(
                                         color: Colors.blue,
+                                        fontSize: 17.0,
                                       ),
                                     ),
                                   ),
                                 ],
                               ),
-                              Image.network(
-                                buildPhotoURL(sortByDateList[index][i].photo),
-                                fit: BoxFit.cover,
-                                width: width / 4,
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(12.0),
+                                child: Image.network(
+                                  buildPhotoURL(sortByDateList[index][i].photo),
+                                  fit: BoxFit.cover,
+                                  width: width / 4,
+                                ),
                               )
                             ],
                           ),

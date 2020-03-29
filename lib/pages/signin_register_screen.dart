@@ -147,6 +147,11 @@ class __SignInRegisterFormState extends State<_SignInRegisterForm> {
                           final _db = DatabaseService();
                           String token = await _fcm.getToken();
                           if (!isSignIn) {
+                            await _db.addNewUser(User(
+                              uid: result.uid,
+                              displayName: result.displayName,
+                              email: result.email,
+                            ));
                             if (token != null) {
                               await _db.setUserDeviceToken(
                                   token: token, uid: result.uid);

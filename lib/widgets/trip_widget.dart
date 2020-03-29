@@ -6,12 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class TripWidget extends StatefulWidget {
+  final Trip pastTrip;
   final int index;
 
   TripWidget({
+    this.pastTrip,
     @required this.index,
   });
-
   @override
   _TripWidgetState createState() => _TripWidgetState();
 }
@@ -19,9 +20,9 @@ class TripWidget extends StatefulWidget {
 class _TripWidgetState extends State<TripWidget> {
   @override
   Widget build(BuildContext context) {
-    final trips = Provider.of<List<Trip>>(context);
-    final startDateToDateString =
-        timeStampToDateString(trips[widget.index].startDate);
+    final index = widget.index;
+    final trip = widget.pastTrip ?? Provider.of<List<Trip>>(context)[index];
+    final startDateToDateString = timeStampToDateString(trip.startDate);
 
     WeatherModel weatherModel = WeatherModel();
     SettingModel settingModel = SettingModel();
@@ -39,7 +40,7 @@ class _TripWidgetState extends State<TripWidget> {
           fit: StackFit.expand,
           children: <Widget>[
             Hero(
-                tag: 'tripItem-${widget.index}',
+                tag: 'tripItem-$index',
                 child: DecoratedBox(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12.0),
@@ -49,11 +50,11 @@ class _TripWidgetState extends State<TripWidget> {
             ClipRRect(
               borderRadius: BorderRadius.circular(12.0),
               child: Hero(
-                tag: 'city-img-${widget.index}',
+                tag: 'city-img-$index',
                 child: Opacity(
                   opacity: 0.6,
                   child: Image.network(
-                    trips[widget.index].heroImages[0],
+                    trip.heroImages[0],
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -70,20 +71,20 @@ class _TripWidgetState extends State<TripWidget> {
                       Row(
                         children: <Widget>[
                           Hero(
-                            tag: 'tempIcon-${widget.index}',
+                            tag: 'tempIcon-$index',
                             child: weatherModel.getWeatherIcon(
-                              condition: trips[widget.index].weatherIcon,
+                              condition: trip.weatherIcon,
                               iconColor: Color(0xFFFFA500),
                               width: 30.0,
                               height: 30.0,
                             ),
                           ),
                           Hero(
-                            tag: 'temp-${widget.index}',
+                            tag: 'temp-$index',
                             child: Material(
                               color: Color(0X00FFFFFF),
                               child: Text(
-                                '${trips[widget.index].temperature}º currently',
+                                '${trip.temperature}º currently',
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w200,
@@ -96,19 +97,19 @@ class _TripWidgetState extends State<TripWidget> {
                       Row(
                         children: <Widget>[
                           Hero(
-                            tag: 'currencyIcon-${widget.index}',
+                            tag: 'currencyIcon-$index',
                             child: Icon(
                               Icons.monetization_on,
                               color: Colors.white,
                             ),
                           ),
                           Hero(
-                            tag: 'currency-${widget.index}',
+                            tag: 'currency-$index',
                             child: Material(
                               color: Color(0X00FFFFFF),
                               child: Text(
-                                trips[widget.index] != null
-                                    ? '1 ${currentSetting.baseSymbol} = ${trips[widget.index].currencyRate.toStringAsFixed(2)} ${trips[widget.index].currencyCode}'
+                                trip != null
+                                    ? '1 ${currentSetting.baseSymbol} = ${trip.currencyRate.toStringAsFixed(2)} ${trip.currencyCode}'
                                     : '---',
                                 style: TextStyle(
                                   color: Colors.white,
@@ -124,11 +125,11 @@ class _TripWidgetState extends State<TripWidget> {
                   Column(
                     children: <Widget>[
                       Hero(
-                        tag: 'city-${widget.index}',
+                        tag: 'city-$index',
                         child: Material(
                           color: Color(0X00FFFFFF),
                           child: Text(
-                            trips[widget.index].destination,
+                            trip.destination,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 22.0,
@@ -138,11 +139,11 @@ class _TripWidgetState extends State<TripWidget> {
                         ),
                       ),
                       Hero(
-                        tag: 'tripName-${widget.index}',
+                        tag: 'tripName-$index',
                         child: Material(
                           color: Color(0X00FFFFFF),
                           child: Text(
-                            trips[widget.index].name,
+                            trip.name,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 18.0,
@@ -159,19 +160,18 @@ class _TripWidgetState extends State<TripWidget> {
                       Row(
                         children: <Widget>[
                           Hero(
-                            tag: 'timer-icon-${widget.index}',
+                            tag: 'timer-icon-$index',
                             child: Icon(
                               Icons.timer,
                               color: Colors.white,
                             ),
                           ),
                           Hero(
-                            tag: 'daysLeft-${widget.index}',
+                            tag: 'daysLeft-$index',
                             child: Material(
                               color: Color(0X00FFFFFF),
                               child: Text(
-                                getTripTimeMessage(
-                                    context, trips[widget.index]),
+                                getTripTimeMessage(context, trip),
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w200,
@@ -182,7 +182,7 @@ class _TripWidgetState extends State<TripWidget> {
                         ],
                       ),
                       Hero(
-                        tag: 'startDate-${widget.index}',
+                        tag: 'startDate-$index',
                         child: Material(
                           color: Color(0X00FFFFFF),
                           child: Text(

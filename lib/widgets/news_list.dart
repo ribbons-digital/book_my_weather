@@ -80,11 +80,9 @@ class _NewsListState extends State<NewsList> {
                         child: Text(
                           results[index].webTitle,
                           style: TextStyle(
-                            fontSize: 15.0,
-                            fontWeight: FontWeight.w800,
-                            color: Color(
-                              0XFF69A4FF,
-                            ),
+                            fontSize: 17.0,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white70,
                           ),
                         ),
                       ),

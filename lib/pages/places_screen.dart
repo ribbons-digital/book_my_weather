@@ -35,8 +35,6 @@ class _PlacesScreenState extends State<PlacesScreen>
   static const _iOSAdUnitID = kAdMobIosAdUnit;
   static const _androidAdUnitId = kAdMobAndroidAdUnit;
 
-  final _controller = NativeAdmobController();
-
   Future<List<GoogleNearByPlace>> getPlaces(
       {NearbySearchType searchType}) async {
     final type = getSearchTypeString(searchType);
@@ -196,13 +194,6 @@ class _PlacesScreenState extends State<PlacesScreen>
     return ListView();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-//    _subscription.cancel();
-    _controller.dispose();
-  }
-
 //  void _onStateChanged(AdLoadState state) {
 //    switch (state) {
 //      case AdLoadState.loading:
@@ -270,21 +261,7 @@ class _PlacesScreenState extends State<PlacesScreen>
                               final place = snapshot.data[index];
 
                               if (index > 0 && index % 7 == 0) {
-                                return Container(
-                                  height: 250,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(12.0),
-                                  ),
-                                  margin: EdgeInsets.all(16.0),
-                                  child: NativeAdmob(
-                                    adUnitID: kTestAdUnit,
-                                    // TODO: use below in production
-//                                    adUnitID:
-//                                        isIos ? _iOSAdUnitID : _androidAdUnitId,
-                                    controller: _controller,
-                                  ),
-                                );
+                                return _PlacesAdWidget();
                               }
 
                               return GestureDetector(
@@ -389,6 +366,42 @@ class _PlaceSearchTypeOption extends StatelessWidget {
           ),
         ),
         onPressed: onPress,
+      ),
+    );
+  }
+}
+
+class _PlacesAdWidget extends StatefulWidget {
+  @override
+  __PlacesAdWidgetState createState() => __PlacesAdWidgetState();
+}
+
+class __PlacesAdWidgetState extends State<_PlacesAdWidget> {
+  static const _iOSAdUnitID = kAdMobIosAdUnit;
+  static const _androidAdUnitId = kAdMobAndroidAdUnit;
+  final _controller = NativeAdmobController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 250,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.0),
+      ),
+      margin: EdgeInsets.all(16.0),
+      child: NativeAdmob(
+        adUnitID: kTestAdUnit,
+        // TODO: use below in production
+//                                    adUnitID:
+//                                        isIos ? _iOSAdUnitID : _androidAdUnitId,
+        controller: _controller,
       ),
     );
   }

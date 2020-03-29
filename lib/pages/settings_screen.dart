@@ -236,6 +236,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           Divider(
                             color: Colors.blueGrey,
                           ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                FlatButton(
+                                  child: Text(
+                                    'Reset Home Screen Weather Data',
+                                    style: TextStyle(
+                                      color: Color(
+                                        0XFF69A4FF,
+                                      ),
+                                      fontSize: 18.0,
+                                      fontWeight: FontWeight.w200,
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    SettingModel settingModal = SettingModel();
+                                    settingModal
+                                        .clearPlacesWeatherDataInSetting();
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                          Divider(
+                            color: Colors.blueGrey,
+                          ),
                           FlatButton(
                             color: Color(
                               0XFF69A4FF,

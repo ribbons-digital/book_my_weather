@@ -32,7 +32,7 @@ class _WrapperState extends State<Wrapper> {
   int _selectedIndex = 0;
 //  Future<String> deviceId;
   String filterString;
-  bool isPast = false;
+//  bool isPast = false;
 
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.w100);
@@ -67,16 +67,15 @@ class _WrapperState extends State<Wrapper> {
     });
   }
 
-  void setIsPast(bool value) {
-    setState(() {
-      isPast = value;
-    });
-  }
+//  void setIsPast(bool value) {
+//    setState(() {
+//      isPast = value;
+//    });
+//  }
 
   @override
   Widget build(BuildContext context) {
     final db = DatabaseService();
-
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<PlaceData>(
@@ -89,12 +88,11 @@ class _WrapperState extends State<Wrapper> {
           create: (_) => NetworkingState(),
         ),
         StreamProvider<List<Trip>>.value(
-          value: db.streamTrips(
+          value: db.streamUpcomingTrips(
             uid: Provider.of<User>(context) != null
                 ? Provider.of<User>(context).uid
                 : '',
             filterString: filterString,
-            isPast: isPast,
           ),
         ),
       ],
@@ -143,7 +141,7 @@ class _WrapperState extends State<Wrapper> {
                       WeatherListingScreen(),
                       TripsScreen(
                         setFilterString: setFilterStringForTrips,
-                        setIsPast: setIsPast,
+                        filterString: filterString,
                       ),
                       NewsScreen(
                         selectHomeIndex: _onItemTapped,

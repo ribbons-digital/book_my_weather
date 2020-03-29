@@ -57,7 +57,31 @@ class _NewsScreenState extends State<NewsScreen> with WidgetsBindingObserver {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Latest News'),
+          actions: <Widget>[
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.only(
+                      left: 16.0,
+                    ),
+                    child: Text(
+                      'News',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 40.0,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 10.0,
+                  ),
+                ],
+              ),
+            )
+          ],
         ),
         body: NewsList(
           newsTags: tagsString,

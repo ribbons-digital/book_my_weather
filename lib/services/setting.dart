@@ -68,4 +68,17 @@ class SettingModel {
 
     settingsBox.putAt(0, setting);
   }
+
+  void clearPlacesWeatherDataInSetting() {
+    final settingsBox = Hive.box('settings');
+    Setting setting = settingsBox.getAt(0) as Setting;
+
+    setting = Setting(
+      useCelsius: setting.useCelsius,
+      places: [setting.places[0]],
+      baseSymbol: setting.baseSymbol,
+    );
+
+    settingsBox.putAt(0, setting);
+  }
 }

@@ -88,6 +88,11 @@ class _TripTodosScreenState extends State<TripTodosScreen> {
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(20.0),
+                      ),
+                    ),
                     title: Text('Edit ToDo'),
                     content: TextField(
                       autofocus: true,
@@ -196,6 +201,11 @@ class _TripTodosScreenState extends State<TripTodosScreen> {
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(20.0),
+                            ),
+                          ),
                           title: Text('Add a ToDo'),
                           content: TextField(
                             autocorrect: true,
@@ -268,66 +278,88 @@ class _TripTodosScreenState extends State<TripTodosScreen> {
                       itemCount: tripToDos.length,
                       itemBuilder: (BuildContext context, int index) {
                         return Container(
-                          margin: EdgeInsets.all(
-                            8.0,
+                          decoration: BoxDecoration(
+                            color: Colors.black26,
+                            border: Border(
+                              bottom: BorderSide(
+                                color: Color(0X42FFFFFF),
+                              ),
+                            ),
                           ),
-                          color: Colors.white,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              if (!isTripEnded)
-                                IconButton(
-                                  icon: Icon(tripToDos[index].isFinished
-                                      ? Icons.check_box
-                                      : Icons.check_box_outline_blank),
-                                  onPressed: () async {
-                                    await _db.toggleTripTodoStatus(
+                          child: Padding(
+                            padding: const EdgeInsets.all(
+                              8.0,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                if (!isTripEnded)
+                                  IconButton(
+                                    icon: Icon(
+                                      tripToDos[index].isFinished
+                                          ? Icons.check_box
+                                          : Icons.check_box_outline_blank,
+                                      color: Colors.white70,
+                                    ),
+                                    onPressed: () async {
+                                      await _db.toggleTripTodoStatus(
                                         trips[tripIndex].id,
                                         tripToDos[index].id,
-                                        tripToDos[index].isFinished);
-                                  },
-                                ),
-                              Container(
-                                width: MediaQuery.of(context).size.width / 1.65,
-                                margin: EdgeInsets.all(
-                                  5.0,
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 8.0,
+                                        tripToDos[index].isFinished,
+                                      );
+                                      if (!isTripEnded) {
+                                        await _db.deleteTripTodo(
+                                            trips[tripIndex].id,
+                                            tripToDos[index].id);
+                                      }
+                                    },
                                   ),
-                                  child: Text(
-                                    tripToDos[index].content,
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 18.0,
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width / 1.65,
+                                  margin: EdgeInsets.all(
+                                    5.0,
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 8.0,
+                                    ),
+                                    child: Text(
+                                      tripToDos[index].content,
+                                      style: TextStyle(
+                                        color: Colors.white70,
+                                        fontSize: 18.0,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              if (!isTripEnded)
-                                IconButton(
-                                  icon: Icon(Icons.more_vert),
-                                  onPressed: () {
-                                    showModalBottomSheet(
-                                        context: context,
-                                        builder: (context) {
-                                          return Container(
-                                            height: 150,
-                                            child: _buildBottomSheetMenu(
-                                                context,
-                                                tripToDos[index],
-                                                trips[tripIndex]),
-                                            decoration: BoxDecoration(
-                                              color:
-                                                  Theme.of(context).canvasColor,
-                                            ),
-                                          );
-                                        });
-                                  },
-                                ),
-                            ],
+                                if (!isTripEnded)
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.more_vert,
+                                      color: Colors.white70,
+                                    ),
+                                    onPressed: () {
+                                      showModalBottomSheet(
+                                          context: context,
+                                          builder: (context) {
+                                            return Container(
+                                              height: 150,
+                                              child: _buildBottomSheetMenu(
+                                                  context,
+                                                  tripToDos[index],
+                                                  trips[tripIndex]),
+                                              decoration: BoxDecoration(
+                                                color: Theme.of(context)
+                                                    .canvasColor,
+                                              ),
+                                            );
+                                          });
+                                    },
+                                  ),
+                              ],
+                            ),
                           ),
                         );
                       },
