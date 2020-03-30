@@ -95,6 +95,7 @@ class _TripsScreenState extends State<TripsScreen>
                     icon: Icon(
                       Icons.add,
                       color: Colors.white,
+                      size: 40.0,
                     ),
                     onPressed: () {
                       if (user != null) {
@@ -121,13 +122,13 @@ class _TripsScreenState extends State<TripsScreen>
                 });
               },
               labelColor: Colors.white,
-              unselectedLabelColor: Colors.blueGrey,
-              indicatorSize: TabBarIndicatorSize.label,
-              indicatorWeight: 10.0,
+              unselectedLabelColor: Colors.white30,
+//              indicatorSize: TabBarIndicatorSize.label,
+//              indicatorWeight: 10.0,
               indicatorPadding: EdgeInsets.symmetric(horizontal: 8.0),
               labelStyle: TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 18.0,
+                fontSize: 20.0,
               ),
               controller: _tabController,
               tabs: <Widget>[
