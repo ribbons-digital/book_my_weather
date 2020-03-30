@@ -6,10 +6,8 @@ import 'package:book_my_weather/models/trip_state.dart';
 import 'package:book_my_weather/models/trip_visiting.dart';
 import 'package:book_my_weather/pages/image_full_screen.dart';
 import 'package:book_my_weather/pages/trip_visiting_screen.dart';
-import 'package:book_my_weather/secure/keys.dart';
 import 'package:book_my_weather/services/db.dart';
 import 'package:book_my_weather/services/google_places.dart';
-import 'package:book_my_weather/services/networking.dart';
 import 'package:book_my_weather/utilities/index.dart';
 import 'package:book_my_weather/widgets/place_detail_widget.dart';
 import 'package:book_my_weather/widgets/place_weather_widget.dart';
@@ -19,7 +17,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:share/share.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -210,23 +207,23 @@ class _PlaceDetailState extends State<PlaceDetail>
                         leading: IconButton(
                           icon: Icon(
                             Icons.chevron_left,
-                            size: 35.0,
+                            size: 40.0,
                           ),
                           color: Colors.white,
                           onPressed: () {
                             Navigator.pop(context);
                           },
                         ),
-                        actions: <Widget>[
-                          IconButton(
-                            icon: Icon(
-                              Icons.more_vert,
-                              size: 35.0,
-                            ),
-                            color: Colors.white,
-                            onPressed: () {},
-                          ),
-                        ],
+//                        actions: <Widget>[
+//                          IconButton(
+//                            icon: Icon(
+//                              Icons.more_vert,
+//                              size: 35.0,
+//                            ),
+//                            color: Colors.white,
+//                            onPressed: () {},
+//                          ),
+//                        ],
                         flexibleSpace: FlexibleSpaceBar(
                           background: PageView(
                             scrollDirection: Axis.horizontal,
@@ -391,18 +388,40 @@ class _PlaceDetailState extends State<PlaceDetail>
                                       ),
                                     ),
                                     onPressed: () async {
-                                      final url =
-                                          'https://maps.googleapis.com/maps/api/place/details/json?key=$kGooglePlacesAPIKey&fields=url&place_id=${widget.placeId}';
-                                      NetworkHelper networkHelper =
-                                          NetworkHelper(url);
-
-                                      try {
-                                        Map<String, dynamic> result =
-                                            await networkHelper.getData();
-                                        Share.share(result['result']['url']);
-                                      } catch (e) {
-                                        print(e.toString());
-                                      }
+                                      sharePlace(context, widget.placeId);
+                                    },
+                                  ),
+                                  SizedBox(
+                                    width: 20.0,
+                                  ),
+                                  FlatButton(
+                                    child: Row(
+                                      children: <Widget>[
+                                        Icon(
+                                          Icons.map,
+                                          color: Color(0XFF69A4FF),
+                                        ),
+                                        SizedBox(
+                                          width: 5.0,
+                                        ),
+                                        Text(
+                                          'Direction',
+                                          style: TextStyle(
+                                            color: Color(0XFF69A4FF),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          new BorderRadius.circular(18.0),
+                                      side: BorderSide(
+                                        color: Color(0XFF69A4FF),
+                                      ),
+                                    ),
+                                    onPressed: () async {
+                                      getPlaceDirection(
+                                          context, widget.placeId);
                                     },
                                   ),
                                   SizedBox(

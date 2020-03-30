@@ -7,6 +7,7 @@ import 'package:book_my_weather/pages/place_detail_screen.dart';
 import 'package:book_my_weather/secure/keys.dart';
 import 'package:book_my_weather/services/google_places.dart';
 import 'package:book_my_weather/utilities/index.dart';
+import 'package:book_my_weather/widgets/enter_exit_route.dart';
 import 'package:book_my_weather/widgets/place_card_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_admob/flutter_native_admob.dart';
@@ -267,23 +268,21 @@ class _PlacesScreenState extends State<PlacesScreen>
                               return GestureDetector(
                                 onTap: () {
                                   Navigator.push(
-                                    context,
-                                    PageRouteBuilder(
-                                      transitionDuration:
-                                          const Duration(milliseconds: 550),
-                                      pageBuilder: (context, _, __) =>
-                                          PlaceDetail(
-                                        placeId: place.placeId,
-                                        placeName: place.name,
-                                        placeRating: place.rating,
-                                        placeRatingTotals: place.ratingTotals,
-                                        placeOpenNow: place.openNow,
-                                        placeType:
-                                            place.types[0].split('_').join(' '),
-                                        placeAddress: place.address,
-                                      ),
-                                    ),
-                                  );
+                                      context,
+                                      EnterExitRoute(
+                                        exitPage: this.widget,
+                                        enterPage: PlaceDetail(
+                                          placeId: place.placeId,
+                                          placeName: place.name,
+                                          placeRating: place.rating,
+                                          placeRatingTotals: place.ratingTotals,
+                                          placeOpenNow: place.openNow,
+                                          placeType: place.types[0]
+                                              .split('_')
+                                              .join(' '),
+                                          placeAddress: place.address,
+                                        ),
+                                      ));
                                 },
                                 child: place.openNow != null
                                     ? PlaceCard(

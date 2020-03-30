@@ -367,7 +367,7 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w100,
-                                fontSize: 30,
+                                fontSize: 20,
                               ),
                             ),
                           if (height > 600)
@@ -385,7 +385,7 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
                                     style: TextStyle(
                                       color: getAqiColor(),
                                       fontWeight: FontWeight.w300,
-                                      fontSize: 45,
+                                      fontSize: 35,
                                     ),
                                   ),
                                   Text(
@@ -412,7 +412,7 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w100,
-                                    fontSize: 30,
+                                    fontSize: 25,
                                   ),
                                 ),
                                 Column(
@@ -427,7 +427,7 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
                                       style: TextStyle(
                                         color: getAqiColor(),
                                         fontWeight: FontWeight.w300,
-                                        fontSize: 25,
+                                        fontSize: 20,
                                       ),
                                     ),
                                     Text(

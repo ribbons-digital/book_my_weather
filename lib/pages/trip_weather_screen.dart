@@ -168,7 +168,8 @@ class _TripWeatherScreenState extends State<TripWeatherScreen>
                                       isScrollControlled: true,
                                       builder: (context) {
                                         return FractionallySizedBox(
-                                          heightFactor: 0.6,
+                                          heightFactor:
+                                              screenHeight < 600 ? 0.65 : 0.55,
                                           child: WeatherDetail(
                                             rowIndex: index,
                                             hourlyWeather:
@@ -202,7 +203,8 @@ class _TripWeatherScreenState extends State<TripWeatherScreen>
                                       isScrollControlled: true,
                                       builder: (context) {
                                         return FractionallySizedBox(
-                                          heightFactor: 0.6,
+                                          heightFactor:
+                                              screenHeight < 600 ? 0.65 : 0.55,
                                           child: WeatherDetail(
                                             rowIndex: index,
                                             dailyWeather:

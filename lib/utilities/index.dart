@@ -4,12 +4,15 @@ import 'package:book_my_weather/models/place.dart';
 import 'package:book_my_weather/models/setting.dart';
 import 'package:book_my_weather/models/trip.dart';
 import 'package:book_my_weather/secure/keys.dart';
+import 'package:book_my_weather/services/networking.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:maps_launcher/maps_launcher.dart';
+import 'package:share/share.dart';
 
 import '../constants.dart';
 
@@ -309,4 +312,35 @@ String getCurrencySymbol(BuildContext context) {
 
 String getCurrencyRateAPIURL(String base, String symbol) {
   return 'https://api.ratesapi.io/api/latest?base=$base&symbols=$symbol';
+}
+
+void getPlaceDirection(BuildContext context, String placeId) async {
+  final url =
+      'https://maps.googleapis.com/maps/api/place/details/json?key=$kGooglePlacesAPIKey&fields=formatted_address&place_id=$placeId';
+  NetworkHelper networkHelper = NetworkHelper(url);
+
+  try {
+    Map<String, dynamic> result = await networkHelper.getData();
+    final address = result['result']['formatted_address'];
+    MapsLauncher.launchQuery(address);
+    Navigator.pop(context);
+  } catch (e) {
+    Navigator.pop(context);
+    displayErrorSnackbar(context, 'Something wrong, please try again later.');
+  }
+}
+
+void sharePlace(BuildContext context, String placeId) async {
+  final url =
+      'https://maps.googleapis.com/maps/api/place/details/json?key=$kGooglePlacesAPIKey&fields=url&place_id=$placeId';
+  NetworkHelper networkHelper = NetworkHelper(url);
+
+  try {
+    Map<String, dynamic> result = await networkHelper.getData();
+    Share.share(result['result']['url']);
+    Navigator.pop(context);
+  } catch (e) {
+    Navigator.pop(context);
+    displayErrorSnackbar(context, 'Something wrong, please try again later.');
+  }
 }

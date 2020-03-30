@@ -81,52 +81,59 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: SafeArea(
         child: Container(
           child: !isLoggedIn
-              ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+              ? ListView(
+//                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     SizedBox(
                       height: 15.0,
                     ),
-                    FlatButton(
-                      color: Color(
-                        0XFF69A4FF,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 80.0,
                       ),
-                      child: Text(
-                        'Sign in',
-                        style: textStyle,
+                      child: FlatButton(
+                        color: Color(
+                          0XFF69A4FF,
+                        ),
+                        child: Text(
+                          'Sign in',
+                          style: textStyle,
+                        ),
+                        onPressed: () {
+                          Navigator.pushNamed(context, SignInRegisterScreen.id);
+                        },
                       ),
-                      onPressed: () {
-                        Navigator.pushNamed(context, SignInRegisterScreen.id);
-                      },
                     ),
                     Divider(
                       color: Colors.blueGrey,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: RichText(
-                        text: TextSpan(
-                          text: 'Weather service ',
-                          style: TextStyle(
-                            color: Colors.white,
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: RichText(
+                          text: TextSpan(
+                            text: 'Weather service ',
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
+                            children: <TextSpan>[
+                              TextSpan(
+                                  text: 'Powered by Dark Sky',
+                                  style: TextStyle(
+                                    color: Colors.blue,
+                                  ),
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () async {
+                                      final url =
+                                          'https://darksky.net/poweredby/';
+                                      if (await canLaunch(url)) {
+                                        await launch(url);
+                                      } else {
+                                        throw 'Something is wrong';
+                                      }
+                                    })
+                            ],
                           ),
-                          children: <TextSpan>[
-                            TextSpan(
-                                text: 'Powered by Dark Sky',
-                                style: TextStyle(
-                                  color: Colors.blue,
-                                ),
-                                recognizer: TapGestureRecognizer()
-                                  ..onTap = () async {
-                                    final url =
-                                        'https://darksky.net/poweredby/';
-                                    if (await canLaunch(url)) {
-                                      await launch(url);
-                                    } else {
-                                      throw 'Something is wrong';
-                                    }
-                                  })
-                          ],
                         ),
                       ),
                     )
@@ -146,14 +153,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     if ((snapshot.connectionState == ConnectionState.done ||
                             snapshot.connectionState == ConnectionState.none) &&
                         snapshot.hasData) {
-                      return Column(
+                      return ListView(
                         children: <Widget>[
                           SizedBox(
                             height: 15.0,
                           ),
-                          Text(
-                            'Logged in as ${user.email}',
-                            style: textStyle,
+                          Center(
+                            child: Text(
+                              'Logged in as ${user.email}',
+                              style: textStyle,
+                            ),
                           ),
                           Divider(
                             color: Colors.blueGrey,
@@ -291,44 +300,51 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           Divider(
                             color: Colors.blueGrey,
                           ),
-                          FlatButton(
-                            color: Color(
-                              0XFF69A4FF,
-                            ),
-                            child: Text(
-                              'Sign Out',
-                              style: textStyle,
-                            ),
-                            onPressed: () {
-                              final _auth = AuthService();
-                              _auth.signOut();
-                            },
-                          ),
                           Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: RichText(
-                              text: TextSpan(
-                                text: 'Weather service ',
-                                style: TextStyle(
-                                  color: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 80.0,
+                            ),
+                            child: FlatButton(
+                              color: Color(
+                                0XFF69A4FF,
+                              ),
+                              child: Text(
+                                'Sign Out',
+                                style: textStyle,
+                              ),
+                              onPressed: () {
+                                final _auth = AuthService();
+                                _auth.signOut();
+                              },
+                            ),
+                          ),
+                          Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: RichText(
+                                text: TextSpan(
+                                  text: 'Weather service ',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                  children: <TextSpan>[
+                                    TextSpan(
+                                        text: 'Powered by Dark Sky',
+                                        style: TextStyle(
+                                          color: Colors.blue,
+                                        ),
+                                        recognizer: TapGestureRecognizer()
+                                          ..onTap = () async {
+                                            final url =
+                                                'https://darksky.net/poweredby/';
+                                            if (await canLaunch(url)) {
+                                              await launch(url);
+                                            } else {
+                                              throw 'Something is wrong';
+                                            }
+                                          })
+                                  ],
                                 ),
-                                children: <TextSpan>[
-                                  TextSpan(
-                                      text: 'Powered by Dark Sky',
-                                      style: TextStyle(
-                                        color: Colors.blue,
-                                      ),
-                                      recognizer: TapGestureRecognizer()
-                                        ..onTap = () async {
-                                          final url =
-                                              'https://darksky.net/poweredby/';
-                                          if (await canLaunch(url)) {
-                                            await launch(url);
-                                          } else {
-                                            throw 'Something is wrong';
-                                          }
-                                        })
-                                ],
                               ),
                             ),
                           )

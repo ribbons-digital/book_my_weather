@@ -105,7 +105,7 @@ class _PlaceOverviewState extends State<PlaceOverview> {
       child: ConstrainedBox(
         constraints: BoxConstraints(
           minHeight: 500,
-          maxHeight: 1000,
+          maxHeight: 1005,
         ),
         child: DecoratedBox(
           decoration: BoxDecoration(color: Colors.white),
