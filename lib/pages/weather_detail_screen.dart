@@ -144,6 +144,7 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen>
                                         screenHeight < 600 ? 0.65 : 0.55,
                                     child: WeatherDetail(
                                       rowIndex: index,
+                                      hourlyWeather: hourlyWeatherList[index],
                                     ),
                                   );
                                 },
@@ -176,7 +177,7 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen>
                                         screenHeight < 600 ? 0.65 : 0.55,
                                     child: WeatherDetail(
                                       rowIndex: index,
-                                      isHourly: false,
+                                      dailyWeather: dailyWeatherList[index],
                                     ),
                                   );
                                 },

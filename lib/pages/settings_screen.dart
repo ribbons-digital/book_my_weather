@@ -50,9 +50,36 @@ class _SettingsScreenState extends State<SettingsScreen> {
       fontWeight: FontWeight.w200,
     );
 
-    return SafeArea(
-      child: Scaffold(
-        body: Container(
+    return Scaffold(
+      appBar: AppBar(
+        actions: <Widget>[
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.only(
+                    left: 16.0,
+                  ),
+                  child: Text(
+                    'Settings',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 40.0,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: 10.0,
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
+      body: SafeArea(
+        child: Container(
           child: !isLoggedIn
               ? Column(
                   crossAxisAlignment: CrossAxisAlignment.center,

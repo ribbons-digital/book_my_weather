@@ -171,6 +171,8 @@ class _TripWeatherScreenState extends State<TripWeatherScreen>
                                           heightFactor: 0.6,
                                           child: WeatherDetail(
                                             rowIndex: index,
+                                            hourlyWeather:
+                                                hourlyWeatherList[index],
                                           ),
                                         );
                                       },
@@ -203,7 +205,8 @@ class _TripWeatherScreenState extends State<TripWeatherScreen>
                                           heightFactor: 0.6,
                                           child: WeatherDetail(
                                             rowIndex: index,
-                                            isHourly: false,
+                                            dailyWeather:
+                                                dailyWeatherList[index],
                                           ),
                                         );
                                       },
