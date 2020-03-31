@@ -345,7 +345,7 @@ class _TripsScreenState extends State<TripsScreen>
                     ),
                 ],
               ),
-              if (_tabController.index == 1)
+              if (_tabController.index == 1 && user != null)
                 StreamBuilder(
                   stream: db.streamPastTrips(user.uid),
                   builder: (BuildContext context,
@@ -366,7 +366,9 @@ class _TripsScreenState extends State<TripsScreen>
                       );
                     }
 
-                    if (snapshot.hasData && snapshot.data.length > 0) {
+                    if (snapshot.hasData &&
+                        snapshot.data.length > 0 &&
+                        user != null) {
                       final pastTrips = snapshot.data;
                       return ListView.builder(
                           itemCount: pastTrips.length,
@@ -471,7 +473,8 @@ class _TripsScreenState extends State<TripsScreen>
 
                     return Container();
                   },
-                )
+                ),
+              if (user == null) Container(),
             ][_tabController.index],
           )
         ],

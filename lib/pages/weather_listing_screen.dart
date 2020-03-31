@@ -188,28 +188,6 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
-    final ParentStyle parentStyle = ParentStyle()
-      ..padding(
-        left: 20.0,
-        top: 8.0,
-        right: 20.0,
-      );
-    final TxtStyle screenTextStyle = TxtStyle()
-      ..textColor(
-        Colors.white,
-      )
-      ..fontSize(
-        50.0,
-      )
-      ..fontWeight(
-        FontWeight.w100,
-      );
-    final TxtStyle aqiTextStyle = screenTextStyle.clone()
-      ..textColor(getAqiColor())
-      ..fontWeight(FontWeight.w300)
-      ..fontSize(
-        35.0,
-      );
 
     return Scaffold(
       appBar: AppBar(
@@ -264,6 +242,30 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
                         snapshot.data.daily.data[0].time * 1000))
                     .toString();
                 final places = (settingsBox.get(0) as Setting).places;
+
+                final ParentStyle parentStyle = ParentStyle()
+                  ..padding(
+                    left: 20.0,
+                    top: 8.0,
+                    right: 20.0,
+                  );
+                final TxtStyle screenTextStyle = TxtStyle()
+                  ..textColor(
+                    Colors.white,
+                  )
+                  ..fontSize(
+                    50.0,
+                  )
+                  ..fontWeight(
+                    FontWeight.w100,
+                  );
+                final TxtStyle aqiTextStyle = screenTextStyle.clone()
+                  ..textColor(getAqiColor())
+                  ..fontWeight(FontWeight.w300)
+                  ..fontSize(
+                    35.0,
+                  );
+
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[

@@ -101,6 +101,7 @@ class _WrapperState extends State<Wrapper> {
           title: 'Book My Weather',
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
+            fontFamily: 'Raleway',
             primarySwatch: Colors.blue,
             primaryColor: Colors.white,
             canvasColor: Colors.black,
@@ -125,15 +126,15 @@ class _WrapperState extends State<Wrapper> {
           home: FutureBuilder(
             future: Hive.openBox('settings'),
             builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) if (snapshot
-                  .hasError)
+              if (snapshot.hasError)
                 return Text(
                   snapshot.error.toString(),
                   style: TextStyle(
                     color: Colors.white,
                   ),
                 );
-              else
+              else if (snapshot.connectionState == ConnectionState.done &&
+                  snapshot.hasData)
                 return Scaffold(
                   body: IndexedStack(
                     index: _selectedIndex,
