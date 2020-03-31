@@ -214,16 +214,6 @@ class _PlaceDetailState extends State<PlaceDetail>
                             Navigator.pop(context);
                           },
                         ),
-//                        actions: <Widget>[
-//                          IconButton(
-//                            icon: Icon(
-//                              Icons.more_vert,
-//                              size: 35.0,
-//                            ),
-//                            color: Colors.white,
-//                            onPressed: () {},
-//                          ),
-//                        ],
                         flexibleSpace: FlexibleSpaceBar(
                           background: PageView(
                             scrollDirection: Axis.horizontal,

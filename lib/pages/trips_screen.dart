@@ -11,6 +11,7 @@ import 'package:book_my_weather/services/db.dart';
 import 'package:book_my_weather/services/setting.dart';
 import 'package:book_my_weather/services/weather.dart';
 import 'package:book_my_weather/widgets/trip_widget.dart';
+import 'package:division/division.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -68,6 +69,11 @@ class _TripsScreenState extends State<TripsScreen>
     final User user = Provider.of<User>(context);
     final trips = Provider.of<List<Trip>>(context);
     final db = DatabaseService();
+    final TxtStyle screenTitleTextStyle = TxtStyle()
+      ..textColor(Colors.white)
+      ..fontSize(40.0)
+      ..fontWeight(FontWeight.w500);
+
     return Scaffold(
       appBar: AppBar(
         //leading: Icon(Icons.arrow_back_ios),
@@ -80,13 +86,9 @@ class _TripsScreenState extends State<TripsScreen>
                   padding: EdgeInsets.only(
                     left: 16.0,
                   ),
-                  child: Text(
+                  child: Txt(
                     'Trips',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 40.0,
-                      fontWeight: FontWeight.w500,
-                    ),
+                    style: screenTitleTextStyle,
                   ),
                 ),
                 Padding(
@@ -123,8 +125,6 @@ class _TripsScreenState extends State<TripsScreen>
               },
               labelColor: Colors.white,
               unselectedLabelColor: Colors.white30,
-//              indicatorSize: TabBarIndicatorSize.label,
-//              indicatorWeight: 10.0,
               indicatorPadding: EdgeInsets.symmetric(horizontal: 8.0),
               labelStyle: TextStyle(
                 fontWeight: FontWeight.bold,

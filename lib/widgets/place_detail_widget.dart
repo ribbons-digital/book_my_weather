@@ -53,6 +53,7 @@ class _PlaceOverviewState extends State<PlaceOverview> {
     final currentSetting = settingModel.getCurrentSetting();
 
     await location.getPlaceMarkFromAddress(address: widget.address);
+
     return await weatherModel.getLocationWeather(
       type: RequestedWeatherType.Daily,
       useCelsius: currentSetting.useCelsius,

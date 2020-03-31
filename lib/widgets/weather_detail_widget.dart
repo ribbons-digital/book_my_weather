@@ -2,6 +2,7 @@ import 'package:book_my_weather/models/dailyWeatherData.dart';
 import 'package:book_my_weather/models/hourlyWeatherData.dart';
 import 'package:book_my_weather/services/weather.dart';
 import 'package:book_my_weather/widgets/weather_condition_widget.dart';
+import 'package:division/division.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -29,6 +30,10 @@ class WeatherDetail extends StatelessWidget {
             .toString()
         : null;
 
+    final TxtStyle widgetTextStyle = TxtStyle()
+      ..fontSize(28.0)
+      ..fontWeight(FontWeight.w100);
+
     return Column(
       children: <Widget>[
         Padding(
@@ -36,10 +41,6 @@ class WeatherDetail extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
-              // Icon(
-              //   Icons.chevron_left,
-              //   size: 50,
-              // ),
               Row(
                 children: <Widget>[
                   if (isHourly)
@@ -61,23 +62,17 @@ class WeatherDetail extends StatelessWidget {
                   ),
                   Column(
                     children: <Widget>[
-                      Text(
+                      Txt(
                         isHourly
                             ? '${hourlyWeather.temperature.toStringAsFixed(0)} º'
                             : '${dailyWeather.temperatureHigh.toStringAsFixed(0)}º / ${dailyWeather.temperatureLow.toStringAsFixed(0)}º',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w100,
-                          fontSize: 28,
-                        ),
+                        style: widgetTextStyle,
                       ),
-                      Text(
+                      Txt(
                         isHourly
                             ? '${DateFormat('ha').format(DateTime.fromMillisecondsSinceEpoch(hourlyWeather.time * 1000)).toString()}'
                             : date,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w100,
-                          fontSize: 22,
-                        ),
+                        style: widgetTextStyle,
                       )
                     ],
                   ),
@@ -92,12 +87,11 @@ class WeatherDetail extends StatelessWidget {
         ),
         Padding(
           padding: const EdgeInsets.only(bottom: 16.0),
-          child: Text(
+          child: Txt(
             isHourly ? '${hourlyWeather.summary}' : '${dailyWeather.summary}',
-            style: TextStyle(
-              fontSize: 16.0,
-            ),
-            textAlign: TextAlign.center,
+            style: TxtStyle()
+              ..alignment.center()
+              ..fontSize(16.0),
           ),
         ),
         Expanded(
