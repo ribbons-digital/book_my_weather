@@ -310,7 +310,10 @@ class _PlaceDetailState extends State<PlaceDetail>
                             Container(
                               width: double.infinity,
                               height: 40.0,
-                              padding: EdgeInsets.only(left: 15.0),
+                              padding: EdgeInsets.only(
+                                left: 15.0,
+                                right: 15.0,
+                              ),
                               child: ListView(
                                 scrollDirection: Axis.horizontal,
                                 children: <Widget>[

@@ -216,8 +216,6 @@ class _PlacesScreenState extends State<PlacesScreen>
 
   @override
   Widget build(BuildContext context) {
-    final isIos = Theme.of(context).platform == TargetPlatform.iOS;
-
     return Scaffold(
       appBar: AppBar(
         title: widget.placeType == PlaceType.General
@@ -376,8 +374,6 @@ class _PlacesAdWidget extends StatefulWidget {
 }
 
 class __PlacesAdWidgetState extends State<_PlacesAdWidget> {
-  static const _iOSAdUnitID = kAdMobIosAdUnit;
-  static const _androidAdUnitId = kAdMobAndroidAdUnit;
   final _controller = NativeAdmobController();
 
   @override
@@ -388,6 +384,8 @@ class __PlacesAdWidgetState extends State<_PlacesAdWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final isIos = Theme.of(context).platform == TargetPlatform.iOS;
+
     return Container(
       height: 250,
       decoration: BoxDecoration(
@@ -396,11 +394,12 @@ class __PlacesAdWidgetState extends State<_PlacesAdWidget> {
       ),
       margin: EdgeInsets.all(16.0),
       child: NativeAdmob(
-        adUnitID: kTestAdUnit,
-        // TODO: use below in production
-//                                    adUnitID:
-//                                        isIos ? _iOSAdUnitID : _androidAdUnitId,
+        // dev
+//        adUnitID: kTestAdUnit,
+        // production
+        adUnitID: isIos ? kAdMobIosAdUnit : kAdMobAndroidAdUnit,
         controller: _controller,
+        type: NativeAdmobType.full,
       ),
     );
   }

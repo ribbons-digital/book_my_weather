@@ -1,4 +1,5 @@
 import 'package:book_my_weather/secure/keys.dart';
+import 'package:division/division.dart';
 import 'package:flutter/material.dart';
 
 const kTextFieldStyle = TextStyle(
@@ -30,6 +31,11 @@ const kSnackbarSuccessTextStyle = TextStyle(
   fontSize: 18.0,
   fontWeight: FontWeight.w300,
 );
+
+final TxtStyle kScreenTitleTextStyle = TxtStyle()
+  ..textColor(Colors.white)
+  ..fontSize(40.0)
+  ..fontWeight(FontWeight.w500);
 
 const kGPlaceAutoCompleteURL =
     'https://maps.googleapis.com/maps/api/place/autocomplete/json';

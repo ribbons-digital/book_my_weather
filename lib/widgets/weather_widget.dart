@@ -7,18 +7,43 @@ import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
+import 'package:page_view_indicators/circle_page_indicator.dart';
 
 import '../styleguide.dart';
 
 class WeatherWidget extends StatelessWidget {
-  final placeIndex;
+  final int placeIndex;
+  final ValueNotifier<int> notifier;
 
-  WeatherWidget({@required this.placeIndex});
+  WeatherWidget({@required this.placeIndex, @required this.notifier});
+  final settingsBox = Hive.box('settings');
+
+  Widget _buildCircleIndicator() {
+    if (settingsBox != null && settingsBox.length > 0) {
+      final places = (settingsBox.get(0) as Setting).places;
+      if (places.length > 1) {
+        return Positioned(
+          left: 0.0,
+          right: 0.0,
+          bottom: 0.0,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: CirclePageIndicator(
+              itemCount: places.length,
+              currentPageNotifier: notifier,
+            ),
+          ),
+        );
+      } else {
+        return Container();
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
-    final settingsBox = Hive.box('settings');
 
     final places = (settingsBox.get(0) as Setting).places;
     WeatherModel weatherModel = WeatherModel();
@@ -59,8 +84,7 @@ class WeatherWidget extends StatelessWidget {
             ),
           ),
           Align(
-            alignment: Alignment(
-                0, screenHeight / 10000 + screenHeight > 600 ? 0.3 : 0),
+            alignment: Alignment(0, -0.05),
             child: Container(
               height: screenHeight / 2,
               child: Column(
@@ -74,10 +98,11 @@ class WeatherWidget extends StatelessWidget {
                       height: screenHeight < 600 ? 75.0 : 100.0,
                     ),
                   ),
-                  Text(
-                    '${currentHourlyWeather.temperature.toStringAsFixed(0)}º',
-                    style: AppTheme.display1,
-                  ),
+                  if (screenHeight > 600)
+                    Text(
+                      '${currentHourlyWeather.temperature.toStringAsFixed(0)}º',
+                      style: AppTheme.display1,
+                    ),
                   Text(
                     '${currentDailyWeather.temperatureHigh.toStringAsFixed(0)}º / ${places[placeIndex].weather.daily.data[0].temperatureLow.toStringAsFixed(0)}º',
                     style: TextStyle(
@@ -161,6 +186,7 @@ class WeatherWidget extends StatelessWidget {
               ),
             ),
           ),
+          _buildCircleIndicator(),
         ],
       ),
     );

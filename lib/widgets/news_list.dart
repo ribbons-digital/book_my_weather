@@ -155,6 +155,7 @@ class __NewsAdWidgetState extends State<_NewsAdWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final isIos = Theme.of(context).platform == TargetPlatform.iOS;
     return Container(
       height: 300.0,
       margin: EdgeInsets.symmetric(
@@ -170,10 +171,10 @@ class __NewsAdWidgetState extends State<_NewsAdWidget> {
       ),
       padding: EdgeInsets.all(8.0),
       child: NativeAdmob(
-        adUnitID: kTestAdUnit,
-        // TODO: use below in production
-//                                    adUnitID:
-//                                        isIos ? _iOSAdUnitID : _androidAdUnitId,
+        // dev
+//        adUnitID: kTestAdUnit,
+        // production
+        adUnitID: isIos ? _iOSAdUnitID : _androidAdUnitId,
         controller: _controller,
       ),
     );

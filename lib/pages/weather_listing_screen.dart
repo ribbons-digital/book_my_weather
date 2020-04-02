@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:book_my_weather/constants.dart';
 import 'package:book_my_weather/models/place.dart';
 import 'package:book_my_weather/models/setting.dart';
 import 'package:book_my_weather/models/weather.dart';
@@ -10,12 +11,12 @@ import 'package:book_my_weather/services/weather.dart';
 import 'package:book_my_weather/utilities/index.dart';
 import 'package:book_my_weather/widgets/message_handler.dart';
 import 'package:book_my_weather/widgets/weather_widget.dart';
-import 'package:cloud_functions/cloud_functions.dart';
 import 'package:division/division.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class WeatherListingScreen extends StatefulWidget {
   static const String id = 'home';
@@ -27,14 +28,12 @@ class WeatherListingScreen extends StatefulWidget {
 class _WeatherListingScreenState extends State<WeatherListingScreen>
     with WidgetsBindingObserver {
   PageController _pageController;
-
   int currentPage = 0;
   String placeName = '';
-
   Timer _throttle;
-
   Future<Weather> hourlyWeather;
   final settingsBox = Hive.box('settings');
+  final _currentPageNotifier = ValueNotifier<int>(0);
 
   @override
   void initState() {
@@ -185,6 +184,79 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
     return '🤪';
   }
 
+  void displayAqiGuide(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(20.0),
+              ),
+            ),
+            title: Text('Air Quality Guide'),
+            content: Container(
+              width: MediaQuery.of(context).size.width * 0.9,
+              child: ListView(
+                shrinkWrap: true,
+                children: <Widget>[
+                  ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: Colors.green,
+                    ),
+                    title: Text('0 ~ 50'),
+                    subtitle: Text('Good'),
+                  ),
+                  ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: Colors.yellow,
+                    ),
+                    title: Text('51 ~ 100'),
+                    subtitle: Text('Moderate'),
+                  ),
+                  ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: Colors.orange,
+                    ),
+                    title: Text('101 ~ 150'),
+                    subtitle: Text('Unhealthy for sensitive groups'),
+                  ),
+                  ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: Colors.red,
+                    ),
+                    title: Text('151 ~ 200'),
+                    subtitle: Text('Unhealthy'),
+                  ),
+                  ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: Colors.purple,
+                    ),
+                    title: Text('201 ~ 300'),
+                    subtitle: Text('Very unhealthy'),
+                  ),
+                  ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: Color(0XFF800000),
+                    ),
+                    title: Text('301 ~ 500'),
+                    subtitle: Text('Hazardous'),
+                  ),
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
@@ -197,30 +269,37 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Expanded(
-                  child: IconButton(
-                    alignment: Alignment.centerLeft,
-                    icon: Icon(
-                      Icons.search,
-                      size: 30.0,
-                    ),
-                    onPressed: () {
-                      Navigator.pushNamed(context, SearchPlaceScreen.id);
-                    },
+                Padding(
+                  padding: EdgeInsets.only(
+                    left: 16.0,
+                  ),
+                  child: Txt(
+                    'Weather',
+                    style: kScreenTitleTextStyle,
                   ),
                 ),
-                MessageHandler(),
-                if (currentPage == 0)
-                  IconButton(
-                      padding: EdgeInsets.only(right: 16.0),
-                      icon: Icon(Icons.refresh),
-                      onPressed: () async {
-//                      await getWeather();
-                        HttpsCallable callable = CloudFunctions.instance
-                            .getHttpsCallable(functionName: 'sendNotification');
-                        await callable();
-//                        _auth.signOut();
-                      })
+                IconButton(
+//                  alignment: Alignment.centerLeft,
+                  icon: Icon(
+                    Icons.search,
+                    size: 30.0,
+                  ),
+                  onPressed: () {
+                    Navigator.pushNamed(context, SearchPlaceScreen.id);
+                  },
+                ),
+
+//                if (currentPage == 0)
+//                  IconButton(
+//                      padding: EdgeInsets.only(right: 16.0),
+//                      icon: Icon(Icons.refresh),
+//                      onPressed: () async {
+////                      await getWeather();
+//                        HttpsCallable callable = CloudFunctions.instance
+//                            .getHttpsCallable(functionName: 'sendNotification');
+//                        await callable();
+////                        _auth.signOut();
+//                      })
               ],
             ),
           ),
@@ -269,6 +348,7 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
+                    MessageHandler(),
                     Parent(
                       style: parentStyle,
                       child: Column(
@@ -295,23 +375,38 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
                           if (height > 600)
                             Align(
                               alignment: Alignment.centerRight,
-                              child: Column(
-                                children: <Widget>[
-                                  Txt(
+                              child: GestureDetector(
+                                onTap: () {
+                                  displayAqiGuide(context);
+                                },
+                                child: CircularPercentIndicator(
+                                  radius: 100.0,
+                                  lineWidth: 15.0,
+                                  animation: true,
+                                  percent:
+                                      places[currentPage].weather.aqi / 500,
+                                  center: new Text(
                                     places[currentPage]
-                                            .weather
-                                            .aqi
-                                            .toStringAsFixed(0) +
-                                        ' ' +
-                                        getAqiEmoji(),
-                                    style: aqiTextStyle,
+                                        .weather
+                                        .aqi
+                                        .toStringAsFixed(0),
+                                    style: new TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20.0,
+                                      color: getAqiColor(),
+                                    ),
                                   ),
-                                  Txt(
-                                    'Air Quality Index',
-                                    style: screenTextStyle.clone()
-                                      ..fontSize(20.0),
+                                  footer: new Text(
+                                    "Air Quality",
+                                    style: new TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16.0,
+                                      color: Colors.white,
+                                    ),
                                   ),
-                                ],
+                                  circularStrokeCap: CircularStrokeCap.round,
+                                  progressColor: getAqiColor(),
+                                ),
                               ),
                             ),
                           if (height > 600)
@@ -327,23 +422,38 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
                                   style: screenTextStyle.clone()
                                     ..fontSize(25.0),
                                 ),
-                                Column(
-                                  children: <Widget>[
-                                    Txt(
+                                GestureDetector(
+                                  onTap: () {
+                                    displayAqiGuide(context);
+                                  },
+                                  child: CircularPercentIndicator(
+                                    radius: 60.0,
+                                    lineWidth: 10.0,
+                                    animation: true,
+                                    percent:
+                                        places[currentPage].weather.aqi / 500,
+                                    center: new Text(
                                       places[currentPage]
-                                              .weather
-                                              .aqi
-                                              .toStringAsFixed(0) +
-                                          ' ' +
-                                          getAqiEmoji(),
-                                      style: aqiTextStyle,
+                                          .weather
+                                          .aqi
+                                          .toStringAsFixed(0),
+                                      style: new TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16.0,
+                                        color: getAqiColor(),
+                                      ),
                                     ),
-                                    Txt(
-                                      'Air Quality Index',
-                                      style: screenTextStyle.clone()
-                                        ..fontSize(15.0),
+                                    footer: new Text(
+                                      "Air Quality",
+                                      style: new TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 13.0,
+                                        color: Colors.white,
+                                      ),
                                     ),
-                                  ],
+                                    circularStrokeCap: CircularStrokeCap.round,
+                                    progressColor: getAqiColor(),
+                                  ),
                                 )
                               ],
                             ),
@@ -359,7 +469,10 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
                             await _handlePageChange(index, place);
                           },
                           itemBuilder: (BuildContext context, int index) {
-                            return WeatherWidget(placeIndex: index);
+                            return WeatherWidget(
+                              placeIndex: index,
+                              notifier: _currentPageNotifier,
+                            );
                           }),
                     ),
                   ],
@@ -382,6 +495,8 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
   }
 
   Future _handlePageChange(int index, Place place) async {
+    _currentPageNotifier.value = index;
+
     setState(() {
       currentPage = index;
     });

@@ -277,22 +277,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
-                                FlatButton(
-                                  child: Text(
-                                    'Reset Home Screen Weather Data',
-                                    style: TextStyle(
-                                      color: Color(
-                                        0XFF69A4FF,
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.9,
+                                  child: FlatButton(
+                                    child: Text(
+                                      'Reset Home Screen Weather Data',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: Color(
+                                          0XFF69A4FF,
+                                        ),
+                                        fontSize: 18.0,
+                                        fontWeight: FontWeight.w200,
                                       ),
-                                      fontSize: 18.0,
-                                      fontWeight: FontWeight.w200,
                                     ),
+                                    onPressed: () {
+                                      SettingModel settingModal =
+                                          SettingModel();
+                                      settingModal
+                                          .clearPlacesWeatherDataInSetting();
+                                    },
                                   ),
-                                  onPressed: () {
-                                    SettingModel settingModal = SettingModel();
-                                    settingModal
-                                        .clearPlacesWeatherDataInSetting();
-                                  },
                                 ),
                               ],
                             ),

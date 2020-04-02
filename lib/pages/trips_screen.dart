@@ -1,3 +1,4 @@
+import 'package:book_my_weather/constants.dart';
 import 'package:book_my_weather/models/currency_rate.dart';
 import 'package:book_my_weather/models/trip.dart';
 import 'package:book_my_weather/models/trip_state.dart';
@@ -69,10 +70,6 @@ class _TripsScreenState extends State<TripsScreen>
     final User user = Provider.of<User>(context);
     final trips = Provider.of<List<Trip>>(context);
     final db = DatabaseService();
-    final TxtStyle screenTitleTextStyle = TxtStyle()
-      ..textColor(Colors.white)
-      ..fontSize(40.0)
-      ..fontWeight(FontWeight.w500);
 
     return Scaffold(
       appBar: AppBar(
@@ -88,7 +85,7 @@ class _TripsScreenState extends State<TripsScreen>
                   ),
                   child: Txt(
                     'Trips',
-                    style: screenTitleTextStyle,
+                    style: kScreenTitleTextStyle,
                   ),
                 ),
                 Padding(

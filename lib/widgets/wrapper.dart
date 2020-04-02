@@ -155,7 +155,7 @@ class _WrapperState extends State<Wrapper> {
                     items: const <BottomNavigationBarItem>[
                       BottomNavigationBarItem(
                         icon: Icon(Icons.wb_sunny),
-                        title: Text('Home'),
+                        title: Text('Weather'),
                       ),
                       BottomNavigationBarItem(
                         icon: Icon(Icons.map),
