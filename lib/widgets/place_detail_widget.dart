@@ -363,6 +363,7 @@ class _PlaceOverviewState extends State<PlaceOverview> {
                             child: ListView(
                               itemExtent: widget.width / 2.5,
                               scrollDirection: Axis.horizontal,
+                              physics: BouncingScrollPhysics(),
                               children: List<Widget>.generate(
                                 nearbyHotels.length,
                                 (index) => GestureDetector(

@@ -316,6 +316,7 @@ class _PlaceDetailState extends State<PlaceDetail>
                               ),
                               child: ListView(
                                 scrollDirection: Axis.horizontal,
+                                physics: BouncingScrollPhysics(),
                                 children: <Widget>[
                                   FlatButton(
                                     shape: RoundedRectangleBorder(

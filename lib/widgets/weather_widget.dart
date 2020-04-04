@@ -7,38 +7,14 @@ import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
-import 'package:page_view_indicators/circle_page_indicator.dart';
 
 import '../styleguide.dart';
 
 class WeatherWidget extends StatelessWidget {
   final int placeIndex;
-  final ValueNotifier<int> notifier;
 
-  WeatherWidget({@required this.placeIndex, @required this.notifier});
+  WeatherWidget({@required this.placeIndex});
   final settingsBox = Hive.box('settings');
-
-  Widget _buildCircleIndicator() {
-    if (settingsBox != null && settingsBox.length > 0) {
-      final places = (settingsBox.get(0) as Setting).places;
-      if (places.length > 1) {
-        return Positioned(
-          left: 0.0,
-          right: 0.0,
-          bottom: 0.0,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: CirclePageIndicator(
-              itemCount: places.length,
-              currentPageNotifier: notifier,
-            ),
-          ),
-        );
-      } else {
-        return Container();
-      }
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -186,7 +162,6 @@ class WeatherWidget extends StatelessWidget {
               ),
             ),
           ),
-          _buildCircleIndicator(),
         ],
       ),
     );

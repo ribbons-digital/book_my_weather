@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
+import 'package:page_view_indicators/circle_page_indicator.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class WeatherListingScreen extends StatefulWidget {
@@ -257,6 +258,26 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
         });
   }
 
+  Widget _buildCircleIndicator() {
+    if (settingsBox != null && settingsBox.length > 0) {
+      final places = (settingsBox.get(0) as Setting).places;
+      if (places.length > 1) {
+        return Center(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: CirclePageIndicator(
+              itemCount: places.length,
+              currentPageNotifier: _currentPageNotifier,
+            ),
+          ),
+        );
+      } else {
+        return Container();
+      }
+    }
+    return Container();
+  }
+
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
@@ -380,7 +401,7 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
                                   displayAqiGuide(context);
                                 },
                                 child: CircularPercentIndicator(
-                                  radius: 100.0,
+                                  radius: 90.0,
                                   lineWidth: 15.0,
                                   animation: true,
                                   percent:
@@ -427,8 +448,8 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
                                     displayAqiGuide(context);
                                   },
                                   child: CircularPercentIndicator(
-                                    radius: 60.0,
-                                    lineWidth: 10.0,
+                                    radius: 50.0,
+                                    lineWidth: 7.0,
                                     animation: true,
                                     percent:
                                         places[currentPage].weather.aqi / 500,
@@ -464,6 +485,7 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
                       child: PageView.builder(
                           controller: _pageController,
                           itemCount: places.length,
+                          physics: BouncingScrollPhysics(),
                           onPageChanged: (int index) async {
                             final place = places[index];
                             await _handlePageChange(index, place);
@@ -471,10 +493,10 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
                           itemBuilder: (BuildContext context, int index) {
                             return WeatherWidget(
                               placeIndex: index,
-                              notifier: _currentPageNotifier,
                             );
                           }),
                     ),
+                    _buildCircleIndicator(),
                   ],
                 );
               } else if (snapshot.hasError) {
