@@ -1,3 +1,4 @@
+import 'package:book_my_weather/app_localizations.dart';
 import 'package:book_my_weather/models/trip.dart';
 import 'package:book_my_weather/widgets/news_list.dart';
 import 'package:flutter/material.dart';
@@ -67,7 +68,8 @@ class _NewsScreenState extends State<NewsScreen> with WidgetsBindingObserver {
                       left: 16.0,
                     ),
                     child: Text(
-                      'News',
+                      AppLocalizations.of(context)
+                          .translate('news_screen_title'),
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 40.0,

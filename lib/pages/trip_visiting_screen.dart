@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:book_my_weather/app_localizations.dart';
 import 'package:book_my_weather/models/networking_state.dart';
 import 'package:book_my_weather/models/trip_state.dart';
 import 'package:book_my_weather/models/trip_visiting.dart';
@@ -148,7 +149,8 @@ class _TripVisitingScreenState extends State<TripVisitingScreen> {
                         actionExtentRatio: 0.25,
                         secondaryActions: <Widget>[
                           IconSlideAction(
-                            caption: 'Edit',
+                            caption: AppLocalizations.of(context).translate(
+                                'trip_visitings_screen_slide_action_option_1_string'),
                             color: Colors.blue,
                             icon: Icons.edit,
                             onTap: () {
@@ -176,7 +178,9 @@ class _TripVisitingScreenState extends State<TripVisitingScreen> {
                                     context: context,
                                     builder: (BuildContext context) {
                                       return AlertDialog(
-                                        title: Text('When are you visiting?'),
+                                        title: Text(AppLocalizations.of(context)
+                                            .translate(
+                                                'trip_visitings_screen_edit_modal_title')),
                                         content: Column(
                                           mainAxisSize: MainAxisSize.min,
                                           children: <Widget>[
@@ -190,7 +194,10 @@ class _TripVisitingScreenState extends State<TripVisitingScreen> {
                                                 pickDate(context);
                                               },
                                               decoration: InputDecoration(
-                                                hintText: 'Select Date',
+                                                hintText: AppLocalizations.of(
+                                                        context)
+                                                    .translate(
+                                                        'trip_visitings_screen_edit_modal_field_1_hint_text'),
                                                 hintStyle: TextStyle(
                                                   color: Color(0XFF436DA6),
                                                   fontSize: 24.0,
@@ -222,7 +229,10 @@ class _TripVisitingScreenState extends State<TripVisitingScreen> {
                                                 pickTime(context);
                                               },
                                               decoration: InputDecoration(
-                                                hintText: 'Select Time',
+                                                hintText: AppLocalizations.of(
+                                                        context)
+                                                    .translate(
+                                                        'trip_visitings_screen_edit_modal_field_2_hint_text'),
                                                 hintStyle: TextStyle(
                                                   color: Color(0XFF436DA6),
                                                   fontSize: 24.0,
@@ -249,7 +259,10 @@ class _TripVisitingScreenState extends State<TripVisitingScreen> {
                                                   context)
                                               .isLoading)
                                             FlatButton(
-                                              child: Text('Cancel'),
+                                              child: Text(AppLocalizations.of(
+                                                      context)
+                                                  .translate(
+                                                      'trip_visitings_screen_edit_modal_cancel_btn_string')),
                                               onPressed: () {
                                                 Navigator.pop(context);
                                               },
@@ -258,7 +271,10 @@ class _TripVisitingScreenState extends State<TripVisitingScreen> {
                                                   context)
                                               .isLoading)
                                             FlatButton(
-                                              child: Text('Save'),
+                                              child: Text(AppLocalizations.of(
+                                                      context)
+                                                  .translate(
+                                                      'trip_visitings_screen_edit_modal_confirm_btn_string')),
                                               onPressed: () async {
                                                 if (visitingDate == null ||
                                                     visitingTime == null)
@@ -309,7 +325,10 @@ class _TripVisitingScreenState extends State<TripVisitingScreen> {
                                                   Navigator.pop(context);
                                                   displaySuccessSnackbar(
                                                       context,
-                                                      'Trip successfully updated.');
+                                                      AppLocalizations.of(
+                                                              context)
+                                                          .translate(
+                                                              'trip_visitings_screen_update_success_msg_string'));
                                                 } on PlatformException catch (e) {
                                                   Provider.of<NetworkingState>(
                                                           context,
@@ -335,7 +354,8 @@ class _TripVisitingScreenState extends State<TripVisitingScreen> {
                             },
                           ),
                           IconSlideAction(
-                            caption: 'Delete',
+                            caption: AppLocalizations.of(context).translate(
+                                'trip_visitings_screen_slide_action_option_2_string'),
                             color: Colors.red,
                             icon: Icons.delete,
                             onTap: () async {
@@ -377,7 +397,11 @@ class _TripVisitingScreenState extends State<TripVisitingScreen> {
                                         ),
                                       ),
                                       subtitle: Text(
-                                        sortByDateList[index][i].placeType,
+                                        getSearchTypeStringWithLocalization(
+                                          context,
+                                          searchType(sortByDateList[index][i]
+                                              .placeType),
+                                        ),
                                         style: TextStyle(
                                           color: Colors.white70,
                                           fontSize: 16.0,
@@ -390,7 +414,7 @@ class _TripVisitingScreenState extends State<TripVisitingScreen> {
                                       left: 15.0,
                                     ),
                                     child: Text(
-                                      'Visiting at ${sortByDateList[index][i].visitingDate.toDate().hour}:$minute',
+                                      '${AppLocalizations.of(context).translate('trip_visitings_screen_item_time_string')} ${sortByDateList[index][i].visitingDate.toDate().hour}:$minute',
                                       style: TextStyle(
                                         color: Colors.blue,
                                         fontSize: 17.0,
@@ -454,14 +478,16 @@ class _TripVisitingScreenState extends State<TripVisitingScreen> {
                     Navigator.pop(context);
                   },
                 ),
-                title: Text('Visitings'),
+                title: Text(AppLocalizations.of(context)
+                    .translate('trip_visitings_screen_title')),
               ),
               body: Column(
                 mainAxisSize: MainAxisSize.max,
                 children: <Widget>[
                   if (tripVisitings == null || tripVisitings.length == 0)
                     Text(
-                      'You haven\'t bookmarked any places yet. You can start by exploring places in this city and tap on "Save" to save them in this page.',
+                      AppLocalizations.of(context)
+                          .translate('trip_visitings_no_visitings_msg_string'),
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 20.0,

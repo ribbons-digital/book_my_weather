@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:book_my_weather/app_localizations.dart';
 import 'package:book_my_weather/models/place.dart';
 import 'package:book_my_weather/models/setting.dart';
 import 'package:book_my_weather/models/trip.dart';
@@ -63,7 +64,7 @@ enum NearbySearchType {
   Laundry,
   Lodging,
   LiquorStore,
-  Meseum,
+  Museum,
   NightClub,
   Park,
   Parking,
@@ -91,7 +92,7 @@ String getSearchTypeString(NearbySearchType searchType) {
   if (searchType == NearbySearchType.Laundry) return 'laundry';
   if (searchType == NearbySearchType.Lodging) return 'lodging';
   if (searchType == NearbySearchType.LiquorStore) return 'liquor_store';
-  if (searchType == NearbySearchType.Meseum) return 'museum';
+  if (searchType == NearbySearchType.Museum) return 'museum';
   if (searchType == NearbySearchType.NightClub) return 'night_club';
   if (searchType == NearbySearchType.Park) return 'park';
   if (searchType == NearbySearchType.Parking) return 'parking';
@@ -104,6 +105,80 @@ String getSearchTypeString(NearbySearchType searchType) {
   if (searchType == NearbySearchType.TransitStation) return 'transit_station';
   if (searchType == NearbySearchType.SubwayStation) return 'subway_station';
   return 'shopping_mall';
+}
+
+String getSearchTypeStringWithLocalization(
+    BuildContext context, NearbySearchType searchType) {
+  if (searchType == NearbySearchType.ShoppingMall)
+    return AppLocalizations.of(context)
+        .translate('places_screen_nearby_places_filter_label_1_string');
+  if (searchType == NearbySearchType.ArtGallery)
+    return AppLocalizations.of(context)
+        .translate('places_screen_nearby_places_filter_label_2_string');
+  if (searchType == NearbySearchType.ATM)
+    return AppLocalizations.of(context)
+        .translate('places_screen_nearby_places_filter_label_3_string');
+  if (searchType == NearbySearchType.Bakery)
+    return AppLocalizations.of(context)
+        .translate('places_screen_nearby_places_filter_label_4_string');
+  if (searchType == NearbySearchType.Bank)
+    return AppLocalizations.of(context)
+        .translate('places_screen_nearby_places_filter_label_5_string');
+  if (searchType == NearbySearchType.Bar)
+    return AppLocalizations.of(context)
+        .translate('places_screen_nearby_places_filter_label_6_string');
+  if (searchType == NearbySearchType.BookStore)
+    return AppLocalizations.of(context)
+        .translate('places_screen_nearby_places_filter_label_7_string');
+  if (searchType == NearbySearchType.Park)
+    return AppLocalizations.of(context)
+        .translate('places_screen_nearby_places_filter_label_8_string');
+  if (searchType == NearbySearchType.Parking)
+    return AppLocalizations.of(context)
+        .translate('places_screen_nearby_places_filter_label_9_string');
+  if (searchType == NearbySearchType.TrainStation)
+    return AppLocalizations.of(context)
+        .translate('places_screen_nearby_places_filter_label_10_string');
+  if (searchType == NearbySearchType.SubwayStation)
+    return AppLocalizations.of(context)
+        .translate('places_screen_nearby_places_filter_label_11_string');
+  if (searchType == NearbySearchType.BusStation)
+    return AppLocalizations.of(context)
+        .translate('places_screen_nearby_places_filter_label_12_string');
+  if (searchType == NearbySearchType.GasStation)
+    return AppLocalizations.of(context)
+        .translate('places_screen_nearby_places_filter_label_13_string');
+  if (searchType == NearbySearchType.Restaurant)
+    return AppLocalizations.of(context)
+        .translate('places_screen_nearby_foods_filter_label_1_string');
+  if (searchType == NearbySearchType.Cafe)
+    return AppLocalizations.of(context)
+        .translate('places_screen_nearby_foods_filter_label_2_string');
+  if (searchType == NearbySearchType.Lodging)
+    return AppLocalizations.of(context)
+        .translate('places_screen_nearby_hotel_filter_label_string');
+  return '';
+}
+
+NearbySearchType searchType(String typeString) {
+  if (typeString == 'shopping_mall') return NearbySearchType.ShoppingMall;
+  if (typeString == 'art_gallery') return NearbySearchType.ArtGallery;
+  if (typeString == 'atm') return NearbySearchType.ATM;
+  if (typeString == 'bakery') return NearbySearchType.Bakery;
+  if (typeString == 'bank') return NearbySearchType.Bank;
+  if (typeString == 'bar') return NearbySearchType.Bar;
+  if (typeString == 'book_store') return NearbySearchType.BookStore;
+  if (typeString == 'cafe') return NearbySearchType.Cafe;
+  if (typeString == 'restaurant') return NearbySearchType.Restaurant;
+  if (typeString == 'park') return NearbySearchType.Park;
+  if (typeString == 'parking') return NearbySearchType.Parking;
+  if (typeString == 'train_station') return NearbySearchType.TrainStation;
+  if (typeString == 'subway_station') return NearbySearchType.SubwayStation;
+  if (typeString == 'bus_station') return NearbySearchType.BusStation;
+  if (typeString == 'gas_station') return NearbySearchType.GasStation;
+  if (typeString == 'lodging') return NearbySearchType.Lodging;
+
+  return null;
 }
 
 String getTripTimeMessage(BuildContext context, Trip trip) {

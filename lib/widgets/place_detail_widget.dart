@@ -1,3 +1,4 @@
+import 'package:book_my_weather/app_localizations.dart';
 import 'package:book_my_weather/models/google_nearby_place.dart';
 import 'package:book_my_weather/models/weather.dart';
 import 'package:book_my_weather/secure/keys.dart';
@@ -121,7 +122,8 @@ class _PlaceOverviewState extends State<PlaceOverview> {
                   bottom: 16.0,
                 ),
                 child: Text(
-                  'Information',
+                  AppLocalizations.of(context).translate(
+                      'place_detail_screen_place_overview_section_1_title'),
                   style: TextStyle(
                     fontSize: 32.0,
                     fontWeight: FontWeight.w100,
@@ -134,7 +136,9 @@ class _PlaceOverviewState extends State<PlaceOverview> {
                   bottom: 10.0,
                 ),
                 child: Text(
-                  widget.address ?? 'Address not available',
+                  widget.address ??
+                      AppLocalizations.of(context).translate(
+                          'place_detail_screen_place_overview_section_1_error_1'),
                   style: TextStyle(
                     fontSize: 20.0,
                     fontWeight: FontWeight.w100,
@@ -149,7 +153,9 @@ class _PlaceOverviewState extends State<PlaceOverview> {
                   bottom: 10.0,
                 ),
                 child: Text(
-                  widget.phoneNumber ?? 'Phone number not available',
+                  widget.phoneNumber ??
+                      AppLocalizations.of(context).translate(
+                          'place_detail_screen_place_overview_section_1_error_2'),
                   style: TextStyle(
                     fontSize: 20.0,
                     fontWeight: FontWeight.w100,
@@ -163,7 +169,9 @@ class _PlaceOverviewState extends State<PlaceOverview> {
                 ),
                 child: InkWell(
                   child: Text(
-                    widget.website ?? 'Website not available',
+                    widget.website ??
+                        AppLocalizations.of(context).translate(
+                            'place_detail_screen_place_overview_section_1_error_3'),
                     style: TextStyle(
                       fontSize: 20.0,
                       fontWeight: FontWeight.w100,
@@ -196,7 +204,8 @@ class _PlaceOverviewState extends State<PlaceOverview> {
 //                bottom: 16.0,
                 ),
                 child: Text(
-                  'Business hours',
+                  AppLocalizations.of(context).translate(
+                      'place_detail_screen_place_overview_section_2_title'),
                   style: TextStyle(
                     fontSize: 32.0,
                     fontWeight: FontWeight.w100,
@@ -221,7 +230,8 @@ class _PlaceOverviewState extends State<PlaceOverview> {
                         ),
                       )
                     : Text(
-                        'Not Available',
+                        AppLocalizations.of(context).translate(
+                            'place_detail_screen_place_overview_section_2_error_1'),
                         style: TextStyle(
                           fontSize: 20.0,
                         ),
@@ -242,7 +252,8 @@ class _PlaceOverviewState extends State<PlaceOverview> {
                   bottom: 16.0,
                 ),
                 child: Text(
-                  'Weather forecast',
+                  AppLocalizations.of(context).translate(
+                      'place_detail_screen_place_overview_section_3_title'),
                   style: TextStyle(
                     fontSize: 32.0,
                     fontWeight: FontWeight.w100,
@@ -295,7 +306,8 @@ class _PlaceOverviewState extends State<PlaceOverview> {
                     if (snapshot.hasError) {
                       return Center(
                         child: Text(
-                          'Error getting weather forecast for this place.',
+                          AppLocalizations.of(context).translate(
+                              'place_detail_screen_place_overview_section_3_error_1'),
                           style: TextStyle(
                             color: Colors.black,
                           ),
@@ -329,7 +341,8 @@ class _PlaceOverviewState extends State<PlaceOverview> {
                       bottom: 16.0,
                     ),
                     child: Text(
-                      'Hotels nearby',
+                      AppLocalizations.of(context).translate(
+                          'place_detail_screen_place_overview_section_4_title'),
                       style: TextStyle(
                         fontSize: 32.0,
                         fontWeight: FontWeight.w100,
@@ -409,7 +422,8 @@ class _PlaceOverviewState extends State<PlaceOverview> {
                   if (snapshot.hasError) {
                     return Center(
                       child: Text(
-                        'Error getting nearby hotels for this place.',
+                        AppLocalizations.of(context).translate(
+                            'place_detail_screen_place_overview_section_4_error_1'),
                         style: TextStyle(
                           color: Colors.black,
                         ),

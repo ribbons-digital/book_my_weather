@@ -1,3 +1,4 @@
+import 'package:book_my_weather/app_localizations.dart';
 import 'package:book_my_weather/constants.dart';
 import 'package:book_my_weather/models/currency_rate.dart';
 import 'package:book_my_weather/models/trip.dart';
@@ -84,7 +85,8 @@ class _TripsScreenState extends State<TripsScreen>
                     left: 16.0,
                   ),
                   child: Txt(
-                    'Trips',
+                    AppLocalizations.of(context)
+                        .translate('trips_screen_title'),
                     style: kScreenTitleTextStyle,
                   ),
                 ),
@@ -130,10 +132,12 @@ class _TripsScreenState extends State<TripsScreen>
               controller: _tabController,
               tabs: <Widget>[
                 Tab(
-                  child: Text('Upcoming'),
+                  child: Text(AppLocalizations.of(context)
+                      .translate('trips_screen_first_tab_string')),
                 ),
                 Tab(
-                  child: Text('Past'),
+                  child: Text(AppLocalizations.of(context)
+                      .translate('trips_screen_second_tab_string')),
                 ),
               ],
             ),
@@ -170,7 +174,8 @@ class _TripsScreenState extends State<TripsScreen>
                           ),
                           contentPadding: EdgeInsets.symmetric(
                               vertical: 10.0, horizontal: 20.0),
-                          hintText: 'Search by destination',
+                          hintText: AppLocalizations.of(context).translate(
+                              'trips_screen_search_hint_text_string'),
                           hintStyle: TextStyle(color: Color(0XFF8D9093)),
                           filled: true,
                           fillColor: Colors.white12,
@@ -195,7 +200,8 @@ class _TripsScreenState extends State<TripsScreen>
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
                             child: Text(
-                              'No Upcoming Trips',
+                              AppLocalizations.of(context)
+                                  .translate('trips_screen_no_trip_string_1'),
                               style: TextStyle(
                                 color: Colors.blueGrey,
                                 fontSize: 20.0,
@@ -211,7 +217,8 @@ class _TripsScreenState extends State<TripsScreen>
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
                             child: Text(
-                              'Tap the "+" button to add your first trip',
+                              AppLocalizations.of(context)
+                                  .translate('trips_screen_no_trip_string_2'),
                               style: TextStyle(
                                 color: Colors.blueGrey,
                                 fontSize: 16.0,
@@ -269,7 +276,8 @@ class _TripsScreenState extends State<TripsScreen>
                               ),
                               secondaryActions: <Widget>[
                                 IconSlideAction(
-                                  caption: 'Refresh',
+                                  caption: AppLocalizations.of(context)
+                                      .translate('trip_card_action_1_string'),
                                   color: Colors.blue,
                                   icon: Icons.refresh,
                                   onTap: () async {
@@ -306,7 +314,8 @@ class _TripsScreenState extends State<TripsScreen>
                                   },
                                 ),
                                 IconSlideAction(
-                                  caption: 'Delete',
+                                  caption: AppLocalizations.of(context)
+                                      .translate('trip_card_action_2_string'),
                                   color: Colors.red,
                                   icon: Icons.delete,
                                   onTap: () async {
@@ -413,7 +422,8 @@ class _TripsScreenState extends State<TripsScreen>
                               ),
                               secondaryActions: <Widget>[
                                 IconSlideAction(
-                                  caption: 'Refresh',
+                                  caption: AppLocalizations.of(context)
+                                      .translate('trip_card_action_1_string'),
                                   color: Colors.blue,
                                   icon: Icons.refresh,
                                   onTap: () async {
@@ -455,7 +465,8 @@ class _TripsScreenState extends State<TripsScreen>
                                   },
                                 ),
                                 IconSlideAction(
-                                  caption: 'Delete',
+                                  caption: AppLocalizations.of(context)
+                                      .translate('trip_card_action_2_string'),
                                   color: Colors.red,
                                   icon: Icons.delete,
                                   onTap: () async {

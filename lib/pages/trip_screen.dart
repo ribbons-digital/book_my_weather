@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:book_my_weather/app_localizations.dart';
 import 'package:book_my_weather/constants.dart';
 import 'package:book_my_weather/models/currency.dart';
 import 'package:book_my_weather/models/currency_rate.dart';
@@ -166,7 +167,8 @@ class _TripScreenState extends State<TripScreen> {
     if (isDateOverlapping) {
       Flushbar(
         messageText: Text(
-          'Dates overlapping with another trip already planned. Please pick different dates.',
+          AppLocalizations.of(context)
+              .translate('trip_screen_pick_date_error_msg_1'),
           style: kSnackbarErrorTextStyle,
         ),
         duration: Duration(seconds: 3),
@@ -180,7 +182,8 @@ class _TripScreenState extends State<TripScreen> {
             Navigator.pop(context);
           },
           child: Text(
-            'OK',
+            AppLocalizations.of(context).translate(
+                'trip_screen_pick_date_error_msg_dismiss_btn_string'),
             style: TextStyle(
               color: Colors.white,
             ),
@@ -190,7 +193,8 @@ class _TripScreenState extends State<TripScreen> {
     } else if (isDateRangeInvalid) {
       Flushbar(
         messageText: Text(
-          'Invalid date range.',
+          AppLocalizations.of(context)
+              .translate('trip_screen_pick_date_error_msg_2'),
           style: kSnackbarErrorTextStyle,
         ),
         duration: Duration(seconds: 3),
@@ -204,7 +208,8 @@ class _TripScreenState extends State<TripScreen> {
             Navigator.pop(context);
           },
           child: Text(
-            'OK',
+            AppLocalizations.of(context).translate(
+                'trip_screen_pick_date_error_msg_dismiss_btn_string'),
             style: TextStyle(
               color: Colors.white,
             ),
@@ -218,7 +223,6 @@ class _TripScreenState extends State<TripScreen> {
       WeatherModel weather;
       CurrencyModel currencyModel;
       double currencyRate;
-      String currencyCode;
       SettingModel settingModel = SettingModel();
       final currentSetting = settingModel.getCurrentSetting();
 
@@ -237,7 +241,8 @@ class _TripScreenState extends State<TripScreen> {
       } catch (e) {
         displayErrorSnackbarWithSilentAction(
           context,
-          'Error getting destination address.',
+          AppLocalizations.of(context)
+              .translate('trip_screen_destination_error_msg_1'),
           (v) => Navigator.pop(context),
         );
         return;
@@ -254,7 +259,8 @@ class _TripScreenState extends State<TripScreen> {
       } catch (e) {
         displayErrorSnackbarWithSilentAction(
           context,
-          'Error getting destination weather.',
+          AppLocalizations.of(context)
+              .translate('trip_screen_destination_error_msg_2'),
           (v) => Navigator.pop(context),
         );
         return;
@@ -270,7 +276,8 @@ class _TripScreenState extends State<TripScreen> {
       } catch (e) {
         displayErrorSnackbarWithSilentAction(
             context,
-            'Error getting destination currency rate.',
+            AppLocalizations.of(context)
+                .translate('trip_screen_destination_error_msg_3'),
             (v) => Navigator.pop(context));
         return;
       }
@@ -317,7 +324,8 @@ class _TripScreenState extends State<TripScreen> {
               ),
             ),
             action: SnackBarAction(
-              label: 'OK',
+              label: AppLocalizations.of(context).translate(
+                  'trip_screen_pick_date_error_msg_dismiss_btn_string'),
               onPressed: () {
                 Provider.of<NetworkingState>(context, listen: false).reset();
               },
@@ -357,7 +365,8 @@ class _TripScreenState extends State<TripScreen> {
               ),
             ),
             action: SnackBarAction(
-              label: 'OK',
+              label: AppLocalizations.of(context).translate(
+                  'trip_screen_pick_date_error_msg_dismiss_btn_string'),
               onPressed: () {
                 Provider.of<NetworkingState>(context, listen: false).reset();
               },
@@ -370,6 +379,9 @@ class _TripScreenState extends State<TripScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final String title = widget.existingTrip != null
+        ? AppLocalizations.of(context).translate('trip_screen_edit_trip_title')
+        : AppLocalizations.of(context).translate('trip_screen_add_trip_title');
     return SafeArea(
       child: Scaffold(
         key: _scaffold,
@@ -424,7 +436,7 @@ class _TripScreenState extends State<TripScreen> {
                       height: 10.0,
                     ),
                     Text(
-                      widget.existingTrip != null ? 'Edit Trip' : 'New Trip',
+                      title,
                       style: TextStyle(
                         fontWeight: FontWeight.w100,
                         fontSize: 40.0,
@@ -439,15 +451,18 @@ class _TripScreenState extends State<TripScreen> {
                             child: TextFormField(
                               controller: _nameTextEditingController,
                               style: kTextFieldStyle,
-                              validator: (val) =>
-                                  val.isEmpty ? 'Enter a name' : null,
+                              validator: (val) => val.isEmpty
+                                  ? AppLocalizations.of(context).translate(
+                                      'trip_screen_field_1_error_text')
+                                  : null,
                               onChanged: (String newValue) {
                                 setState(() {
                                   name = newValue;
                                 });
                               },
                               decoration: InputDecoration(
-                                hintText: 'Name',
+                                hintText: AppLocalizations.of(context)
+                                    .translate('trip_screen_field_1_hint_text'),
                                 hintStyle: TextStyle(
                                   color: Color(0XFF436DA6),
                                   fontSize: 24.0,
@@ -466,15 +481,18 @@ class _TripScreenState extends State<TripScreen> {
                             child: TextFormField(
                               style: kTextFieldStyle,
                               controller: _destinationTextEditingController,
-                              validator: (val) =>
-                                  val.isEmpty ? 'Enter a destination' : null,
+                              validator: (val) => val.isEmpty
+                                  ? AppLocalizations.of(context).translate(
+                                      'trip_screen_field_2_error_text')
+                                  : null,
                               onChanged: (String newValue) {
                                 setState(() {
                                   destination = newValue;
                                 });
                               },
                               decoration: InputDecoration(
-                                hintText: 'Destination',
+                                hintText: AppLocalizations.of(context)
+                                    .translate('trip_screen_field_2_hint_text'),
                                 hintStyle: TextStyle(
                                   color: Color(0XFF436DA6),
                                   fontSize: 24.0,
@@ -493,13 +511,16 @@ class _TripScreenState extends State<TripScreen> {
                             child: TextFormField(
                               style: kTextFieldStyle,
                               controller: _startDateTextEditingController,
-                              validator: (val) =>
-                                  val.isEmpty ? 'Enter a start date' : null,
+                              validator: (val) => val.isEmpty
+                                  ? AppLocalizations.of(context).translate(
+                                      'trip_screen_field_3_error_text')
+                                  : null,
                               onTap: () async {
                                 pickDate(context, DateType.startDate);
                               },
                               decoration: InputDecoration(
-                                hintText: 'Start Date',
+                                hintText: AppLocalizations.of(context)
+                                    .translate('trip_screen_field_3_hint_text'),
                                 hintStyle: TextStyle(
                                   color: Color(0XFF436DA6),
                                   fontSize: 24.0,
@@ -518,13 +539,16 @@ class _TripScreenState extends State<TripScreen> {
                             child: TextFormField(
                               controller: _endDateTextEditingController,
                               style: kTextFieldStyle,
-                              validator: (val) =>
-                                  val.isEmpty ? 'Enter an end date' : null,
+                              validator: (val) => val.isEmpty
+                                  ? AppLocalizations.of(context).translate(
+                                      'trip_screen_field_4_error_text')
+                                  : null,
                               onTap: () {
                                 pickDate(context, DateType.endDate);
                               },
                               decoration: InputDecoration(
-                                hintText: 'End Date',
+                                hintText: AppLocalizations.of(context)
+                                    .translate('trip_screen_field_4_hint_text'),
                                 hintStyle: TextStyle(
                                   color: Color(0XFF436DA6),
                                   fontSize: 24.0,
@@ -549,7 +573,8 @@ class _TripScreenState extends State<TripScreen> {
                                 });
                               },
                               decoration: InputDecoration(
-                                hintText: 'Description',
+                                hintText: AppLocalizations.of(context)
+                                    .translate('trip_screen_field_5_hint_text'),
                                 hintStyle: TextStyle(
                                   color: Color(0XFF436DA6),
                                   fontSize: 24.0,

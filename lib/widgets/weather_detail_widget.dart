@@ -1,3 +1,4 @@
+import 'package:book_my_weather/app_localizations.dart';
 import 'package:book_my_weather/models/dailyWeatherData.dart';
 import 'package:book_my_weather/models/hourlyWeatherData.dart';
 import 'package:book_my_weather/services/weather.dart';
@@ -103,21 +104,24 @@ class WeatherDetail extends StatelessWidget {
                 children: <Widget>[
                   WeatherCondition(
                     icon: Icons.wb_cloudy,
-                    conditionName: 'Rain',
+                    conditionName: AppLocalizations.of(context)
+                        .translate('weather_detail_screen_first_condition'),
                     condition: isHourly
                         ? '${(hourlyWeather.precipProbability * 100).toStringAsFixed(0)}%'
                         : '${(dailyWeather.precipProbability * 100).toStringAsFixed(0)}%',
                   ),
                   WeatherCondition(
                     icon: Icons.wb_cloudy,
-                    conditionName: 'Wind Speed',
+                    conditionName: AppLocalizations.of(context)
+                        .translate('weather_detail_screen_second_condition'),
                     condition: isHourly
                         ? '${hourlyWeather.windSpeed} KPH'
                         : '${dailyWeather.windSpeed} KPH',
                   ),
                   WeatherCondition(
                     icon: Icons.wb_cloudy,
-                    conditionName: 'Dew Point',
+                    conditionName: AppLocalizations.of(context)
+                        .translate('weather_detail_screen_third_condition'),
                     condition: isHourly
                         ? '${hourlyWeather.dewPoint.toStringAsFixed(0)} º'
                         : '${dailyWeather.dewPoint.toStringAsFixed(0)} ',
@@ -132,21 +136,24 @@ class WeatherDetail extends StatelessWidget {
                 children: <Widget>[
                   WeatherCondition(
                     icon: Icons.wb_cloudy,
-                    conditionName: 'UV Index',
+                    conditionName: AppLocalizations.of(context)
+                        .translate('weather_detail_screen_fourth_condition'),
                     condition: isHourly
                         ? '${hourlyWeather.uvIndex}'
                         : '${dailyWeather.uvIndex}',
                   ),
                   WeatherCondition(
                     icon: Icons.wb_cloudy,
-                    conditionName: 'Visibility',
+                    conditionName: AppLocalizations.of(context)
+                        .translate('weather_detail_screen_fifth_condition'),
                     condition: isHourly
                         ? '${hourlyWeather.visibility.toStringAsFixed(2)} KM'
                         : '${dailyWeather.visibility.toStringAsFixed(2)} KM',
                   ),
                   WeatherCondition(
                     icon: Icons.wb_cloudy,
-                    conditionName: 'Humidity',
+                    conditionName: AppLocalizations.of(context)
+                        .translate('weather_detail_screen_sixth_condition'),
                     condition: isHourly
                         ? '${(hourlyWeather.humidity * 100).toStringAsFixed(0)}%'
                         : '${(dailyWeather.humidity * 100).toStringAsFixed(0)}%',

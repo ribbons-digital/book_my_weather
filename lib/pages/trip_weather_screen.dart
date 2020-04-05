@@ -1,3 +1,4 @@
+import 'package:book_my_weather/app_localizations.dart';
 import 'package:book_my_weather/models/trip.dart';
 import 'package:book_my_weather/models/weather.dart';
 import 'package:book_my_weather/services/location.dart';
@@ -136,10 +137,12 @@ class _TripWeatherScreenState extends State<TripWeatherScreen>
                         controller: _tabController,
                         tabs: <Widget>[
                           Tab(
-                            child: Text('Today'),
+                            child: Text(AppLocalizations.of(context)
+                                .translate('trip_weather_screen_tab_1_string')),
                           ),
                           Tab(
-                            child: Text('Forecast'),
+                            child: Text(AppLocalizations.of(context)
+                                .translate('trip_weather_screen_tab_2_string')),
                           ),
                         ],
                       ),
@@ -227,7 +230,8 @@ class _TripWeatherScreenState extends State<TripWeatherScreen>
                     ),
                   if (daysLeft > 7)
                     Text(
-                      '📅 Weather forecast will be available within 7 days before your trip starts. Please check back later.',
+                      AppLocalizations.of(context)
+                          .translate('trip_weather_screen_no_forecast_string'),
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.white,

@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:book_my_weather/app_localizations.dart';
 import 'package:book_my_weather/models/google_place_detail.dart';
 import 'package:book_my_weather/models/networking_state.dart';
 import 'package:book_my_weather/models/trip_state.dart';
@@ -227,7 +228,11 @@ class _PlaceDetailState extends State<PlaceDetail>
                           children: <Widget>[
                             ListTile(
                               title: Text(widget.placeName),
-                              subtitle: Text(widget.placeType),
+                              subtitle:
+                                  Text(getSearchTypeStringWithLocalization(
+                                context,
+                                searchType(widget.placeType),
+                              )),
                             ),
                             Padding(
                               padding: EdgeInsets.only(left: 15.0),
@@ -277,8 +282,12 @@ class _PlaceDetailState extends State<PlaceDetail>
                                     children: [
                                       TextSpan(
                                         text: widget.placeOpenNow
-                                            ? 'Open now'
-                                            : 'Closed - ',
+                                            ? AppLocalizations.of(context)
+                                                .translate(
+                                                    'place_detail_screen_open_now_string')
+                                            : AppLocalizations.of(context)
+                                                .translate(
+                                                    'place_detail_screen_closed_string'),
                                         style: TextStyle(
                                           color: widget.placeOpenNow
                                               ? Colors.green
@@ -291,9 +300,11 @@ class _PlaceDetailState extends State<PlaceDetail>
                                               0)
                                         TextSpan(
                                           text: placeDetail.todayOpeningHour ==
-                                                  '24 Hours'
-                                              ? ' Opens ${placeDetail.todayOpeningHour}'
-                                              : ' Opens at ${placeDetail.todayOpeningHour}',
+                                                  AppLocalizations.of(context)
+                                                      .translate(
+                                                          'place_detail_screen_24_hr_string')
+                                              ? ' ${AppLocalizations.of(context).translate('place_detail_screen_open_hr_string_1')} ${placeDetail.todayOpeningHour}'
+                                              : ' ${AppLocalizations.of(context).translate('place_detail_screen_open_hr_string_2')} ${placeDetail.todayOpeningHour}',
                                           style: TextStyle(
                                             color: Colors.black,
                                             fontSize: 15,
@@ -336,7 +347,8 @@ class _PlaceDetailState extends State<PlaceDetail>
                                           width: 5.0,
                                         ),
                                         Text(
-                                          'Call',
+                                          AppLocalizations.of(context).translate(
+                                              'place_detail_screen_action_btn_1_string'),
                                           style: TextStyle(
                                             color: Color(0XFF69A4FF),
                                           ),
@@ -367,7 +379,8 @@ class _PlaceDetailState extends State<PlaceDetail>
                                           width: 5.0,
                                         ),
                                         Text(
-                                          'Share',
+                                          AppLocalizations.of(context).translate(
+                                              'place_detail_screen_action_btn_2_string'),
                                           style: TextStyle(
                                             color: Color(0XFF69A4FF),
                                           ),
@@ -399,7 +412,8 @@ class _PlaceDetailState extends State<PlaceDetail>
                                           width: 5.0,
                                         ),
                                         Text(
-                                          'Direction',
+                                          AppLocalizations.of(context).translate(
+                                              'place_detail_screen_action_btn_3_string'),
                                           style: TextStyle(
                                             color: Color(0XFF69A4FF),
                                           ),
@@ -436,7 +450,8 @@ class _PlaceDetailState extends State<PlaceDetail>
                                             width: 5.0,
                                           ),
                                           Text(
-                                            'Save',
+                                            AppLocalizations.of(context).translate(
+                                                'place_detail_screen_action_btn_4_string'),
                                             style: TextStyle(
                                               color: Color(0XFF69A4FF),
                                             ),
@@ -464,7 +479,10 @@ class _PlaceDetailState extends State<PlaceDetail>
                                                     ),
                                                   ),
                                                   title: Text(
-                                                      'When are you visiting?'),
+                                                    AppLocalizations.of(context)
+                                                        .translate(
+                                                            'trip_visitings_screen_edit_modal_title'),
+                                                  ),
                                                   content: Column(
                                                     mainAxisSize:
                                                         MainAxisSize.min,
@@ -481,8 +499,10 @@ class _PlaceDetailState extends State<PlaceDetail>
                                                         },
                                                         decoration:
                                                             InputDecoration(
-                                                          hintText:
-                                                              'Select Date',
+                                                          hintText: AppLocalizations
+                                                                  .of(context)
+                                                              .translate(
+                                                                  'trip_visitings_screen_edit_modal_field_1_hint_text'),
                                                           hintStyle: TextStyle(
                                                             color: Color(
                                                                 0XFF436DA6),
@@ -522,8 +542,10 @@ class _PlaceDetailState extends State<PlaceDetail>
                                                         },
                                                         decoration:
                                                             InputDecoration(
-                                                          hintText:
-                                                              'Select Time',
+                                                          hintText: AppLocalizations
+                                                                  .of(context)
+                                                              .translate(
+                                                                  'trip_visitings_screen_edit_modal_field_2_hint_text'),
                                                           hintStyle: TextStyle(
                                                             color: Color(
                                                                 0XFF436DA6),
@@ -557,7 +579,12 @@ class _PlaceDetailState extends State<PlaceDetail>
                                                             context)
                                                         .isLoading)
                                                       FlatButton(
-                                                        child: Text('Cancel'),
+                                                        child: Text(
+                                                          AppLocalizations.of(
+                                                                  context)
+                                                              .translate(
+                                                                  'trip_visitings_screen_edit_modal_cancel_btn_string'),
+                                                        ),
                                                         onPressed: () {
                                                           Navigator.pop(
                                                               context);
@@ -568,7 +595,12 @@ class _PlaceDetailState extends State<PlaceDetail>
                                                             context)
                                                         .isLoading)
                                                       FlatButton(
-                                                        child: Text('Save'),
+                                                        child: Text(
+                                                          AppLocalizations.of(
+                                                                  context)
+                                                              .translate(
+                                                                  'trip_visitings_screen_edit_modal_confirm_btn_string'),
+                                                        ),
                                                         onPressed: () async {
                                                           if (visitingDate ==
                                                                   null ||
@@ -624,10 +656,14 @@ class _PlaceDetailState extends State<PlaceDetail>
                                                             displaySuccessSnackbarWithAction(
                                                                 context:
                                                                     context,
-                                                                msg:
-                                                                    'Saved successfully.',
-                                                                buttonText:
-                                                                    'View saved places',
+                                                                msg: AppLocalizations.of(
+                                                                        context)
+                                                                    .translate(
+                                                                        'place_detail_screen_save_success_msg'),
+                                                                buttonText: AppLocalizations.of(
+                                                                        context)
+                                                                    .translate(
+                                                                        'place_detail_screen_save_success_snackbar_dismiss_btn_string'),
                                                                 actionFn: () {
                                                                   Route route =
                                                                       MaterialPageRoute(
@@ -675,8 +711,12 @@ class _PlaceDetailState extends State<PlaceDetail>
                                           try {
                                             await db.deleteTripVisiting(
                                                 tripId, tripVisitingId);
-                                            displaySuccessSnackbar(context,
-                                                'Bookmark successfully removed');
+                                            displaySuccessSnackbar(
+                                              context,
+                                              AppLocalizations.of(context)
+                                                  .translate(
+                                                      'place_detail_screen_bookmark_remove_success_msg'),
+                                            );
                                           } on PlatformException catch (e) {
                                             displayErrorSnackbar(
                                                 context, e.details);
@@ -721,13 +761,22 @@ class _PlaceDetailState extends State<PlaceDetail>
                               controller: _tabController,
                               tabs: <Widget>[
                                 Tab(
-                                  child: Text('Overview'),
+                                  child: Text(
+                                    AppLocalizations.of(context).translate(
+                                        'place_detail_screen_tab_1_string'),
+                                  ),
                                 ),
                                 Tab(
-                                  child: Text('Weather'),
+                                  child: Text(
+                                    AppLocalizations.of(context).translate(
+                                        'place_detail_screen_tab_2_string'),
+                                  ),
                                 ),
                                 Tab(
-                                  child: Text('Photos'),
+                                  child: Text(
+                                    AppLocalizations.of(context).translate(
+                                        'place_detail_screen_tab_3_string'),
+                                  ),
                                 ),
                               ].toList(),
                             ),

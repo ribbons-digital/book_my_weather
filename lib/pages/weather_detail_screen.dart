@@ -1,3 +1,4 @@
+import 'package:book_my_weather/app_localizations.dart';
 import 'package:book_my_weather/models/place.dart';
 import 'package:book_my_weather/models/place_data.dart';
 import 'package:book_my_weather/models/setting.dart';
@@ -110,10 +111,12 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen>
                   controller: _tabController,
                   tabs: <Widget>[
                     Tab(
-                      child: Text('Today'),
+                      child: Text(AppLocalizations.of(context)
+                          .translate('weather_detail_screen_first_tab_string')),
                     ),
                     Tab(
-                      child: Text('Forecast'),
+                      child: Text(AppLocalizations.of(context).translate(
+                          'weather_detail_screen_second_tab_string')),
                     ),
                   ],
                 ),

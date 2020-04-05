@@ -1,3 +1,4 @@
+import 'package:book_my_weather/app_localizations.dart';
 import 'package:book_my_weather/models/trip_state.dart';
 import 'package:book_my_weather/pages/places_screen.dart';
 import 'package:book_my_weather/pages/trip_screen.dart';
@@ -297,7 +298,8 @@ class TripDetail extends StatelessWidget {
                       child: TripDetailGridItem(
                         tag: 'places',
                         gridImgPath: 'assets/images/places.jpg',
-                        gridItemText: 'Places',
+                        gridItemText: AppLocalizations.of(context)
+                            .translate('trip_detail_grid_1_string'),
                       ),
                     ),
                     GestureDetector(
@@ -316,7 +318,8 @@ class TripDetail extends StatelessWidget {
                       child: TripDetailGridItem(
                         tag: 'foods',
                         gridImgPath: 'assets/images/food.jpg',
-                        gridItemText: 'Foods',
+                        gridItemText: AppLocalizations.of(context)
+                            .translate('trip_detail_grid_2_string'),
                       ),
                     ),
                     GestureDetector(
@@ -335,7 +338,8 @@ class TripDetail extends StatelessWidget {
                       child: TripDetailGridItem(
                         tag: 'hotels',
                         gridImgPath: 'assets/images/hotels.jpg',
-                        gridItemText: 'Hotels',
+                        gridItemText: AppLocalizations.of(context)
+                            .translate('trip_detail_grid_3_string'),
                       ),
                     ),
                     GestureDetector(
@@ -353,7 +357,8 @@ class TripDetail extends StatelessWidget {
                       child: TripDetailGridItem(
                         tag: 'weather',
                         gridImgPath: 'assets/images/weather-2.jpg',
-                        gridItemText: 'Weather',
+                        gridItemText: AppLocalizations.of(context)
+                            .translate('trip_detail_grid_4_string'),
                       ),
                     ),
                     GestureDetector(
@@ -363,7 +368,8 @@ class TripDetail extends StatelessWidget {
                       child: TripDetailGridItem(
                         tag: 'todos',
                         gridImgPath: 'assets/images/todo.jpg',
-                        gridItemText: 'To Dos',
+                        gridItemText: AppLocalizations.of(context)
+                            .translate('trip_detail_grid_5_string'),
                       ),
                     ),
                     GestureDetector(
@@ -373,7 +379,8 @@ class TripDetail extends StatelessWidget {
                       child: TripDetailGridItem(
                         tag: 'visiting',
                         gridImgPath: 'assets/images/saved_places.jpg',
-                        gridItemText: 'Visiting',
+                        gridItemText: AppLocalizations.of(context)
+                            .translate('trip_detail_grid_6_string'),
                       ),
                     ),
                   ],

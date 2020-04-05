@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:book_my_weather/app_localizations.dart';
 import 'package:book_my_weather/constants.dart';
 import 'package:book_my_weather/models/place.dart';
 import 'package:book_my_weather/models/setting.dart';
@@ -195,7 +196,8 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
                 Radius.circular(20.0),
               ),
             ),
-            title: Text('Air Quality Guide'),
+            title: Text(AppLocalizations.of(context)
+                .translate('weather_listing_screen_aqi_modal_title')),
             content: Container(
               width: MediaQuery.of(context).size.width * 0.9,
               child: ListView(
@@ -206,42 +208,48 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
                       backgroundColor: Colors.green,
                     ),
                     title: Text('0 ~ 50'),
-                    subtitle: Text('Good'),
+                    subtitle: Text(AppLocalizations.of(context).translate(
+                        'weather_listing_screen_aqi_modal_first_subtitle')),
                   ),
                   ListTile(
                     leading: CircleAvatar(
                       backgroundColor: Colors.yellow,
                     ),
                     title: Text('51 ~ 100'),
-                    subtitle: Text('Moderate'),
+                    subtitle: Text(AppLocalizations.of(context).translate(
+                        'weather_listing_screen_aqi_modal_second_subtitle')),
                   ),
                   ListTile(
                     leading: CircleAvatar(
                       backgroundColor: Colors.orange,
                     ),
                     title: Text('101 ~ 150'),
-                    subtitle: Text('Unhealthy for sensitive groups'),
+                    subtitle: Text(AppLocalizations.of(context).translate(
+                        'weather_listing_screen_aqi_modal_third_subtitle')),
                   ),
                   ListTile(
                     leading: CircleAvatar(
                       backgroundColor: Colors.red,
                     ),
                     title: Text('151 ~ 200'),
-                    subtitle: Text('Unhealthy'),
+                    subtitle: Text(AppLocalizations.of(context).translate(
+                        'weather_listing_screen_aqi_modal_fourth_subtitle')),
                   ),
                   ListTile(
                     leading: CircleAvatar(
                       backgroundColor: Colors.purple,
                     ),
                     title: Text('201 ~ 300'),
-                    subtitle: Text('Very unhealthy'),
+                    subtitle: Text(AppLocalizations.of(context).translate(
+                        'weather_listing_screen_aqi_modal_fifth_subtitle')),
                   ),
                   ListTile(
                     leading: CircleAvatar(
                       backgroundColor: Color(0XFF800000),
                     ),
                     title: Text('301 ~ 500'),
-                    subtitle: Text('Hazardous'),
+                    subtitle: Text(AppLocalizations.of(context).translate(
+                        'weather_listing_screen_aqi_modal_sixth_subtitle')),
                   ),
                 ],
               ),
@@ -295,7 +303,8 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
                     left: 16.0,
                   ),
                   child: Txt(
-                    'Weather',
+                    AppLocalizations.of(context)
+                        .translate('weather_listing_screen_title'),
                     style: kScreenTitleTextStyle,
                   ),
                 ),
@@ -418,7 +427,8 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
                                     ),
                                   ),
                                   footer: new Text(
-                                    "Air Quality",
+                                    AppLocalizations.of(context).translate(
+                                        'weather_listing_screen_aqi_string'),
                                     style: new TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16.0,
@@ -465,7 +475,8 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
                                       ),
                                     ),
                                     footer: new Text(
-                                      "Air Quality",
+                                      AppLocalizations.of(context).translate(
+                                          'weather_listing_screen_aqi_string'),
                                       style: new TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 13.0,

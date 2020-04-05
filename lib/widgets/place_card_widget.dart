@@ -1,3 +1,4 @@
+import 'package:book_my_weather/app_localizations.dart';
 import 'package:book_my_weather/models/networking_state.dart';
 import 'package:book_my_weather/models/trip.dart';
 import 'package:book_my_weather/models/trip_state.dart';
@@ -68,8 +69,10 @@ class _PlaceCardState extends State<PlaceCard> {
       Navigator.pop(context);
       displaySuccessSnackbarWithAction(
           context: context,
-          msg: 'Todo successfully added.',
-          buttonText: 'View To Dos',
+          msg: AppLocalizations.of(context)
+              .translate('place_card_bottom_sheet_todo_modal_success_string_1'),
+          buttonText: AppLocalizations.of(context)
+              .translate('place_card_bottom_sheet_todo_modal_success_string_2'),
           actionFn: () {
             Navigator.pushNamed(context, TripTodosScreen.id);
           });
@@ -100,7 +103,8 @@ class _PlaceCardState extends State<PlaceCard> {
               color: Color(0XFF69A4FF),
             ),
             title: Text(
-              'Add a ToDo',
+              AppLocalizations.of(context)
+                  .translate('place_card_bottom_sheet_option_1_string'),
               style: TextStyle(
                 fontSize: 18.0,
                 color: Color(0XFF69A4FF),
@@ -117,7 +121,8 @@ class _PlaceCardState extends State<PlaceCard> {
                           Radius.circular(20.0),
                         ),
                       ),
-                      title: Text('Add a ToDo'),
+                      title: Text(AppLocalizations.of(context).translate(
+                          'place_card_bottom_sheet_option_1_modal_title')),
                       content: TextField(
                         autofocus: true,
                         decoration: InputDecoration(
@@ -137,14 +142,16 @@ class _PlaceCardState extends State<PlaceCard> {
                       actions: <Widget>[
                         if (!Provider.of<NetworkingState>(context).isLoading)
                           FlatButton(
-                            child: Text('Cancel'),
+                            child: Text(AppLocalizations.of(context).translate(
+                                'place_card_bottom_sheet_option_1_modal_cancel_btn_string')),
                             onPressed: () {
                               Navigator.pop(context);
                             },
                           ),
                         if (!Provider.of<NetworkingState>(context).isLoading)
                           FlatButton(
-                            child: Text('Add'),
+                            child: Text(AppLocalizations.of(context).translate(
+                                'place_card_bottom_sheet_option_1_modal_confirm_btn_string')),
                             onPressed: () async {
                               _onHandleAddTodo(trips[tripIndex]);
                             },
@@ -167,7 +174,8 @@ class _PlaceCardState extends State<PlaceCard> {
             color: Color(0XFF69A4FF),
           ),
           title: Text(
-            'Share',
+            AppLocalizations.of(context)
+                .translate('place_card_bottom_sheet_option_2_string'),
             style: TextStyle(
               fontSize: 18.0,
               color: Color(0XFF69A4FF),
@@ -185,7 +193,8 @@ class _PlaceCardState extends State<PlaceCard> {
             color: Color(0XFF69A4FF),
           ),
           title: Text(
-            'Direction',
+            AppLocalizations.of(context)
+                .translate('place_card_bottom_sheet_option_3_string'),
             style: TextStyle(
               fontSize: 18.0,
               color: Color(0XFF69A4FF),
@@ -247,7 +256,12 @@ class _PlaceCardState extends State<PlaceCard> {
                 children: <Widget>[
                   ListTile(
                     title: Text(widget.placeName),
-                    subtitle: Text(widget.placeCategory.split('_').join(' ')),
+                    subtitle: Text(
+                      getSearchTypeStringWithLocalization(
+                        context,
+                        searchType(widget.placeCategory),
+                      ),
+                    ),
                     trailing: IconButton(
                       icon: Icon(Icons.more_vert),
                       onPressed: () {
@@ -308,7 +322,11 @@ class _PlaceCardState extends State<PlaceCard> {
                         text: TextSpan(
                           children: [
                             TextSpan(
-                              text: widget.openNow ? 'Open now' : 'Closed',
+                              text: widget.openNow
+                                  ? AppLocalizations.of(context)
+                                      .translate('place_card_open_now_string')
+                                  : AppLocalizations.of(context)
+                                      .translate('place_card_closed_string'),
                               style: TextStyle(
                                 color:
                                     widget.openNow ? Colors.green : Colors.red,

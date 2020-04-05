@@ -42,7 +42,7 @@ class TripDetailGridItem extends StatelessWidget {
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 30.0,
-                    fontWeight: FontWeight.w100,
+                    fontWeight: FontWeight.w300,
                   ),
                 ),
               ),

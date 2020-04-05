@@ -1,3 +1,4 @@
+import 'package:book_my_weather/app_localizations.dart';
 import 'package:book_my_weather/models/setting.dart';
 import 'package:book_my_weather/models/user.dart';
 import 'package:book_my_weather/pages/signin_register_screen.dart';
@@ -62,7 +63,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     left: 16.0,
                   ),
                   child: Text(
-                    'Settings',
+                    AppLocalizations.of(context)
+                        .translate('settings_screen_title'),
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 40.0,
@@ -96,7 +98,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           0XFF69A4FF,
                         ),
                         child: Text(
-                          'Sign in',
+                          AppLocalizations.of(context)
+                              .translate('settings_screen_sign_in_btn_string'),
                           style: textStyle,
                         ),
                         onPressed: () {
@@ -160,7 +163,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                           Center(
                             child: Text(
-                              'Logged in as ${user.email}',
+                              '${AppLocalizations.of(context).translate('settings_screen_user_string')} ${user.email}',
                               style: textStyle,
                             ),
                           ),
@@ -173,7 +176,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
                                 Text(
-                                  'Set base currency:',
+                                  '${AppLocalizations.of(context).translate('settings_screen_field_1_string')}:',
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 18.0,
@@ -219,7 +222,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
                                 Text(
-                                  'Temperature unit:',
+                                  '${AppLocalizations.of(context).translate('settings_screen_field_2_string')}:',
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 18.0,
@@ -282,7 +285,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                       MediaQuery.of(context).size.width * 0.9,
                                   child: FlatButton(
                                     child: Text(
-                                      'Reset Home Screen Weather Data',
+                                      AppLocalizations.of(context).translate(
+                                          'settings_screen_reset_weather_btn_string'),
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                         color: Color(
@@ -315,7 +319,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 0XFF69A4FF,
                               ),
                               child: Text(
-                                'Sign Out',
+                                AppLocalizations.of(context).translate(
+                                    'settings_screen_sign_out_btn_string'),
                                 style: textStyle,
                               ),
                               onPressed: () {

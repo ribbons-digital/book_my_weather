@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:book_my_weather/app_localizations.dart';
 import 'package:book_my_weather/constants.dart';
 import 'package:book_my_weather/models/google_nearby_place.dart';
 import 'package:book_my_weather/models/trip.dart';
@@ -165,6 +166,66 @@ class _PlacesScreenState extends State<PlacesScreen>
             },
             displayColor: displaySelectedColor(NearbySearchType.BookStore),
           ),
+          SizedBox(
+            width: 8.0,
+          ),
+          _PlaceSearchTypeOption(
+            searchType: NearbySearchType.Park,
+            onPress: () {
+              optionPressed(NearbySearchType.Park);
+            },
+            displayColor: displaySelectedColor(NearbySearchType.Park),
+          ),
+          SizedBox(
+            width: 8.0,
+          ),
+          _PlaceSearchTypeOption(
+            searchType: NearbySearchType.Parking,
+            onPress: () {
+              optionPressed(NearbySearchType.Parking);
+            },
+            displayColor: displaySelectedColor(NearbySearchType.Parking),
+          ),
+          SizedBox(
+            width: 8.0,
+          ),
+          _PlaceSearchTypeOption(
+            searchType: NearbySearchType.TrainStation,
+            onPress: () {
+              optionPressed(NearbySearchType.TrainStation);
+            },
+            displayColor: displaySelectedColor(NearbySearchType.TrainStation),
+          ),
+          SizedBox(
+            width: 8.0,
+          ),
+          _PlaceSearchTypeOption(
+            searchType: NearbySearchType.SubwayStation,
+            onPress: () {
+              optionPressed(NearbySearchType.SubwayStation);
+            },
+            displayColor: displaySelectedColor(NearbySearchType.SubwayStation),
+          ),
+          SizedBox(
+            width: 8.0,
+          ),
+          _PlaceSearchTypeOption(
+            searchType: NearbySearchType.BusStation,
+            onPress: () {
+              optionPressed(NearbySearchType.BusStation);
+            },
+            displayColor: displaySelectedColor(NearbySearchType.BusStation),
+          ),
+          SizedBox(
+            width: 8.0,
+          ),
+          _PlaceSearchTypeOption(
+            searchType: NearbySearchType.GasStation,
+            onPress: () {
+              optionPressed(NearbySearchType.GasStation);
+            },
+            displayColor: displaySelectedColor(NearbySearchType.GasStation),
+          ),
         ],
       );
 
@@ -219,10 +280,13 @@ class _PlacesScreenState extends State<PlacesScreen>
     return Scaffold(
       appBar: AppBar(
         title: widget.placeType == PlaceType.General
-            ? Text('Nearby Places')
+            ? Text(AppLocalizations.of(context)
+                .translate('places_screen_nearby_places_title_string'))
             : widget.placeType == PlaceType.Food
-                ? Text('Nearby Foods')
-                : Text('Nearby Hotels'),
+                ? Text(AppLocalizations.of(context)
+                    .translate('places_screen_nearby_foods_title_string'))
+                : Text(AppLocalizations.of(context)
+                    .translate('places_screen_nearby_hotels_title_string')),
       ),
       body: SafeArea(
         child: Builder(
@@ -357,7 +421,7 @@ class _PlaceSearchTypeOption extends StatelessWidget {
           ),
         ),
         child: Text(
-          getSearchTypeString(searchType).split('_').join(' '),
+          getSearchTypeStringWithLocalization(context, searchType),
           style: TextStyle(
             color: Color(0XFF69A4FF),
           ),

@@ -1,3 +1,4 @@
+import 'package:book_my_weather/utilities/index.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
 
@@ -69,7 +70,10 @@ class ExplorePlaceCardWidget extends StatelessWidget {
                         name,
                         maxLines: 3,
                       ),
-                      subtitle: Text(type),
+                      subtitle: Text(getSearchTypeStringWithLocalization(
+                        context,
+                        searchType(type),
+                      )),
                       contentPadding: EdgeInsets.only(
                         left: 0.0,
                         bottom: 0.0,

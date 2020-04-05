@@ -1,3 +1,4 @@
+import 'package:book_my_weather/app_localizations.dart';
 import 'package:book_my_weather/models/networking_state.dart';
 import 'package:book_my_weather/models/trip.dart';
 import 'package:book_my_weather/models/trip_state.dart';
@@ -38,7 +39,11 @@ class _TripTodosScreenState extends State<TripTodosScreen> {
       await _db.addTodoToTrip(trip.id, tripTodo);
 
       Navigator.pop(context);
-      displaySuccessSnackbar(context, 'Todo successfully added.');
+      displaySuccessSnackbar(
+        context,
+        AppLocalizations.of(context)
+            .translate('trip_todos_screen_add_todo_success_msg'),
+      );
     } on PlatformException catch (e) {
       Navigator.pop(context);
       displayErrorSnackbar(context, e.details);
@@ -55,7 +60,10 @@ class _TripTodosScreenState extends State<TripTodosScreen> {
         await _db.updateTripTodoContent(trip.id, tripTodo.id, toDoContent);
 
         Navigator.pop(context);
-        displaySuccessSnackbar(context, 'Todo successfully edited.');
+        displaySuccessSnackbar(
+            context,
+            AppLocalizations.of(context)
+                .translate('trip_todos_screen_add_todo_success_msg'));
       } on PlatformException catch (e) {
         Navigator.pop(context);
         displayErrorSnackbar(context, e.details);
@@ -75,7 +83,8 @@ class _TripTodosScreenState extends State<TripTodosScreen> {
             color: Color(0XFF69A4FF),
           ),
           title: Text(
-            'Edit this todo',
+            AppLocalizations.of(context)
+                .translate('trips_todos_screen_bottom_sheet_option_1_string'),
             style: TextStyle(
               fontSize: 18.0,
               color: Color(0XFF69A4FF),
@@ -93,7 +102,10 @@ class _TripTodosScreenState extends State<TripTodosScreen> {
                         Radius.circular(20.0),
                       ),
                     ),
-                    title: Text('Edit ToDo'),
+                    title: Text(
+                      AppLocalizations.of(context)
+                          .translate('trip_todos_screen_edit_todo_modal_title'),
+                    ),
                     content: TextField(
                       autofocus: true,
                       decoration: InputDecoration(
@@ -114,14 +126,16 @@ class _TripTodosScreenState extends State<TripTodosScreen> {
                     actions: <Widget>[
                       if (!Provider.of<NetworkingState>(context).isLoading)
                         FlatButton(
-                          child: Text('Cancel'),
+                          child: Text(AppLocalizations.of(context).translate(
+                              'trip_todos_screen_edit_todo_modal_cancel_btn_string')),
                           onPressed: () {
                             Navigator.pop(context);
                           },
                         ),
                       if (!Provider.of<NetworkingState>(context).isLoading)
                         FlatButton(
-                          child: Text('Save'),
+                          child: Text(AppLocalizations.of(context).translate(
+                              'trip_todos_screen_edit_todo_modal_confirm_btn_string')),
                           onPressed: () {
                             _onHandleEditTodo(
                                 action: TodoAction.Edit,
@@ -142,7 +156,8 @@ class _TripTodosScreenState extends State<TripTodosScreen> {
         ListTile(
           leading: Icon(Icons.delete, color: Color(0XFF69A4FF)),
           title: Text(
-            'Delete this todo',
+            AppLocalizations.of(context)
+                .translate('trips_todos_screen_bottom_sheet_option_2_string'),
             style: TextStyle(
               fontSize: 18.0,
               color: Color(0XFF69A4FF),
@@ -206,7 +221,8 @@ class _TripTodosScreenState extends State<TripTodosScreen> {
                               Radius.circular(20.0),
                             ),
                           ),
-                          title: Text('Add a ToDo'),
+                          title: Text(AppLocalizations.of(context).translate(
+                              'trip_todos_screen_add_todo_modal_title')),
                           content: TextField(
                             autocorrect: true,
                             decoration: InputDecoration(
@@ -230,7 +246,8 @@ class _TripTodosScreenState extends State<TripTodosScreen> {
                             if (!Provider.of<NetworkingState>(context)
                                 .isLoading)
                               FlatButton(
-                                child: Text('Cancel'),
+                                child: Text(AppLocalizations.of(context).translate(
+                                    'trip_todos_screen_add_todo_modal_cancel_btn_string')),
                                 onPressed: () {
                                   Navigator.pop(context);
                                 },
@@ -238,7 +255,8 @@ class _TripTodosScreenState extends State<TripTodosScreen> {
                             if (!Provider.of<NetworkingState>(context)
                                 .isLoading)
                               FlatButton(
-                                child: Text('Save'),
+                                child: Text(AppLocalizations.of(context).translate(
+                                    'trip_todos_screen_add_todo_modal_confirm_btn_string')),
                                 onPressed: () {
                                   _onHandleAddTodo(trips[tripIndex]);
                                 },
@@ -254,7 +272,8 @@ class _TripTodosScreenState extends State<TripTodosScreen> {
                 },
               ),
           ],
-          title: Text('To Dos'),
+          title: Text(AppLocalizations.of(context)
+              .translate('trip_todos_screen_title_string')),
         ),
         body: StreamProvider<List<TripTodo>>.value(
           value: _db.streamTripTodos(trips[tripIndex].id),
@@ -264,7 +283,8 @@ class _TripTodosScreenState extends State<TripTodosScreen> {
               children: <Widget>[
                 if (tripToDos == null || tripToDos.length == 0)
                   Text(
-                    'No todos yet. Tap the " + " button to add a new to do.',
+                    AppLocalizations.of(context)
+                        .translate('trip_todos_screen_no_todos_msg_string'),
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20.0,
