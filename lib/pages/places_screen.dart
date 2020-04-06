@@ -37,6 +37,14 @@ class _PlacesScreenState extends State<PlacesScreen>
   static const _iOSAdUnitID = kAdMobIosAdUnit;
   static const _androidAdUnitId = kAdMobAndroidAdUnit;
 
+  final _controller = NativeAdmobController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   Future<List<GoogleNearByPlace>> getPlaces(
       {NearbySearchType searchType}) async {
     final type = getSearchTypeString(searchType);
@@ -277,6 +285,8 @@ class _PlacesScreenState extends State<PlacesScreen>
 
   @override
   Widget build(BuildContext context) {
+    final isIos = Theme.of(context).platform == TargetPlatform.iOS;
+
     return Scaffold(
       appBar: AppBar(
         title: widget.placeType == PlaceType.General
@@ -324,7 +334,11 @@ class _PlacesScreenState extends State<PlacesScreen>
                               final place = snapshot.data[index];
 
                               if (index > 0 && index % 7 == 0) {
-                                return _PlacesAdWidget();
+                                return _PlacesAdWidget(
+                                  admobController: _controller,
+                                  adUnitID:
+                                      isIos ? _iOSAdUnitID : _androidAdUnitId,
+                                );
                               }
 
                               return GestureDetector(
@@ -433,23 +447,17 @@ class _PlaceSearchTypeOption extends StatelessWidget {
 }
 
 class _PlacesAdWidget extends StatefulWidget {
+  NativeAdmobController admobController;
+  String adUnitID;
+
+  _PlacesAdWidget({@required this.admobController, @required this.adUnitID});
   @override
   __PlacesAdWidgetState createState() => __PlacesAdWidgetState();
 }
 
 class __PlacesAdWidgetState extends State<_PlacesAdWidget> {
-  final _controller = NativeAdmobController();
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
-    final isIos = Theme.of(context).platform == TargetPlatform.iOS;
-
     return Container(
       height: 250,
       decoration: BoxDecoration(
@@ -461,8 +469,8 @@ class __PlacesAdWidgetState extends State<_PlacesAdWidget> {
         // dev
 //        adUnitID: kTestAdUnit,
         // production
-        adUnitID: isIos ? kAdMobIosAdUnit : kAdMobAndroidAdUnit,
-        controller: _controller,
+        adUnitID: widget.adUnitID,
+        controller: widget.admobController,
         type: NativeAdmobType.full,
       ),
     );

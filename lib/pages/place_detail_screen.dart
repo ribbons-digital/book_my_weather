@@ -472,6 +472,14 @@ class _PlaceDetailState extends State<PlaceDetail>
                                               context: context,
                                               builder: (BuildContext context) {
                                                 return AlertDialog(
+                                                  contentPadding: height < 720
+                                                      ? EdgeInsets.fromLTRB(
+                                                          24.0, 0.0, 24.0, 0.0)
+                                                      : EdgeInsets.fromLTRB(
+                                                          24.0,
+                                                          20.0,
+                                                          24.0,
+                                                          20.0),
                                                   shape: RoundedRectangleBorder(
                                                     borderRadius:
                                                         BorderRadius.all(
@@ -482,6 +490,10 @@ class _PlaceDetailState extends State<PlaceDetail>
                                                     AppLocalizations.of(context)
                                                         .translate(
                                                             'trip_visitings_screen_edit_modal_title'),
+                                                    maxLines: 1,
+                                                    style: TextStyle(
+                                                      fontSize: 18.0,
+                                                    ),
                                                   ),
                                                   content: Column(
                                                     mainAxisSize:
@@ -490,8 +502,9 @@ class _PlaceDetailState extends State<PlaceDetail>
                                                       TextField(
                                                         autofocus: true,
                                                         style: TextStyle(
-                                                            color: Color(
-                                                                0XFF436DA6)),
+                                                          color:
+                                                              Color(0XFF436DA6),
+                                                        ),
                                                         controller:
                                                             _dateEditingController,
                                                         onTap: () async {

@@ -63,7 +63,7 @@ class _TripTodosScreenState extends State<TripTodosScreen> {
         displaySuccessSnackbar(
             context,
             AppLocalizations.of(context)
-                .translate('trip_todos_screen_add_todo_success_msg'));
+                .translate('trip_todos_screen_edit_todo_success_msg'));
       } on PlatformException catch (e) {
         Navigator.pop(context);
         displayErrorSnackbar(context, e.details);

@@ -1,3 +1,4 @@
+import 'package:book_my_weather/app_localizations.dart';
 import 'package:book_my_weather/models/weather.dart';
 import 'package:book_my_weather/services/location.dart';
 import 'package:book_my_weather/services/setting.dart';
@@ -48,6 +49,12 @@ class _PlaceWeatherState extends State<PlaceWeather> {
 
   @override
   Widget build(BuildContext context) {
+    final String hourlyString = AppLocalizations.of(context)
+        .translate('place_detail_screen_place_weather_dropdown_option_1');
+
+    final String dailyString = AppLocalizations.of(context)
+        .translate('place_detail_screen_place_weather_dropdown_option_2');
+
     return FutureBuilder(
       future: getWeather,
       builder: (BuildContext context, AsyncSnapshot<Weather> snapshot) {
@@ -92,14 +99,14 @@ class _PlaceWeatherState extends State<PlaceWeather> {
                         bottom: 8.0,
                       ),
                       child: DropdownButton(
-                        value: isHourly ? 'Hourly' : 'Daily',
+                        value: isHourly ? hourlyString : dailyString,
                         elevation: 16,
                         style: TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.w200,
                           fontSize: 20.0,
                         ),
-                        items: <String>['Hourly', 'Daily']
+                        items: <String>[hourlyString, dailyString]
                             .map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
@@ -108,7 +115,7 @@ class _PlaceWeatherState extends State<PlaceWeather> {
                         }).toList(),
                         onChanged: (String newValue) {
                           setState(() {
-                            newValue == 'Hourly'
+                            newValue == hourlyString
                                 ? isHourly = true
                                 : isHourly = false;
                           });

@@ -97,7 +97,7 @@
   "trip_visitings_no_visitings_msg_string": "尚未有任何儲存景點。請由附近景點/美食/住宿頁面點選‘儲存'進行新增。",
   "trip_visitings_screen_slide_action_option_1_string": "編輯",
   "trip_visitings_screen_slide_action_option_2_string": "刪除",
-  "trip_visitings_screen_edit_modal_title": "打算何時造訪？",
+  "trip_visitings_screen_edit_modal_title": "何時造訪？",
   "trip_visitings_screen_edit_modal_field_1_hint_text": "選擇日期",
   "trip_visitings_screen_edit_modal_field_2_hint_text": "選擇時間",
   "trip_visitings_screen_edit_modal_cancel_btn_string": "取消",
@@ -135,5 +135,7 @@
   "place_detail_screen_place_overview_section_1_error_3": "無法取得網址",
   "place_detail_screen_place_overview_section_2_error_1": "尚無資訊",
   "place_detail_screen_place_overview_section_3_error_1": "無法取得此處天氣",
-  "place_detail_screen_place_overview_section_4_error_1": "無法取得此處附近住宿"
+  "place_detail_screen_place_overview_section_4_error_1": "無法取得此處附近住宿",
+  "place_detail_screen_place_weather_dropdown_option_1": "每小時",
+  "place_detail_screen_place_weather_dropdown_option_2": "每天"
 }

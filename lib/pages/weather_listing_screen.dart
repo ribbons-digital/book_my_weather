@@ -394,7 +394,7 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
                           SizedBox(
                             height: 8.0,
                           ),
-                          if (height > 600)
+                          if (height > 720)
                             Txt(
                               date,
                               style: screenTextStyle.clone()
@@ -402,7 +402,7 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
                                   20.0,
                                 ),
                             ),
-                          if (height > 600)
+                          if (height > 720)
                             Align(
                               alignment: Alignment.centerRight,
                               child: GestureDetector(
@@ -440,11 +440,11 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
                                 ),
                               ),
                             ),
-                          if (height > 600)
+                          if (height > 720)
                             SizedBox(
                               height: 18.0,
                             ),
-                          if (height < 600)
+                          if (height < 720)
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[

@@ -135,5 +135,7 @@
   "place_detail_screen_place_overview_section_1_error_3": "Website not available",
   "place_detail_screen_place_overview_section_2_error_1": "Not available",
   "place_detail_screen_place_overview_section_3_error_1": "Error getting weather forecast for this place.",
-  "place_detail_screen_place_overview_section_4_error_1": "Error getting nearby hotels for this place."
+  "place_detail_screen_place_overview_section_4_error_1": "Error getting nearby hotels for this place.",
+  "place_detail_screen_place_weather_dropdown_option_1": "Hourly",
+  "place_detail_screen_place_weather_dropdown_option_2": "Daily"
 }
