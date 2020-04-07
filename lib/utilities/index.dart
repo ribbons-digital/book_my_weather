@@ -4,6 +4,7 @@ import 'package:book_my_weather/app_localizations.dart';
 import 'package:book_my_weather/models/place.dart';
 import 'package:book_my_weather/models/setting.dart';
 import 'package:book_my_weather/models/trip.dart';
+import 'package:book_my_weather/pages/image_full_screen.dart';
 import 'package:book_my_weather/secure/keys.dart';
 import 'package:book_my_weather/services/networking.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -418,4 +419,28 @@ void sharePlace(BuildContext context, String placeId) async {
     Navigator.pop(context);
     displayErrorSnackbar(context, 'Something wrong, please try again later.');
   }
+}
+
+List<Widget> heroImages(BuildContext context, List<String> photoReferences) {
+  return photoReferences.map((reference) {
+    final url = buildPhotoURL(reference);
+
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(context, MaterialPageRoute(builder: (_) {
+          return ImageFullScreen(
+            tag: DateTime.now().toIso8601String(),
+            url: url,
+          );
+        }));
+      },
+      child: Hero(
+        tag: DateTime.now().toIso8601String(),
+        child: Image.network(
+          url,
+          fit: BoxFit.cover,
+        ),
+      ),
+    );
+  }).toList();
 }

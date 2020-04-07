@@ -29,6 +29,7 @@ class HourlyWeatherWidget extends StatelessWidget {
     WeatherModel weatherModel = WeatherModel();
 
     return Container(
+      color: Colors.white,
       margin: EdgeInsets.only(
         bottom: 10.0,
       ),

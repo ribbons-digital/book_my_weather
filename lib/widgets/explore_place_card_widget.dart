@@ -34,7 +34,7 @@ class ExplorePlaceCardWidget extends StatelessWidget {
           Align(
             alignment: Alignment.topCenter,
             child: FractionallySizedBox(
-              heightFactor: 0.45,
+              heightFactor: 0.4,
               widthFactor: 1,
               child: ClipRRect(
                 borderRadius: BorderRadius.only(
@@ -54,64 +54,60 @@ class ExplorePlaceCardWidget extends StatelessWidget {
             ),
           ),
           Align(
-            alignment: Alignment(0, 0.9),
+            alignment: Alignment(0, 0.6),
             child: FractionallySizedBox(
-              heightFactor: 0.55,
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  top: 8.0,
-                ),
-                child: ListView(
+              heightFactor: 0.6,
+              child: ListView(
 //                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
 //                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    ListTile(
-                      title: Text(
-                        name,
-                        maxLines: 3,
-                      ),
-                      subtitle: Text(getSearchTypeStringWithLocalization(
-                        context,
-                        searchType(type),
-                      )),
-                      contentPadding: EdgeInsets.only(
-                        left: 0.0,
-                        bottom: 0.0,
-                      ),
+                children: <Widget>[
+                  ListTile(
+                    title: Text(
+                      name,
+                      maxLines: 3,
                     ),
-                    Row(
-                      children: <Widget>[
-                        Text(
-                          '$rating ',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 15,
-                          ),
+                    subtitle: Text(getSearchTypeStringWithLocalization(
+                      context,
+                      searchType(type),
+                    )),
+                    contentPadding: EdgeInsets.only(
+                      left: 0.0,
+                      bottom: 0.0,
+                    ),
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Text(
+                        '$rating ',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 15,
                         ),
-                        SmoothStarRating(
-                          allowHalfRating: true,
-                          onRatingChanged: (v) {
+                      ),
+                      SmoothStarRating(
+                        allowHalfRating: true,
+                        onRatingChanged: (v) {
 //                              rating = v;
 //                              setState(() {});
-                          },
-                          starCount: 1,
-                          rating: rating,
-                          size: 18.0,
-                          filledIconData: Icons.star,
-                          halfFilledIconData: Icons.star_half,
-                          color: Color(0XFF69A4FF),
-                          borderColor: Color(0XFF69A4FF),
-                          spacing: 0.0,
+                        },
+                        starCount: 1,
+                        rating: rating,
+                        size: 18.0,
+                        filledIconData: Icons.star,
+                        halfFilledIconData: Icons.star_half,
+                        color: Color(0XFF69A4FF),
+                        borderColor: Color(0XFF69A4FF),
+                        spacing: 0.0,
+                      ),
+                      Text(
+                        ratingTotals != null ? ' ($ratingTotals)' : ' (0)',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 15,
                         ),
-                        Text(
-                          ratingTotals != null ? ' ($ratingTotals)' : ' (0)',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 15,
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
+                  ),
 //                    if (openNow != null)
 //                      FittedBox(
 //                        fit: BoxFit.contain,
@@ -147,8 +143,7 @@ class ExplorePlaceCardWidget extends StatelessWidget {
 //                        ),
 //                      ],
 //                    ),
-                  ],
-                ),
+                ],
               ),
             ),
           ),

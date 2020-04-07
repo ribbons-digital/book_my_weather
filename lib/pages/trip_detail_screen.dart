@@ -8,7 +8,7 @@ import 'package:book_my_weather/pages/trip_weather_screen.dart';
 import 'package:book_my_weather/services/setting.dart';
 import 'package:book_my_weather/services/weather.dart';
 import 'package:book_my_weather/utilities/index.dart';
-import 'package:book_my_weather/widgets/enter_exit_route.dart';
+import 'package:book_my_weather/widgets/my_custom_material_page_route.dart';
 import 'package:book_my_weather/widgets/trip_detail_grid_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -286,9 +286,8 @@ class TripDetail extends StatelessWidget {
                       onTap: () {
                         Navigator.push(
                           context,
-                          EnterExitRoute(
-                            exitPage: this,
-                            enterPage: PlacesScreen(
+                          CustomMaterialPageRoute(
+                            builder: (BuildContext context) => PlacesScreen(
                               trip: trip,
                               placeType: PlaceType.General,
                             ),
@@ -306,9 +305,8 @@ class TripDetail extends StatelessWidget {
                       onTap: () {
                         Navigator.push(
                           context,
-                          EnterExitRoute(
-                            exitPage: this,
-                            enterPage: PlacesScreen(
+                          CustomMaterialPageRoute(
+                            builder: (BuildContext context) => PlacesScreen(
                               trip: trip,
                               placeType: PlaceType.Food,
                             ),
@@ -326,9 +324,8 @@ class TripDetail extends StatelessWidget {
                       onTap: () {
                         Navigator.push(
                           context,
-                          EnterExitRoute(
-                            exitPage: this,
-                            enterPage: PlacesScreen(
+                          CustomMaterialPageRoute(
+                            builder: (BuildContext context) => PlacesScreen(
                               trip: trip,
                               placeType: PlaceType.Hotel,
                             ),
@@ -346,9 +343,9 @@ class TripDetail extends StatelessWidget {
                       onTap: () {
                         Navigator.push(
                           context,
-                          EnterExitRoute(
-                            exitPage: this,
-                            enterPage: TripWeatherScreen(
+                          CustomMaterialPageRoute(
+                            builder: (BuildContext context) =>
+                                TripWeatherScreen(
                               trip: trip,
                             ),
                           ),

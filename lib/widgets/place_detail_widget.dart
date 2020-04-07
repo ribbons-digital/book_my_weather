@@ -103,141 +103,91 @@ class _PlaceOverviewState extends State<PlaceOverview> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-          minHeight: 500,
-          maxHeight: 1150,
-        ),
-        child: DecoratedBox(
-          decoration: BoxDecoration(color: Colors.white),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 12.0,
-                  top: 16.0,
-                  bottom: 16.0,
-                ),
-                child: Text(
-                  AppLocalizations.of(context).translate(
-                      'place_detail_screen_place_overview_section_1_title'),
-                  style: TextStyle(
-                    fontSize: 32.0,
-                    fontWeight: FontWeight.w100,
-                  ),
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        minHeight: 500,
+        maxHeight: 1150,
+      ),
+      child: DecoratedBox(
+        decoration: BoxDecoration(color: Colors.white),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 12.0,
+                top: 16.0,
+                bottom: 16.0,
+              ),
+              child: Text(
+                AppLocalizations.of(context).translate(
+                    'place_detail_screen_place_overview_section_1_title'),
+                style: TextStyle(
+                  fontSize: 32.0,
+                  fontWeight: FontWeight.w100,
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 18.0,
-                  bottom: 10.0,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 18.0,
+                bottom: 10.0,
+              ),
+              child: Text(
+                widget.address ??
+                    AppLocalizations.of(context).translate(
+                        'place_detail_screen_place_overview_section_1_error_1'),
+                style: TextStyle(
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.w100,
                 ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 18.0,
+                bottom: 10.0,
+              ),
+              child: Text(
+                widget.phoneNumber ??
+                    AppLocalizations.of(context).translate(
+                        'place_detail_screen_place_overview_section_1_error_2'),
+                style: TextStyle(
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.w100,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 18.0,
+                bottom: 10.0,
+              ),
+              child: InkWell(
                 child: Text(
-                  widget.address ??
+                  widget.website ??
                       AppLocalizations.of(context).translate(
-                          'place_detail_screen_place_overview_section_1_error_1'),
+                          'place_detail_screen_place_overview_section_1_error_3'),
                   style: TextStyle(
                     fontSize: 20.0,
                     fontWeight: FontWeight.w100,
+                    color: Color(0XFF69A4FF),
                   ),
                   maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
                 ),
+                onTap: () async {
+                  if (await canLaunch(widget.website)) {
+                    launch(widget.website);
+                  }
+                },
               ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 18.0,
-                  bottom: 10.0,
-                ),
-                child: Text(
-                  widget.phoneNumber ??
-                      AppLocalizations.of(context).translate(
-                          'place_detail_screen_place_overview_section_1_error_2'),
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.w100,
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 18.0,
-                  bottom: 10.0,
-                ),
-                child: InkWell(
-                  child: Text(
-                    widget.website ??
-                        AppLocalizations.of(context).translate(
-                            'place_detail_screen_place_overview_section_1_error_3'),
-                    style: TextStyle(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.w100,
-                      color: Color(0XFF69A4FF),
-                    ),
-                    maxLines: 2,
-                  ),
-                  onTap: () async {
-                    if (await canLaunch(widget.website)) {
-                      launch(widget.website);
-                    }
-                  },
-                ),
-              ),
-              SizedBox(
-                height: 20.0,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10.0,
-                  ),
-                  child: Divider(
-                    color: Colors.black26,
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 12.0,
-                  top: 16.0,
-//                bottom: 16.0,
-                ),
-                child: Text(
-                  AppLocalizations.of(context).translate(
-                      'place_detail_screen_place_overview_section_2_title'),
-                  style: TextStyle(
-                    fontSize: 32.0,
-                    fontWeight: FontWeight.w100,
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 12.0,
-                ),
-                child: widget.openingHours is List &&
-                        widget.openingHours.length > 0
-                    ? Container(
-                        height: 200,
-                        child: ListView(
-                          padding: EdgeInsets.only(
-                            top: 5.0,
-                            left: 12.0,
-                          ),
-//                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: displayBusinessHours(widget.openingHours),
-                        ),
-                      )
-                    : Text(
-                        AppLocalizations.of(context).translate(
-                            'place_detail_screen_place_overview_section_2_error_1'),
-                        style: TextStyle(
-                          fontSize: 20.0,
-                        ),
-                      ),
-              ),
-              Padding(
+            ),
+            SizedBox(
+              height: 20.0,
+              child: Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 10.0,
                 ),
@@ -245,185 +195,118 @@ class _PlaceOverviewState extends State<PlaceOverview> {
                   color: Colors.black26,
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 12.0,
-                  top: 16.0,
-                  bottom: 16.0,
-                ),
-                child: Text(
-                  AppLocalizations.of(context).translate(
-                      'place_detail_screen_place_overview_section_3_title'),
-                  style: TextStyle(
-                    fontSize: 32.0,
-                    fontWeight: FontWeight.w100,
-                  ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 12.0,
+                top: 16.0,
+//                bottom: 16.0,
+              ),
+              child: Text(
+                AppLocalizations.of(context).translate(
+                    'place_detail_screen_place_overview_section_2_title'),
+                style: TextStyle(
+                  fontSize: 32.0,
+                  fontWeight: FontWeight.w100,
                 ),
               ),
-              GestureDetector(
-                onTap: widget.goToWeatherTab,
-                child: FutureBuilder(
-                  future: weatherForecast,
-                  builder:
-                      (BuildContext context, AsyncSnapshot<Weather> snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return SpinKitWave(
-                        size: 30.0,
-                        color: Colors.black,
-                      );
-                    }
-
-                    if (snapshot.connectionState == ConnectionState.done &&
-                        snapshot.hasData) {
-                      final dailyWeather = snapshot.data.daily.data;
-
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: List<Widget>.generate(7, (index) {
-                          return Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Text(
-                                '${DateFormat('Md').format(DateTime.fromMillisecondsSinceEpoch(dailyWeather[index].time * 1000))}',
-                                style: TextStyle(color: Colors.black),
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(top: 5, bottom: 10),
-//                          child: _SpinningSun(),
-                                child: getDailyWeatherForecastIcon(
-                                    icon: dailyWeather[index].icon),
-                              ),
-                              Text(
-                                '${dailyWeather[index].temperatureHigh.toStringAsFixed(0)}º',
-                                style: TextStyle(color: Colors.black),
-                              ),
-                            ],
-                          );
-                        }),
-                      );
-                    }
-
-                    if (snapshot.hasError) {
-                      return Center(
-                        child: Text(
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 12.0,
+              ),
+              child:
+                  widget.openingHours is List && widget.openingHours.length > 0
+                      ? Container(
+                          height: 200,
+                          child: ListView(
+                            padding: EdgeInsets.only(
+                              top: 5.0,
+                              left: 12.0,
+                            ),
+//                          crossAxisAlignment: CrossAxisAlignment.end,
+                            children: displayBusinessHours(widget.openingHours),
+                          ),
+                        )
+                      : Text(
                           AppLocalizations.of(context).translate(
-                              'place_detail_screen_place_overview_section_3_error_1'),
+                              'place_detail_screen_place_overview_section_2_error_1'),
                           style: TextStyle(
-                            color: Colors.black,
+                            fontSize: 20.0,
                           ),
                         ),
-                      );
-                    }
-
-                    return Container();
-                  },
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 10.0,
+              ),
+              child: Divider(
+                color: Colors.black26,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 12.0,
+                top: 16.0,
+                bottom: 16.0,
+              ),
+              child: Text(
+                AppLocalizations.of(context).translate(
+                    'place_detail_screen_place_overview_section_3_title'),
+                style: TextStyle(
+                  fontSize: 32.0,
+                  fontWeight: FontWeight.w100,
                 ),
               ),
-              SizedBox(
-                height: 20.0,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10.0,
-                  ),
-                  child: Divider(
-                    color: Colors.black26,
-                  ),
-                ),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 12.0,
-                      top: 16.0,
-                      bottom: 16.0,
-                    ),
-                    child: Text(
-                      AppLocalizations.of(context).translate(
-                          'place_detail_screen_place_overview_section_4_title'),
-                      style: TextStyle(
-                        fontSize: 32.0,
-                        fontWeight: FontWeight.w100,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              FutureBuilder(
-                future: nearbyHotels,
-                builder: (BuildContext context,
-                    AsyncSnapshot<List<GoogleNearByPlace>> snapshot) {
+            ),
+            GestureDetector(
+              onTap: widget.goToWeatherTab,
+              child: FutureBuilder(
+                future: weatherForecast,
+                builder:
+                    (BuildContext context, AsyncSnapshot<Weather> snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return SpinKitWave(
-                      color: Colors.black,
                       size: 30.0,
+                      color: Colors.black,
                     );
                   }
 
                   if (snapshot.connectionState == ConnectionState.done &&
                       snapshot.hasData) {
-                    final nearbyHotels = snapshot.data;
+                    final dailyWeather = snapshot.data.daily.data;
 
-                    if (nearbyHotels != null && snapshot.data.length > 0)
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Container(
-                            height: widget.height < 600 ? 220 : 250,
-                            child: ListView(
-                              itemExtent: widget.width / 2.5,
-                              scrollDirection: Axis.horizontal,
-                              physics: BouncingScrollPhysics(),
-                              children: List<Widget>.generate(
-                                nearbyHotels.length,
-                                (index) => GestureDetector(
-                                  onTap: () async {
-                                    final url =
-                                        'https://maps.googleapis.com/maps/api/place/details/json?key=$kGooglePlacesAPIKey&fields=name&place_id=${nearbyHotels[index].placeId}';
-                                    NetworkHelper networkHelper =
-                                        NetworkHelper(url);
-
-                                    try {
-                                      Map<String, dynamic> result =
-                                          await networkHelper.getData();
-                                      final name = result['result']['name'];
-                                      MapsLauncher.launchQuery(name);
-                                    } catch (e) {
-                                      print(e.toString());
-                                    }
-                                  },
-                                  child: ExplorePlaceCardWidget(
-                                    name: nearbyHotels[index].name,
-                                    placeId: nearbyHotels[index].placeId,
-                                    openNow: nearbyHotels[index].openNow,
-                                    rating: nearbyHotels[index].rating,
-                                    ratingTotals:
-                                        nearbyHotels[index].ratingTotals,
-                                    type: nearbyHotels[index]
-                                        .types[0]
-                                        .split('_')
-                                        .join(' '),
-                                    photo: nearbyHotels[index].photos.length > 0
-                                        ? buildPhotoURL(
-                                            nearbyHotels[index].photos[0])
-                                        : 'assets/images/no_image_found.jpg',
-                                  ),
-                                ),
-                              ),
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: List<Widget>.generate(7, (index) {
+                        return Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              '${DateFormat('Md').format(DateTime.fromMillisecondsSinceEpoch(dailyWeather[index].time * 1000))}',
+                              style: TextStyle(color: Colors.black),
                             ),
-                          )
-                        ],
-                      );
+                            Container(
+                              margin: EdgeInsets.only(top: 5, bottom: 10),
+//                          child: _SpinningSun(),
+                              child: getDailyWeatherForecastIcon(
+                                  icon: dailyWeather[index].icon),
+                            ),
+                            Text(
+                              '${dailyWeather[index].temperatureHigh.toStringAsFixed(0)}º',
+                              style: TextStyle(color: Colors.black),
+                            ),
+                          ],
+                        );
+                      }),
+                    );
                   }
 
                   if (snapshot.hasError) {
                     return Center(
                       child: Text(
                         AppLocalizations.of(context).translate(
-                            'place_detail_screen_place_overview_section_4_error_1'),
+                            'place_detail_screen_place_overview_section_3_error_1'),
                         style: TextStyle(
                           color: Colors.black,
                         ),
@@ -434,8 +317,123 @@ class _PlaceOverviewState extends State<PlaceOverview> {
                   return Container();
                 },
               ),
-            ],
-          ),
+            ),
+            SizedBox(
+              height: 20.0,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10.0,
+                ),
+                child: Divider(
+                  color: Colors.black26,
+                ),
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 12.0,
+                    top: 16.0,
+                    bottom: 16.0,
+                  ),
+                  child: Text(
+                    AppLocalizations.of(context).translate(
+                        'place_detail_screen_place_overview_section_4_title'),
+                    style: TextStyle(
+                      fontSize: 32.0,
+                      fontWeight: FontWeight.w100,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            FutureBuilder(
+              future: nearbyHotels,
+              builder: (BuildContext context,
+                  AsyncSnapshot<List<GoogleNearByPlace>> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return SpinKitWave(
+                    color: Colors.black,
+                    size: 30.0,
+                  );
+                }
+
+                if (snapshot.connectionState == ConnectionState.done &&
+                    snapshot.hasData) {
+                  final nearbyHotels = snapshot.data;
+
+                  if (nearbyHotels != null && snapshot.data.length > 0)
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Container(
+                          height: widget.height < 600 ? 220 : 250,
+                          child: ListView(
+                            itemExtent: widget.width / 2.5,
+                            scrollDirection: Axis.horizontal,
+                            physics: BouncingScrollPhysics(),
+                            children: List<Widget>.generate(
+                              nearbyHotels.length,
+                              (index) => GestureDetector(
+                                onTap: () async {
+                                  final url =
+                                      'https://maps.googleapis.com/maps/api/place/details/json?key=$kGooglePlacesAPIKey&fields=name&place_id=${nearbyHotels[index].placeId}';
+                                  NetworkHelper networkHelper =
+                                      NetworkHelper(url);
+
+                                  try {
+                                    Map<String, dynamic> result =
+                                        await networkHelper.getData();
+                                    final name = result['result']['name'];
+                                    MapsLauncher.launchQuery(name);
+                                  } catch (e) {
+                                    print(e.toString());
+                                  }
+                                },
+                                child: ExplorePlaceCardWidget(
+                                  name: nearbyHotels[index].name,
+                                  placeId: nearbyHotels[index].placeId,
+                                  openNow: nearbyHotels[index].openNow,
+                                  rating: nearbyHotels[index].rating,
+                                  ratingTotals:
+                                      nearbyHotels[index].ratingTotals,
+                                  type: nearbyHotels[index]
+                                      .types[0]
+                                      .split('_')
+                                      .join(' '),
+                                  photo: nearbyHotels[index].photos.length > 0
+                                      ? buildPhotoURL(
+                                          nearbyHotels[index].photos[0])
+                                      : 'assets/images/no_image_found.jpg',
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    );
+                }
+
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Text(
+                      AppLocalizations.of(context).translate(
+                          'place_detail_screen_place_overview_section_4_error_1'),
+                      style: TextStyle(
+                        color: Colors.black,
+                      ),
+                    ),
+                  );
+                }
+
+                return Container();
+              },
+            ),
+          ],
         ),
       ),
     );
