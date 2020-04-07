@@ -1,7 +1,5 @@
 import 'package:book_my_weather/app_localizations.dart';
 import 'package:book_my_weather/models/place.dart';
-import 'package:book_my_weather/models/place_data.dart';
-import 'package:book_my_weather/models/setting.dart';
 import 'package:book_my_weather/styleguide.dart';
 import 'package:book_my_weather/widgets/daily_weather_heading.dart';
 import 'package:book_my_weather/widgets/daily_weather_widget.dart';
@@ -10,7 +8,6 @@ import 'package:book_my_weather/widgets/weather_detail_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 
 import '../styleguide.dart';
 
@@ -37,14 +34,9 @@ class _WeatherDetailScreenState extends State<WeatherDetailScreen>
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
-//    final screenWidth = MediaQuery.of(context).size.width;
 
-    final placeData = Provider.of<PlaceData>(context);
-    final places = (settingsBox.get(0) as Setting).places;
-    final hourlyWeatherList =
-        places[placeData.currentPlaceIndex].weather.hourly.data;
-    final dailyWeatherList =
-        places[placeData.currentPlaceIndex].weather.daily.data;
+    final hourlyWeatherList = widget.place.weather.hourly.data;
+    final dailyWeatherList = widget.place.weather.daily.data;
 
     final today = DateFormat('EEE, MMM d')
         .format(DateTime.fromMillisecondsSinceEpoch(

@@ -93,7 +93,7 @@ class WeatherWidget extends StatelessWidget {
           ),
           if (screenHeight > 812)
             Positioned(
-                bottom: screenHeight / 5.2,
+                bottom: screenHeight / 5.8,
                 left: 40,
                 right: 40,
                 child: Column(
