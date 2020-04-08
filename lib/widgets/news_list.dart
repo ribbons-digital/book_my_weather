@@ -157,10 +157,9 @@ class __NewsAdWidgetState extends State<_NewsAdWidget> {
   Widget build(BuildContext context) {
     final isIos = Theme.of(context).platform == TargetPlatform.iOS;
     return Container(
-      height: 300.0,
-      margin: EdgeInsets.symmetric(
-        horizontal: 8.0,
-      ),
+      height: 330.0,
+      width: MediaQuery.of(context).size.width,
+//      margin: EdgeInsets.all(8.0),
       decoration: BoxDecoration(
         color: Colors.black26,
         border: Border(
@@ -176,6 +175,7 @@ class __NewsAdWidgetState extends State<_NewsAdWidget> {
         // production
         adUnitID: isIos ? _iOSAdUnitID : _androidAdUnitId,
         controller: _controller,
+        type: NativeAdmobType.full,
       ),
     );
   }

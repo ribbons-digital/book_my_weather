@@ -32,9 +32,7 @@ class Wrapper extends StatefulWidget {
 
 class _WrapperState extends State<Wrapper> {
   int _selectedIndex = 0;
-//  Future<String> deviceId;
   String filterString;
-//  bool isPast = false;
 
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.w100);
@@ -48,20 +46,7 @@ class _WrapperState extends State<Wrapper> {
   @override
   void initState() {
     super.initState();
-//    deviceId = getDeviceId();
   }
-
-//  Future<String> getDeviceId() async {
-//    DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
-//
-//    if (widget.isIos) {
-//      IosDeviceInfo iosDeviceInfo = await deviceInfoPlugin.iosInfo;
-//      return iosDeviceInfo.identifierForVendor;
-//    } else {
-//      AndroidDeviceInfo androidDeviceInfo = await deviceInfoPlugin.androidInfo;
-//      return androidDeviceInfo.androidId;
-//    }
-//  }
 
   void setFilterStringForTrips(String newString) {
     setState(() {
@@ -69,11 +54,30 @@ class _WrapperState extends State<Wrapper> {
     });
   }
 
-//  void setIsPast(bool value) {
-//    setState(() {
-//      isPast = value;
-//    });
-//  }
+  Widget renderScreen() {
+    if (_selectedIndex == 0) {
+      return WeatherListingScreen();
+    }
+
+    if (_selectedIndex == 1) {
+      return TripsScreen(
+        setFilterString: setFilterStringForTrips,
+        filterString: filterString,
+      );
+    }
+
+    if (_selectedIndex == 2) {
+      return NewsScreen(
+        selectHomeIndex: _onItemTapped,
+      );
+    }
+
+    if (_selectedIndex == 3) {
+      return SettingsScreen();
+    }
+
+    return Container();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -166,20 +170,7 @@ class _WrapperState extends State<Wrapper> {
             else if (snapshot.connectionState == ConnectionState.done &&
                 snapshot.hasData)
               return Scaffold(
-                body: IndexedStack(
-                  index: _selectedIndex,
-                  children: <Widget>[
-                    WeatherListingScreen(),
-                    TripsScreen(
-                      setFilterString: setFilterStringForTrips,
-                      filterString: filterString,
-                    ),
-                    NewsScreen(
-                      selectHomeIndex: _onItemTapped,
-                    ),
-                    SettingsScreen(),
-                  ],
-                ),
+                body: renderScreen(),
                 bottomNavigationBar: BottomNavigationBar(
                   backgroundColor: Colors.white,
                   items: const <BottomNavigationBarItem>[
