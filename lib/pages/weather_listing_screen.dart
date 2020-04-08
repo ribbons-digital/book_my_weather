@@ -190,79 +190,7 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(20.0),
-              ),
-            ),
-            title: Text(AppLocalizations.of(context)
-                .translate('weather_listing_screen_aqi_modal_title')),
-            content: Container(
-              width: MediaQuery.of(context).size.width * 0.9,
-              child: ListView(
-                shrinkWrap: true,
-                children: <Widget>[
-                  ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: Colors.green,
-                    ),
-                    title: Text('0 ~ 50'),
-                    subtitle: Text(AppLocalizations.of(context).translate(
-                        'weather_listing_screen_aqi_modal_first_subtitle')),
-                  ),
-                  ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: Colors.yellow,
-                    ),
-                    title: Text('51 ~ 100'),
-                    subtitle: Text(AppLocalizations.of(context).translate(
-                        'weather_listing_screen_aqi_modal_second_subtitle')),
-                  ),
-                  ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: Colors.orange,
-                    ),
-                    title: Text('101 ~ 150'),
-                    subtitle: Text(AppLocalizations.of(context).translate(
-                        'weather_listing_screen_aqi_modal_third_subtitle')),
-                  ),
-                  ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: Colors.red,
-                    ),
-                    title: Text('151 ~ 200'),
-                    subtitle: Text(AppLocalizations.of(context).translate(
-                        'weather_listing_screen_aqi_modal_fourth_subtitle')),
-                  ),
-                  ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: Colors.purple,
-                    ),
-                    title: Text('201 ~ 300'),
-                    subtitle: Text(AppLocalizations.of(context).translate(
-                        'weather_listing_screen_aqi_modal_fifth_subtitle')),
-                  ),
-                  ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: Color(0XFF800000),
-                    ),
-                    title: Text('301 ~ 500'),
-                    subtitle: Text(AppLocalizations.of(context).translate(
-                        'weather_listing_screen_aqi_modal_sixth_subtitle')),
-                  ),
-                ],
-              ),
-            ),
-            actions: <Widget>[
-              FlatButton(
-                child: Text('OK'),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ],
-          );
+          return AqiGuideModal();
         });
   }
 
@@ -318,18 +246,6 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
                     Navigator.pushNamed(context, SearchPlaceScreen.id);
                   },
                 ),
-
-//                if (currentPage == 0)
-//                  IconButton(
-//                      padding: EdgeInsets.only(right: 16.0),
-//                      icon: Icon(Icons.refresh),
-//                      onPressed: () async {
-////                      await getWeather();
-//                        HttpsCallable callable = CloudFunctions.instance
-//                            .getHttpsCallable(functionName: 'sendNotification');
-//                        await callable();
-////                        _auth.signOut();
-//                      })
               ],
             ),
           ),
@@ -367,12 +283,6 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
                   )
                   ..fontWeight(
                     FontWeight.w100,
-                  );
-                final TxtStyle aqiTextStyle = screenTextStyle.clone()
-                  ..textColor(getAqiColor())
-                  ..fontWeight(FontWeight.w300)
-                  ..fontSize(
-                    35.0,
                   );
 
                 return Column(
@@ -548,5 +458,88 @@ class _WeatherListingScreenState extends State<WeatherListingScreen>
 
       _updatePlaceWeather(index, updatedWeather);
     });
+  }
+}
+
+class AqiGuideModal extends StatelessWidget {
+  const AqiGuideModal({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(
+          Radius.circular(20.0),
+        ),
+      ),
+      title: Text(AppLocalizations.of(context)
+          .translate('weather_listing_screen_aqi_modal_title')),
+      content: Container(
+        width: MediaQuery.of(context).size.width * 0.9,
+        child: ListView(
+          shrinkWrap: true,
+          children: <Widget>[
+            ListTile(
+              leading: CircleAvatar(
+                backgroundColor: Colors.green,
+              ),
+              title: Text('0 ~ 50'),
+              subtitle: Text(AppLocalizations.of(context).translate(
+                  'weather_listing_screen_aqi_modal_first_subtitle')),
+            ),
+            ListTile(
+              leading: CircleAvatar(
+                backgroundColor: Colors.yellow,
+              ),
+              title: Text('51 ~ 100'),
+              subtitle: Text(AppLocalizations.of(context).translate(
+                  'weather_listing_screen_aqi_modal_second_subtitle')),
+            ),
+            ListTile(
+              leading: CircleAvatar(
+                backgroundColor: Colors.orange,
+              ),
+              title: Text('101 ~ 150'),
+              subtitle: Text(AppLocalizations.of(context).translate(
+                  'weather_listing_screen_aqi_modal_third_subtitle')),
+            ),
+            ListTile(
+              leading: CircleAvatar(
+                backgroundColor: Colors.red,
+              ),
+              title: Text('151 ~ 200'),
+              subtitle: Text(AppLocalizations.of(context).translate(
+                  'weather_listing_screen_aqi_modal_fourth_subtitle')),
+            ),
+            ListTile(
+              leading: CircleAvatar(
+                backgroundColor: Colors.purple,
+              ),
+              title: Text('201 ~ 300'),
+              subtitle: Text(AppLocalizations.of(context).translate(
+                  'weather_listing_screen_aqi_modal_fifth_subtitle')),
+            ),
+            ListTile(
+              leading: CircleAvatar(
+                backgroundColor: Color(0XFF800000),
+              ),
+              title: Text('301 ~ 500'),
+              subtitle: Text(AppLocalizations.of(context).translate(
+                  'weather_listing_screen_aqi_modal_sixth_subtitle')),
+            ),
+          ],
+        ),
+      ),
+      actions: <Widget>[
+        FlatButton(
+          child: Text('OK'),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    );
   }
 }

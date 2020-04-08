@@ -6,6 +6,7 @@ import 'package:book_my_weather/styleguide.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 
 import '../styleguide.dart';
@@ -14,157 +15,165 @@ class WeatherWidget extends StatelessWidget {
   final int placeIndex;
 
   WeatherWidget({@required this.placeIndex});
-  final settingsBox = Hive.box('settings');
+//  final settingsBox = Hive.box('settings');
 
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
 
-    final places = (settingsBox.get(0) as Setting).places;
     WeatherModel weatherModel = WeatherModel();
-    final currentHourlyWeather = places[placeIndex].weather.hourly.data[0];
-    final currentDailyWeather = places[placeIndex].weather.daily.data[0];
 
-    return InkWell(
-      onTap: () {
+    return ValueListenableBuilder(
+        valueListenable: Hive.box('settings').listenable(),
+        builder: (BuildContext context, Box<dynamic> box, Widget widget) {
+          final places = (box.get(0) as Setting).places;
+          final currentHourlyWeather =
+              places[placeIndex].weather.hourly.data[0];
+          final currentDailyWeather = places[placeIndex].weather.daily.data[0];
+          return InkWell(
+            onTap: () {
 //        placeData.updateCurrentPlaceIndex(placeIndex);
 
-        Navigator.push(
-            context,
-            PageRouteBuilder(
-                transitionDuration: const Duration(milliseconds: 350),
-                pageBuilder: (context, _, __) =>
-                    WeatherDetailScreen(place: places[placeIndex])));
-      },
-      child: Stack(
-        children: [
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: ClipPath(
-              clipper: CharacterCardBackgroundClipper(),
-              child: Hero(
-                tag: "background-${places[placeIndex].name}",
-                child: Container(
-                  height: 0.6 * screenHeight,
-                  width: 0.9 * screenWidth,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Color(0x42436DA6), Color(0xFF000000)],
-                      begin: Alignment.topRight,
-                      end: Alignment.bottomLeft,
+              Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                      transitionDuration: const Duration(milliseconds: 350),
+                      pageBuilder: (context, _, __) =>
+                          WeatherDetailScreen(place: places[placeIndex])));
+            },
+            child: Stack(
+              children: [
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: ClipPath(
+                    clipper: CharacterCardBackgroundClipper(),
+                    child: Hero(
+                      tag: "background-${places[placeIndex].name}",
+                      child: Container(
+                        height: 0.6 * screenHeight,
+                        width: 0.9 * screenWidth,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [Color(0x42436DA6), Color(0xFF000000)],
+                            begin: Alignment.topRight,
+                            end: Alignment.bottomLeft,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
-          ),
-          Align(
-            alignment: Alignment(0, -0.05),
-            child: Container(
-              height: screenHeight / 2,
-              child: Column(
-                children: <Widget>[
-                  Hero(
-                    tag: "weather-icon",
-                    child: weatherModel.getWeatherIcon(
-                      condition: currentHourlyWeather.icon,
-                      iconColor: Color(0xFFFFA500),
-                      width: screenHeight < 600 ? 75.0 : 100.0,
-                      height: screenHeight < 600 ? 75.0 : 100.0,
-                    ),
-                  ),
-                  if (screenHeight > 600)
-                    Text(
-                      '${currentHourlyWeather.temperature.toStringAsFixed(0)}º',
-                      style: AppTheme.display1,
-                    ),
-                  Text(
-                    '${currentDailyWeather.temperatureHigh.toStringAsFixed(0)}º / ${places[placeIndex].weather.daily.data[0].temperatureLow.toStringAsFixed(0)}º',
-                    style: TextStyle(
-                      fontSize: 26,
-                      fontWeight: FontWeight.w100,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          if (screenHeight > 812)
-            Positioned(
-                bottom: screenHeight / 5.8,
-                left: 40,
-                right: 40,
-                child: Column(
-                  children: <Widget>[
-                    FittedBox(
-                      fit: BoxFit.fitWidth,
-                      child: Text(
-                        places[placeIndex].weather.hourly.summary,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20.0,
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    FittedBox(
-                      fit: BoxFit.fitWidth,
-                      child: Text(
-                        places[placeIndex].weather.daily.summary,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18.0,
-                        ),
-                      ),
-                    ),
-                  ],
-                )),
-          Positioned(
-            bottom: screenHeight > 600 && screenHeight < 768
-                ? screenHeight / 30
-                : screenHeight > 768 ? screenHeight / 30 : screenHeight / 20,
-            left: 15,
-            right: 15,
-            child: Container(
-              width: screenWidth * 0.9,
-              child: Row(
-                children: List.generate(5, (index) {
-                  final data = places[placeIndex].weather.hourly.data[index];
-                  return Expanded(
+                Align(
+                  alignment: Alignment(0, -0.05),
+                  child: Container(
+                    height: screenHeight / 2,
                     child: Column(
                       children: <Widget>[
-                        Text(
-                          '${DateFormat('ha').format(DateTime.fromMillisecondsSinceEpoch(data.time * 1000)).toString()}',
-                          style: AppTheme.small,
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(top: 5),
-//                          child: _SpinningSun(),
+                        Hero(
+                          tag: "weather-icon",
                           child: weatherModel.getWeatherIcon(
-                            condition: data.icon,
+                            condition: currentHourlyWeather.icon,
                             iconColor: Color(0xFFFFA500),
-                            width: 50.0,
-                            height: 50.0,
+                            width: screenHeight < 600 ? 75.0 : 100.0,
+                            height: screenHeight < 600 ? 75.0 : 100.0,
                           ),
                         ),
+                        if (screenHeight > 600)
+                          Text(
+                            '${currentHourlyWeather.temperature.toStringAsFixed(0)}º',
+                            style: AppTheme.display1,
+                          ),
                         Text(
-                          '${data.temperature.toStringAsFixed(0)}º',
-                          style: AppTheme.small,
+                          '${currentDailyWeather.temperatureHigh.toStringAsFixed(0)}º / ${places[placeIndex].weather.daily.data[0].temperatureLow.toStringAsFixed(0)}º',
+                          style: TextStyle(
+                            fontSize: 26,
+                            fontWeight: FontWeight.w100,
+                            color: Colors.white,
+                          ),
                         ),
                       ],
                     ),
-                  );
-                }),
-              ),
+                  ),
+                ),
+                if (screenHeight > 812)
+                  Positioned(
+                      bottom: screenHeight / 5.8,
+                      left: 40,
+                      right: 40,
+                      child: Column(
+                        children: <Widget>[
+                          FittedBox(
+                            fit: BoxFit.fitWidth,
+                            child: Text(
+                              places[placeIndex].weather.hourly.summary,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20.0,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          FittedBox(
+                            fit: BoxFit.fitWidth,
+                            child: Text(
+                              places[placeIndex].weather.daily.summary,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18.0,
+                              ),
+                            ),
+                          ),
+                        ],
+                      )),
+                Positioned(
+                  bottom: screenHeight > 600 && screenHeight < 768
+                      ? screenHeight / 30
+                      : screenHeight > 768
+                          ? screenHeight / 30
+                          : screenHeight / 20,
+                  left: 15,
+                  right: 15,
+                  child: Container(
+                    width: screenWidth * 0.9,
+                    child: Row(
+                      children: List.generate(5, (index) {
+                        final data =
+                            places[placeIndex].weather.hourly.data[index];
+                        return Expanded(
+                          child: Column(
+                            children: <Widget>[
+                              Text(
+                                '${DateFormat('ha').format(DateTime.fromMillisecondsSinceEpoch(data.time * 1000)).toString()}',
+                                style: AppTheme.small,
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(top: 5),
+//                          child: _SpinningSun(),
+                                child: weatherModel.getWeatherIcon(
+                                  condition: data.icon,
+                                  iconColor: Color(0xFFFFA500),
+                                  width: 50.0,
+                                  height: 50.0,
+                                ),
+                              ),
+                              Text(
+                                '${data.temperature.toStringAsFixed(0)}º',
+                                style: AppTheme.small,
+                              ),
+                            ],
+                          ),
+                        );
+                      }),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
-    );
+          );
+        });
   }
 }
 

@@ -98,132 +98,129 @@ class _WrapperState extends State<Wrapper> {
           ),
         ),
       ],
-      child: Consumer<PlaceData>(
-        builder: (_, placeData, __) => MaterialApp(
-          title: 'Book My Weather',
-          debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            fontFamily: 'Raleway',
-            primarySwatch: Colors.blue,
-            primaryColor: Colors.white,
-            canvasColor: Colors.black,
-            appBarTheme: AppBarTheme(
-              brightness: Brightness.dark,
-              elevation: 0,
-              color: Colors.black,
-              iconTheme: IconThemeData(
+      child: MaterialApp(
+        title: 'Book My Weather',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          fontFamily: 'Raleway',
+          primarySwatch: Colors.blue,
+          primaryColor: Colors.white,
+          canvasColor: Colors.black,
+          appBarTheme: AppBarTheme(
+            brightness: Brightness.dark,
+            elevation: 0,
+            color: Colors.black,
+            iconTheme: IconThemeData(
+              color: Colors.white,
+              size: 30.0,
+            ),
+            textTheme: TextTheme(
+              title: TextStyle(
                 color: Colors.white,
-                size: 30.0,
-              ),
-              textTheme: TextTheme(
-                title: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.w100,
-                ),
+                fontSize: 24.0,
+                fontWeight: FontWeight.w100,
               ),
             ),
           ),
-          supportedLocales: [
-            const Locale('en', 'US'),
-            const Locale.fromSubtags(
-                languageCode: 'zh'), // generic Chinese 'zh'
-            const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'),
-            const Locale.fromSubtags(
-                languageCode: 'zh', scriptCode: 'Hant', countryCode: 'TW'),
-          ],
-          // These delegates make sure that the localization data for the proper language is loaded
-          localizationsDelegates: [
-            // THIS CLASS WILL BE ADDED LATER
-            // A class which loads the translations from JSON files
-            AppLocalizations.delegate,
-            // Built-in localization of basic text for Material widgets
-            GlobalMaterialLocalizations.delegate,
-            // Built-in localization for text direction LTR/RTL
-            GlobalWidgetsLocalizations.delegate,
-          ],
-          // Returns a locale which will be used by the app
-          localeResolutionCallback: (locale, supportedLocales) {
-            // Check if the current device locale is supported
-            for (var supportedLocale in supportedLocales) {
-              if (supportedLocale.languageCode == locale.languageCode &&
-                  supportedLocale.countryCode == locale.countryCode) {
-                return supportedLocale;
-              }
+        ),
+        supportedLocales: [
+          const Locale('en', 'US'),
+          const Locale.fromSubtags(languageCode: 'zh'), // generic Chinese 'zh'
+          const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'),
+          const Locale.fromSubtags(
+              languageCode: 'zh', scriptCode: 'Hant', countryCode: 'TW'),
+        ],
+        // These delegates make sure that the localization data for the proper language is loaded
+        localizationsDelegates: [
+          // THIS CLASS WILL BE ADDED LATER
+          // A class which loads the translations from JSON files
+          AppLocalizations.delegate,
+          // Built-in localization of basic text for Material widgets
+          GlobalMaterialLocalizations.delegate,
+          // Built-in localization for text direction LTR/RTL
+          GlobalWidgetsLocalizations.delegate,
+        ],
+        // Returns a locale which will be used by the app
+        localeResolutionCallback: (locale, supportedLocales) {
+          // Check if the current device locale is supported
+          for (var supportedLocale in supportedLocales) {
+            if (supportedLocale.languageCode == locale.languageCode &&
+                supportedLocale.countryCode == locale.countryCode) {
+              return supportedLocale;
             }
-            // If the locale of the device is not supported, use the first one
-            // from the list (English, in this case).
-            return supportedLocales.first;
-          },
-          home: FutureBuilder(
-            future: Hive.openBox('settings'),
-            builder: (context, snapshot) {
-              if (snapshot.hasError)
-                return Text(
-                  snapshot.error.toString(),
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
-                );
-              else if (snapshot.connectionState == ConnectionState.done &&
-                  snapshot.hasData)
-                return Scaffold(
-                  body: IndexedStack(
-                    index: _selectedIndex,
-                    children: <Widget>[
-                      WeatherListingScreen(),
-                      TripsScreen(
-                        setFilterString: setFilterStringForTrips,
-                        filterString: filterString,
-                      ),
-                      NewsScreen(
-                        selectHomeIndex: _onItemTapped,
-                      ),
-                      SettingsScreen(),
-                    ],
-                  ),
-                  bottomNavigationBar: BottomNavigationBar(
-                    backgroundColor: Colors.white,
-                    items: const <BottomNavigationBarItem>[
-                      BottomNavigationBarItem(
-                        icon: Icon(Icons.wb_sunny),
-                        title: Text('Weather'),
-                      ),
-                      BottomNavigationBarItem(
-                        icon: Icon(Icons.map),
-                        title: Text('Trips'),
-                      ),
-                      BottomNavigationBarItem(
-                        icon: Icon(Icons.public),
-                        title: Text('News'),
-                      ),
-                      BottomNavigationBarItem(
-                        icon: Icon(Icons.settings),
-                        title: Text('Settings'),
-                      ),
-                    ],
-                    currentIndex: _selectedIndex,
-                    selectedItemColor: Colors.amber[800],
-                    onTap: _onItemTapped,
-                  ),
-                );
-              else
-                return Scaffold();
-            },
-          ),
-          routes: {
-            TripScreen.id: (context) => TripScreen(),
-            TripDetail.id: (context) => TripDetail(),
-            PlacesScreen.id: (context) => PlacesScreen(),
-            PlaceDetail.id: (context) => PlaceDetail(),
-            SearchPlaceScreen.id: (context) => SearchPlaceScreen(),
-            TripsScreen.id: (context) => TripsScreen(),
-            SignInRegisterScreen.id: (context) => SignInRegisterScreen(),
-            TripWeatherScreen.id: (context) => TripWeatherScreen(),
-            TripTodosScreen.id: (context) => TripTodosScreen(),
-            TripVisitingScreen.id: (context) => TripVisitingScreen(),
+          }
+          // If the locale of the device is not supported, use the first one
+          // from the list (English, in this case).
+          return supportedLocales.first;
+        },
+        home: FutureBuilder(
+          future: Hive.openBox('settings'),
+          builder: (context, snapshot) {
+            if (snapshot.hasError)
+              return Text(
+                snapshot.error.toString(),
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              );
+            else if (snapshot.connectionState == ConnectionState.done &&
+                snapshot.hasData)
+              return Scaffold(
+                body: IndexedStack(
+                  index: _selectedIndex,
+                  children: <Widget>[
+                    WeatherListingScreen(),
+                    TripsScreen(
+                      setFilterString: setFilterStringForTrips,
+                      filterString: filterString,
+                    ),
+                    NewsScreen(
+                      selectHomeIndex: _onItemTapped,
+                    ),
+                    SettingsScreen(),
+                  ],
+                ),
+                bottomNavigationBar: BottomNavigationBar(
+                  backgroundColor: Colors.white,
+                  items: const <BottomNavigationBarItem>[
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.wb_sunny),
+                      title: Text('Weather'),
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.map),
+                      title: Text('Trips'),
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.public),
+                      title: Text('News'),
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.settings),
+                      title: Text('Settings'),
+                    ),
+                  ],
+                  currentIndex: _selectedIndex,
+                  selectedItemColor: Colors.amber[800],
+                  onTap: _onItemTapped,
+                ),
+              );
+            else
+              return Scaffold();
           },
         ),
+        routes: {
+          TripScreen.id: (context) => TripScreen(),
+          TripDetail.id: (context) => TripDetail(),
+          PlacesScreen.id: (context) => PlacesScreen(),
+          PlaceDetail.id: (context) => PlaceDetail(),
+          SearchPlaceScreen.id: (context) => SearchPlaceScreen(),
+          TripsScreen.id: (context) => TripsScreen(),
+          SignInRegisterScreen.id: (context) => SignInRegisterScreen(),
+          TripWeatherScreen.id: (context) => TripWeatherScreen(),
+          TripTodosScreen.id: (context) => TripTodosScreen(),
+          TripVisitingScreen.id: (context) => TripVisitingScreen(),
+        },
       ),
     );
   }
