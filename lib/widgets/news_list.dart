@@ -1,9 +1,7 @@
 import 'package:book_my_weather/models/news.dart';
-import 'package:book_my_weather/secure/keys.dart';
 import 'package:book_my_weather/services/news.dart';
+import 'package:book_my_weather/widgets/native_ad_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_native_admob/flutter_native_admob.dart';
-import 'package:flutter_native_admob/native_admob_controller.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -65,7 +63,7 @@ class _NewsListState extends State<NewsList> {
                 itemCount: snapshot.data.results.length,
                 itemBuilder: (BuildContext context, int index) {
                   if (index > 0 && index % 5 == 0) {
-                    return _NewsAdWidget();
+                    return NativeAdWidget();
                   }
 
                   return Container(
@@ -133,50 +131,6 @@ class _NewsListState extends State<NewsList> {
 
         return Container();
       },
-    );
-  }
-}
-
-class _NewsAdWidget extends StatefulWidget {
-  @override
-  __NewsAdWidgetState createState() => __NewsAdWidgetState();
-}
-
-class __NewsAdWidgetState extends State<_NewsAdWidget> {
-  static const _iOSAdUnitID = kAdMobIosAdUnit;
-  static const _androidAdUnitId = kAdMobAndroidAdUnit;
-  final _controller = NativeAdmobController();
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final isIos = Theme.of(context).platform == TargetPlatform.iOS;
-    return Container(
-      height: 330.0,
-      width: MediaQuery.of(context).size.width,
-//      margin: EdgeInsets.all(8.0),
-      decoration: BoxDecoration(
-        color: Colors.black26,
-        border: Border(
-          bottom: BorderSide(
-            color: Color(0X42FFFFFF),
-          ),
-        ),
-      ),
-      padding: EdgeInsets.all(8.0),
-      child: NativeAdmob(
-        // dev
-//        adUnitID: kTestAdUnit,
-        // production
-        adUnitID: isIos ? _iOSAdUnitID : _androidAdUnitId,
-        controller: _controller,
-        type: NativeAdmobType.full,
-      ),
     );
   }
 }

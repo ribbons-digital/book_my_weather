@@ -35,14 +35,8 @@ class _PlacesScreenState extends State<PlacesScreen>
   Future<List<GoogleNearByPlace>> getNearbyPlaces;
   NearbySearchType selectedSearchType;
 
-  static const _iOSAdUnitID = kAdMobIosAdUnit;
-  static const _androidAdUnitId = kAdMobAndroidAdUnit;
-
-  final _controller = NativeAdmobController();
-
   @override
   void dispose() {
-    _controller.dispose();
     super.dispose();
   }
 
@@ -286,8 +280,6 @@ class _PlacesScreenState extends State<PlacesScreen>
 
   @override
   Widget build(BuildContext context) {
-    final isIos = Theme.of(context).platform == TargetPlatform.iOS;
-
     return Scaffold(
       appBar: AppBar(
         title: widget.placeType == PlaceType.General
@@ -335,11 +327,7 @@ class _PlacesScreenState extends State<PlacesScreen>
                               final place = snapshot.data[index];
 
                               if (index > 0 && index % 7 == 0) {
-                                return _PlacesAdWidget(
-                                  admobController: _controller,
-                                  adUnitID:
-                                      isIos ? _iOSAdUnitID : _androidAdUnitId,
-                                );
+                                return _PlacesAdWidget();
                               }
 
                               return GestureDetector(
@@ -461,17 +449,24 @@ class _PlaceSearchTypeOption extends StatelessWidget {
 }
 
 class _PlacesAdWidget extends StatefulWidget {
-  NativeAdmobController admobController;
-  String adUnitID;
-
-  _PlacesAdWidget({@required this.admobController, @required this.adUnitID});
   @override
-  __PlacesAdWidgetState createState() => __PlacesAdWidgetState();
+  _PlacesAdWidgetState createState() => _PlacesAdWidgetState();
 }
 
-class __PlacesAdWidgetState extends State<_PlacesAdWidget> {
+class _PlacesAdWidgetState extends State<_PlacesAdWidget> {
+  static const _iOSAdUnitID = kAdMobIosAdUnit;
+  static const _androidAdUnitId = kAdMobAndroidAdUnit;
+  final _controller = NativeAdmobController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final isIos = Theme.of(context).platform == TargetPlatform.iOS;
     return Container(
       height: 250,
       decoration: BoxDecoration(
@@ -479,12 +474,13 @@ class __PlacesAdWidgetState extends State<_PlacesAdWidget> {
         borderRadius: BorderRadius.circular(12.0),
       ),
       margin: EdgeInsets.all(16.0),
+      padding: EdgeInsets.all(8.0),
       child: NativeAdmob(
         // dev
 //        adUnitID: kTestAdUnit,
         // production
-        adUnitID: widget.adUnitID,
-        controller: widget.admobController,
+        adUnitID: isIos ? _iOSAdUnitID : _androidAdUnitId,
+        controller: _controller,
         type: NativeAdmobType.full,
       ),
     );
