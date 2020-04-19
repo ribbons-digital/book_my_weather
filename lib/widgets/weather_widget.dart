@@ -3,7 +3,6 @@ import 'package:book_my_weather/models/setting.dart';
 import 'package:book_my_weather/pages/weather_detail_screen.dart';
 import 'package:book_my_weather/services/weather.dart';
 import 'package:book_my_weather/styleguide.dart';
-import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -205,24 +204,24 @@ class CharacterCardBackgroundClipper extends CustomClipper<Path> {
   }
 }
 
-class _SpinningSun extends StatefulWidget {
-  @override
-  __SpinningSunState createState() => __SpinningSunState();
-}
-
-class __SpinningSunState extends State<_SpinningSun> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 50,
-      height: 50,
-      margin: EdgeInsets.only(top: 5, bottom: 10),
-      child: FlareActor(
-        'assets/images/Spinning Sun.flr',
-        alignment: Alignment.center,
-        fit: BoxFit.contain,
-        animation: 'Spinning',
-      ),
-    );
-  }
-}
+//class _SpinningSun extends StatefulWidget {
+//  @override
+//  __SpinningSunState createState() => __SpinningSunState();
+//}
+//
+//class __SpinningSunState extends State<_SpinningSun> {
+//  @override
+//  Widget build(BuildContext context) {
+//    return Container(
+//      width: 50,
+//      height: 50,
+//      margin: EdgeInsets.only(top: 5, bottom: 10),
+//      child: FlareActor(
+//        'assets/images/Spinning Sun.flr',
+//        alignment: Alignment.center,
+//        fit: BoxFit.contain,
+//        animation: 'Spinning',
+//      ),
+//    );
+//  }
+//}

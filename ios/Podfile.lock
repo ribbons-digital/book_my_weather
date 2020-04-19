@@ -275,17 +275,11 @@ PODS:
     - GoogleUtilities/UserDefaults (~> 6.5)
     - Protobuf (>= 3.9.2, ~> 3.9)
   - Flutter (1.0.0)
-  - flutter_native_admob (0.0.1):
-    - Flutter
-    - Google-Mobile-Ads-SDK
-    - PureLayout
   - FMDB (2.7.5):
     - FMDB/standard (= 2.7.5)
   - FMDB/standard (2.7.5)
   - geolocator (5.2.1):
     - Flutter
-  - Google-Mobile-Ads-SDK (7.57.0):
-    - GoogleAppMeasurement (~> 6.0)
   - google_api_availability (2.0.2):
     - Flutter
   - GoogleAppMeasurement (6.2.2):
@@ -347,7 +341,6 @@ PODS:
     - Flutter
   - PromisesObjC (1.2.8)
   - Protobuf (3.11.4)
-  - PureLayout (3.1.5)
   - share (0.5.2):
     - Flutter
   - sqflite (0.0.1):
@@ -372,7 +365,6 @@ DEPENDENCIES:
   - firebase_core_web (from `.symlinks/plugins/firebase_core_web/ios`)
   - firebase_messaging (from `.symlinks/plugins/firebase_messaging/ios`)
   - Flutter (from `Flutter`)
-  - flutter_native_admob (from `.symlinks/plugins/flutter_native_admob/ios`)
   - geolocator (from `.symlinks/plugins/geolocator/ios`)
   - google_api_availability (from `.symlinks/plugins/google_api_availability/ios`)
   - location_permissions (from `.symlinks/plugins/location_permissions/ios`)
@@ -402,7 +394,6 @@ SPEC REPOS:
     - FirebaseInstanceID
     - FirebaseMessaging
     - FMDB
-    - Google-Mobile-Ads-SDK
     - GoogleAppMeasurement
     - GoogleDataTransport
     - GoogleDataTransportCCTSupport
@@ -414,7 +405,6 @@ SPEC REPOS:
     - nanopb
     - PromisesObjC
     - Protobuf
-    - PureLayout
 
 EXTERNAL SOURCES:
   cloud_firestore:
@@ -439,8 +429,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/firebase_messaging/ios"
   Flutter:
     :path: Flutter
-  flutter_native_admob:
-    :path: ".symlinks/plugins/flutter_native_admob/ios"
   geolocator:
     :path: ".symlinks/plugins/geolocator/ios"
   google_api_availability:
@@ -489,10 +477,8 @@ SPEC CHECKSUMS:
   FirebaseInstanceID: 031d7d0c8e7b5c030bbeb4d2a690550375e83fec
   FirebaseMessaging: 9e23f9d603b1fb71ccbeb48d79bf0d4ba0272c84
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
-  flutter_native_admob: 384f39f8b8dc0a96624c7cfa4cd255205e7c3da5
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   geolocator: a048cc412bf350b17d671d170f151b0c9fb8f098
-  Google-Mobile-Ads-SDK: ec897018b9ab9b447e7aa4876e7f75aba13ba2de
   google_api_availability: 6f1017d3a61be12be3bd9f929cc5b2606f24ae7f
   GoogleAppMeasurement: d0560d915abf15e692e8538ba1d58442217b6aff
   GoogleDataTransport: 47fe3b8e1673e5187dfd615656a3c5034f150d69
@@ -508,7 +494,6 @@ SPEC CHECKSUMS:
   path_provider_macos: f760a3c5b04357c380e2fddb6f9db6f3015897e0
   PromisesObjC: c119f3cd559f50b7ae681fa59dc1acd19173b7e6
   Protobuf: 176220c526ad8bd09ab1fb40a978eac3fef665f7
-  PureLayout: 9b4ad47b2f0388c84ff534af23d96e720c1b875a
   share: bae0a282aab4483288913fc4dc0b935d4b491f2e
   sqflite: 4001a31ff81d210346b500c55b17f4d6c7589dd0
   url_launcher: a1c0cc845906122c4784c542523d8cacbded5626

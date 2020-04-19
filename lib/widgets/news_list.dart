@@ -1,6 +1,5 @@
 import 'package:book_my_weather/models/news.dart';
 import 'package:book_my_weather/services/news.dart';
-import 'package:book_my_weather/widgets/native_ad_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
@@ -62,9 +61,9 @@ class _NewsListState extends State<NewsList> {
                 physics: const AlwaysScrollableScrollPhysics(),
                 itemCount: snapshot.data.results.length,
                 itemBuilder: (BuildContext context, int index) {
-                  if (index > 0 && index % 5 == 0) {
-                    return NativeAdWidget();
-                  }
+//                  if (index > 0 && index % 5 == 0) {
+//                    return NativeAdWidget();
+//                  }
 
                   return Container(
                     margin: EdgeInsets.symmetric(

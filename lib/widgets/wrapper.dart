@@ -4,7 +4,6 @@ import 'package:book_my_weather/models/place_data.dart';
 import 'package:book_my_weather/models/trip.dart';
 import 'package:book_my_weather/models/trip_state.dart';
 import 'package:book_my_weather/models/user.dart';
-import 'package:book_my_weather/pages/news_screen.dart';
 import 'package:book_my_weather/pages/place_detail_screen.dart';
 import 'package:book_my_weather/pages/places_screen.dart';
 import 'package:book_my_weather/pages/search_place_screen.dart';
@@ -66,13 +65,13 @@ class _WrapperState extends State<Wrapper> {
       );
     }
 
-    if (_selectedIndex == 2) {
-      return NewsScreen(
-        selectHomeIndex: _onItemTapped,
-      );
-    }
+//    if (_selectedIndex == 2) {
+//      return NewsScreen(
+//        selectHomeIndex: _onItemTapped,
+//      );
+//    }
 
-    if (_selectedIndex == 3) {
+    if (_selectedIndex == 2) {
       return SettingsScreen();
     }
 
@@ -172,7 +171,7 @@ class _WrapperState extends State<Wrapper> {
               return Scaffold(
                 body: renderScreen(),
                 bottomNavigationBar: BottomNavigationBar(
-                  backgroundColor: Colors.white,
+                  backgroundColor: Colors.black,
                   items: const <BottomNavigationBarItem>[
                     BottomNavigationBarItem(
                       icon: Icon(Icons.wb_sunny),
@@ -182,10 +181,10 @@ class _WrapperState extends State<Wrapper> {
                       icon: Icon(Icons.map),
                       title: Text('Trips'),
                     ),
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.public),
-                      title: Text('News'),
-                    ),
+//                    BottomNavigationBarItem(
+//                      icon: Icon(Icons.public),
+//                      title: Text('News'),
+//                    ),
                     BottomNavigationBarItem(
                       icon: Icon(Icons.settings),
                       title: Text('Settings'),
@@ -193,6 +192,7 @@ class _WrapperState extends State<Wrapper> {
                   ],
                   currentIndex: _selectedIndex,
                   selectedItemColor: Colors.amber[800],
+                  unselectedItemColor: Colors.grey,
                   onTap: _onItemTapped,
                 ),
               );

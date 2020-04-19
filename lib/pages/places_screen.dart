@@ -12,8 +12,6 @@ import 'package:book_my_weather/widgets/my_custom_material_page_route.dart';
 import 'package:book_my_weather/widgets/place_card_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_native_admob/flutter_native_admob.dart';
-import 'package:flutter_native_admob/native_admob_controller.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 enum PlaceType { General, Food, Hotel }
@@ -326,9 +324,9 @@ class _PlacesScreenState extends State<PlacesScreen>
                             itemBuilder: (BuildContext context, int index) {
                               final place = snapshot.data[index];
 
-                              if (index > 0 && index % 7 == 0) {
-                                return _PlacesAdWidget();
-                              }
+//                              if (index > 0 && index % 7 == 0) {
+//                                return _PlacesAdWidget();
+//                              }
 
                               return GestureDetector(
                                 onTap: () {
@@ -448,41 +446,41 @@ class _PlaceSearchTypeOption extends StatelessWidget {
   }
 }
 
-class _PlacesAdWidget extends StatefulWidget {
-  @override
-  _PlacesAdWidgetState createState() => _PlacesAdWidgetState();
-}
-
-class _PlacesAdWidgetState extends State<_PlacesAdWidget> {
-  static const _iOSAdUnitID = kAdMobIosAdUnit;
-  static const _androidAdUnitId = kAdMobAndroidAdUnit;
-  final _controller = NativeAdmobController();
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final isIos = Theme.of(context).platform == TargetPlatform.iOS;
-    return Container(
-      height: 250,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12.0),
-      ),
-      margin: EdgeInsets.all(16.0),
-      padding: EdgeInsets.all(8.0),
-      child: NativeAdmob(
-        // dev
-//        adUnitID: kTestAdUnit,
-        // production
-        adUnitID: isIos ? _iOSAdUnitID : _androidAdUnitId,
-        controller: _controller,
-        type: NativeAdmobType.full,
-      ),
-    );
-  }
-}
+//class _PlacesAdWidget extends StatefulWidget {
+//  @override
+//  _PlacesAdWidgetState createState() => _PlacesAdWidgetState();
+//}
+//
+//class _PlacesAdWidgetState extends State<_PlacesAdWidget> {
+//  static const _iOSAdUnitID = kAdMobIosAdUnit;
+//  static const _androidAdUnitId = kAdMobAndroidAdUnit;
+//  final _controller = NativeAdmobController();
+//
+//  @override
+//  void dispose() {
+//    _controller.dispose();
+//    super.dispose();
+//  }
+//
+//  @override
+//  Widget build(BuildContext context) {
+//    final isIos = Theme.of(context).platform == TargetPlatform.iOS;
+//    return Container(
+//      height: 250,
+//      decoration: BoxDecoration(
+//        color: Colors.white,
+//        borderRadius: BorderRadius.circular(12.0),
+//      ),
+//      margin: EdgeInsets.all(16.0),
+//      padding: EdgeInsets.all(8.0),
+//      child: NativeAdmob(
+//        // dev
+////        adUnitID: kTestAdUnit,
+//        // production
+//        adUnitID: isIos ? _iOSAdUnitID : _androidAdUnitId,
+//        controller: _controller,
+//        type: NativeAdmobType.full,
+//      ),
+//    );
+//  }
+//}
