@@ -25,7 +25,7 @@ dependencies:
   cupertino_icons: ^0.1.2
   after_layout: ^1.0.7+2
   flare_flutter: ^2.0.1
-  flutter_svg: ^0.17.1
+  flutter_svg: ^0.19.0
   intl: ^0.16.1
   smooth_star_rating: ^1.0.4+2
   geolocator: ^5.2.1

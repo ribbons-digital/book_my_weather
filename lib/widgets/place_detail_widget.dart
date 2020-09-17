@@ -39,10 +39,6 @@ class PlaceDetailWidget extends StatelessWidget {
                 ),
                 SmoothStarRating(
                   allowHalfRating: true,
-                  onRatingChanged: (v) {
-//                              rating = v;
-//                              setState(() {});
-                  },
                   starCount: 5,
                   rating: 4.3,
                   size: 18.0,
