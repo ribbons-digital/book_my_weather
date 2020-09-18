@@ -86,7 +86,6 @@ class _TripVisitingScreenState extends State<TripVisitingScreen> {
       BuildContext context, List<TripVisiting> tripVisitings) {
     final db = DatabaseService();
     final tripId = Provider.of<TripState>(context).tripId;
-    final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
 
     final isTripEnded = Provider.of<TripState>(context).isTripEnded;
