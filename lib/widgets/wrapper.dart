@@ -16,6 +16,7 @@ import 'package:book_my_weather/pages/trip_visiting_screen.dart';
 import 'package:book_my_weather/pages/trip_weather_screen.dart';
 import 'package:book_my_weather/pages/trips_screen.dart';
 import 'package:book_my_weather/pages/weather_listing_screen.dart';
+import 'package:book_my_weather/services/auth.dart';
 import 'package:book_my_weather/services/db.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -80,9 +81,12 @@ class _WrapperState extends State<Wrapper> {
 
   @override
   Widget build(BuildContext context) {
-    final db = DatabaseService();
+//    final db = DatabaseService();
     return MultiProvider(
       providers: [
+        Provider<DatabaseService>(
+          create: (_) => DatabaseService(),
+        ),
         ChangeNotifierProvider<PlaceData>(
           create: (_) => PlaceData(),
         ),
@@ -92,13 +96,13 @@ class _WrapperState extends State<Wrapper> {
         ChangeNotifierProvider<NetworkingState>(
           create: (_) => NetworkingState(),
         ),
-        StreamProvider<List<Trip>>.value(
-          value: db.streamUpcomingTrips(
-            uid: Provider.of<User>(context) != null
-                ? Provider.of<User>(context).uid
-                : '',
-            filterString: filterString,
-          ),
+        StreamProvider<List<Trip>>(
+          create: (ctx) => ctx.read<DatabaseService>().streamUpcomingTrips(
+//                uid: ctx.watch<User>() != null ? ctx.watch<User>().uid : '',
+
+                uid: ctx.read<User>()?.uid,
+                filterString: filterString,
+              ),
         ),
       ],
       child: MaterialApp(

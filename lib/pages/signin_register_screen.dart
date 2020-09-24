@@ -4,6 +4,7 @@ import 'package:book_my_weather/services/db.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:provider/provider.dart';
 
 class SignInRegisterScreen extends StatefulWidget {
   static const String id = 'signInRegister';
@@ -39,7 +40,7 @@ class _SignInRegisterForm extends StatefulWidget {
 }
 
 class __SignInRegisterFormState extends State<_SignInRegisterForm> {
-  final AuthService _auth = AuthService();
+//  final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
 
   // text field state
@@ -56,6 +57,7 @@ class __SignInRegisterFormState extends State<_SignInRegisterForm> {
 
   @override
   Widget build(BuildContext context) {
+    final _auth = context.watch<AuthService>();
     return ListView(
       children: <Widget>[
         Form(
@@ -134,6 +136,7 @@ class __SignInRegisterFormState extends State<_SignInRegisterForm> {
                           isLoading = true;
                         });
                         dynamic result;
+
                         if (isSignIn) {
                           result = await _auth.signInWithEmailAndPassword(
                               email, password);

@@ -324,7 +324,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 style: textStyle,
                               ),
                               onPressed: () {
-                                final _auth = AuthService();
+//                                final _auth = AuthService();
+                                final _auth = context.read<AuthService>();
                                 _auth.signOut();
                               },
                             ),

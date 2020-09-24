@@ -9,6 +9,7 @@ import 'package:book_my_weather/models/user.dart';
 import 'package:book_my_weather/models/weather.dart';
 import 'package:book_my_weather/services/auth.dart';
 import 'package:book_my_weather/widgets/wrapper.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
@@ -48,10 +49,20 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     final isIos = Theme.of(context).platform == TargetPlatform.iOS;
-    final auth = AuthService();
-    return StreamProvider<User>.value(
-      value: auth.user,
-      child: Wrapper(isIos: isIos),
+//    final auth = AuthService();
+
+    return MultiProvider(
+      providers: [
+        Provider<AuthService>(
+          create: (_) => AuthService(FirebaseAuth.instance),
+        ),
+        StreamProvider<User>(
+          create: (ctx) => ctx.read<AuthService>().user,
+        )
+      ],
+      child: Wrapper(
+        isIos: isIos,
+      ),
     );
   }
 }

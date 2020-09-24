@@ -19,7 +19,7 @@ class TripWidget extends StatefulWidget {
 
 class _TripWidgetState extends State<TripWidget> {
   @override
-  Widget build(BuildContext context) {
+  Widget build(context) {
     final index = widget.index;
     final trip = widget.pastTrip ?? Provider.of<List<Trip>>(context)[index];
     final startDateToDateString = timeStampToDateString(trip.startDate);
